@@ -13,14 +13,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
     }
-    private fun splashSetup(navController: NavController){
-        CoroutineScope(Dispatchers.Default).launch{
-            delay(3000)
-            CoroutineScope(Dispatchers.Main).launch{
-                navController.popBackStack()
-                navController.navigate(R.id.shopFragment)
-            }
-        }
-    }
+
+
 
 }
