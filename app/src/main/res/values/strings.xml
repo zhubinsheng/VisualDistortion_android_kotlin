@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">VisualDestortion</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="company_name"> شركة رينو لععمليات الصيانة </string>
+    <string name="welcome_msg"> مرحبابك فى تطبيق رينو لمعالجة التشوة البصرى</string>
+    <string name="login_msg"> قم بتسجيل الدخول بحسابك الشخصى لتسجيل الخدمات من كافة الأدارات فى المؤسسة </string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="login_userName_hint">البريد الألكترونى</string>
+    <string name="login_password_hint">كلمة المرور</string>
+    <string name="forgot_password">استعادة كلمة المرور</string>
+
+
+
 </resources>
