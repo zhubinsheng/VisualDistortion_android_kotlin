@@ -1,13 +1,14 @@
-package com.rino.visualdestortion
+package com.rino.visualdestortion.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.rino.visualdestortion.R
 
 
-class WelcomeFragment : Fragment() {
+class HomeFragment : Fragment() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +21,8 @@ class WelcomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_welcome, container, false)
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
+
 
 }

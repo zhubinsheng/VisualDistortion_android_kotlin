@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="com.rino.visualdestortion.WelcomeFragment"
+        android:name="com.rino.visualdestortion.ui.WelcomeFragment"
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_welcome" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.rino.visualdestortion.LoginFragment"
+        android:name="com.rino.visualdestortion.ui.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" />
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.rino.visualdestortion.SplashFragment"
+        android:name="com.rino.visualdestortion.ui.SplashFragment"
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash" />
 </navigation>
