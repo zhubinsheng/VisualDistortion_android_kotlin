@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.databinding.FragmentLoginBinding
 import com.rino.visualdestortion.model.pojo.LoginRequest
+import com.rino.visualdestortion.ui.MainActivity
 
 
 class LoginFragment : Fragment() {
@@ -143,5 +145,9 @@ class LoginFragment : Fragment() {
             binding.textInputPassword.isErrorEnabled = false
             true
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity).bottomNavigation.isGone = true
     }
 }
