@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.LoginFragment">
+    tools:context=".ui.login.LoginFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -17,7 +18,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
-
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+     app:cardCornerRadius="20dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,12 +31,18 @@
             android:focusableInTouchMode="true"
             android:layout_gravity="center">
 
-
-
-
-
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="100dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="right"
+                android:gravity="center"
+                android:text="@string/already_have_account"
+                android:textColor="@color/teal"
+                android:textSize="@dimen/headerTextSize"/>
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputUserName"
+                android:id="@+id/textInputEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -42,9 +52,10 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/editTextUserName"
+                    android:id="@+id/editTextEmail"
                     android:textSize="@dimen/newsMoreTextSize"
-                    android:backgroundTint="@color/orange"
+                    android:textDirection="ltr"
+                    android:backgroundTint="@color/teal"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:hint="@string/login_userName_hint" />
@@ -54,6 +65,9 @@
                 android:id="@+id/textInputPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:passwordToggleEnabled="true"
+                android:layoutDirection="rtl"
+                app:passwordToggleDrawable="@drawable/show_password_selector"
                 android:layout_marginTop="10dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 app:errorEnabled="true">
@@ -61,6 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/editTextPassword"
+                    android:textDirection="ltr"
                     android:textSize="@dimen/newsMoreTextSize"
                     android:backgroundTint="@color/black"
                     android:hint="@string/login_password_hint"
@@ -80,7 +95,14 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:text="@string/login" />
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/newsMoreTextSize"
+                android:text="@string/forgot_password"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/dark_gray"
+                android:layout_gravity="center"/>
 
             <ProgressBar
                 android:id="@+id/progress"
@@ -91,16 +113,10 @@
                 android:foregroundGravity="center"
                 android:layout_gravity="center_horizontal"
                 />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/newsMoreTextSize"
-                android:text="@string/forgot_password"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/gray"
-                android:layout_gravity="center"/>
+
 
         </LinearLayout>
+</androidx.cardview.widget.CardView>
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
