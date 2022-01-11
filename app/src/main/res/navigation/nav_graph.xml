@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/loginFragment2">
 
     <fragment
         android:id="@+id/welcomeFragment"
@@ -11,13 +11,23 @@
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_welcome" />
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.rino.visualdestortion.ui.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
-    <fragment
         android:id="@+id/splashFragment"
         android:name="com.rino.visualdestortion.ui.SplashFragment"
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash" />
+    <fragment
+        android:id="@+id/loginFragment2"
+        android:name="com.rino.visualdestortion.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_login_to_homeFragment"
+            app:destination="@id/homeFragment2" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/homeFragment2"
+        android:name="com.rino.visualdestortion.ui.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
 </navigation>

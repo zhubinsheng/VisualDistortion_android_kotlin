@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.SplashFragment"
-    android:background="@color/orange"
+    android:background="@color/teal"
     >
 
    <ImageView
        android:layout_width="100dp"
        android:layout_height="100dp"
        android:layout_gravity="center"
-       android:background="@color/orange"
+       android:background="@color/teal"
        android:src="@drawable/splash_icon"/>
 
 </FrameLayout>
