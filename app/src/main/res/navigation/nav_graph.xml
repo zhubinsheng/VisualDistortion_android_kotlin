@@ -26,8 +26,8 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action
-            android:id="@+id/action_login_to_homeFragment"
-            app:destination="@id/homeFragment2" />
+            android:id="@+id/action_login_to_ServiceFragment"
+            app:destination="@id/servicesFragment" />
     </fragment>
 
     <fragment
@@ -39,7 +39,12 @@
         android:id="@+id/servicesFragment"
         android:name="com.rino.visualdestortion.ui.services.ServicesFragment"
         android:label="fragment_services"
-        tools:layout="@layout/fragment_services" />
+        tools:layout="@layout/fragment_services">
+    <action
+        android:id="@+id/action_service_to_addService"
+        app:destination="@id/addServiceFragment" />
+
+    </fragment>
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.rino.visualdestortion.ui.history.HistoryFragment"
@@ -50,4 +55,9 @@
         android:name="com.rino.visualdestortion.ui.setting.settingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" />
+    <fragment
+        android:id="@+id/addServiceFragment"
+        android:name="com.rino.visualdestortion.ui.AddService.AddServiceFragment"
+        android:label="fragment_add_service"
+        tools:layout="@layout/fragment_add_service" />
 </navigation>
