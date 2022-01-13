@@ -10,7 +10,7 @@
         android:id="@+id/meowBottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:mbn_selectedIconColor="#00c1bc"
+        app:mbn_selectedIconColor="@color/teal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -23,8 +23,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-
+        app:layout_constraintBottom_toTopOf="@id/meowBottomNavigation"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph" />
 

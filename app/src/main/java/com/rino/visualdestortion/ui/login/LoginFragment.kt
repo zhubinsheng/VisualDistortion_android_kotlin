@@ -1,15 +1,19 @@
 package com.rino.visualdestortion.ui.login
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentLoginBinding
 import com.rino.visualdestortion.model.pojo.LoginRequest
+import com.rino.visualdestortion.ui.MainActivity
 
 
 class LoginFragment : Fragment() {
@@ -76,7 +80,7 @@ class LoginFragment : Fragment() {
         })
     }
     private fun navigateToHome() {
-        val action = LoginFragmentDirections.actionLoginToHomeFragment()
+        val action = LoginFragmentDirections.actionLoginToServiceFragment()
         findNavController().navigate(action)
     }
 
@@ -92,8 +96,9 @@ class LoginFragment : Fragment() {
         viewModel.setError.observe(viewLifecycleOwner, {
             it?.let {
                 Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
-                    .setAction("Ok") {
+                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(getResources().getColor(R.color.teal))
+                    .setActionTextColor(getResources().getColor(R.color.white)) .setAction("Ok")
+                    {
                     }.show()
             }
         })
@@ -143,5 +148,9 @@ class LoginFragment : Fragment() {
             binding.textInputPassword.isErrorEnabled = false
             true
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity).bottomNavigation.isGone = true
     }
 }

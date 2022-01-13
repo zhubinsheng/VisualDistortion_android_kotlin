@@ -1,11 +1,16 @@
 package com.rino.visualdestortion.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.rino.visualdestortion.R
+import com.rino.visualdestortion.ui.services.ServicesFragment
 
 class MainActivity : AppCompatActivity() {
+    lateinit var bottomNavigation : MeowBottomNavigation
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -13,8 +18,61 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
        // navController.navigate(R.id.splashFragment)
+        bottomNavigation = findViewById(R.id.meowBottomNavigation)
+        navigationSetup(navController,bottomNavigation)
     }
+    private fun navigationSetup(navController: NavController, bottomNavigation: MeowBottomNavigation){
+        bottomNavigation.add(MeowBottomNavigation.Model(1, R.drawable.ic_baseline_home_24))
+        bottomNavigation.add(MeowBottomNavigation.Model(2, R.drawable.ic_baseline_history_24))
+        bottomNavigation.add(MeowBottomNavigation.Model(3, R.drawable.ic_baseline_settings_24))
+        bottomNavigation.show(1)
+        bottomNavigation.setOnClickMenuListener { model: MeowBottomNavigation.Model? ->
+            when(model?.id){
+                1->{
+                    navController.popBackStack()
+                    navController.navigate(R.id.servicesFragment)
+                }
+                2->{
+                    navController.popBackStack()
+                    navController.navigate(R.id.historyFragment)
+                }
+                3->{
+                    navController.popBackStack()
+                    navController.navigate(R.id.settingFragment)
 
+                }
+                else->{
+
+                }
+            }
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        val navHostFragment = supportFragmentManager.fragments.first()
+                as? NavHostFragment
+
+        navHostFragment?.let {
+            val childFragments =
+                navHostFragment.childFragmentManager.fragments
+
+            childFragments.forEach { fragment ->
+                fragment.onActivityResult(requestCode, resultCode, data)
+
+                if (fragment is ServicesFragment) {
+                    val page = supportFragmentManager
+                        .findFragmentByTag(
+                            "android:switcher:${R.id.servicesFragment}:${fragment.arguments}"
+                        )
+
+                    page?.let {
+                        page.onActivityResult(requestCode, resultCode, data)
+                    }
+                }
+            }
+        }
+    }
 
 
 }
