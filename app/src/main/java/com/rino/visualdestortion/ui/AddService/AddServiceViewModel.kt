@@ -1,4 +1,4 @@
-package com.rino.visualdestortion.ui.login
+package com.rino.visualdestortion.ui.AddService
 
 import android.app.Application
 import android.util.Log
@@ -7,6 +7,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.remoteDataSource.Result
 import com.rino.visualdestortion.model.reposatory.ModelRepo
@@ -14,12 +16,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LoginFragmentViewModel(application: Application) : AndroidViewModel(application) {
+class AddServiceViewModel(application: Application) : AndroidViewModel(application) {
     private val modelRepository: ModelRepo = ModelRepo(application)
 
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
-    private val _isLogin = MutableLiveData<Boolean>()
+    private var _navigateToQRCode = MutableLiveData<String>()
+    private var _getServicesData = MutableLiveData<AddServiceResponse>()
+    private var _setServiceForm = MutableLiveData<QRCode>()
+
 
     val loading: LiveData<Int>
         get() = _loading
@@ -27,38 +32,31 @@ class LoginFragmentViewModel(application: Application) : AndroidViewModel(applic
     val setError: LiveData<String>
         get() = _setError
 
-    val isLogin: LiveData<Boolean>
-        get() = _isLogin
+
+    val getServicesData: LiveData<AddServiceResponse>
+        get() = _getServicesData
+
+    val setServiceForm: LiveData<QRCode>
+        get() = _setServiceForm
 
 
-    fun login(loginRequest: LoginRequest?) {
+    fun getServicesData() {
 
         viewModelScope.launch(Dispatchers.IO) {
-            when (val result = loginRequest?.let { modelRepository.login(it) }) {
+            when (val result =  modelRepository.getServiceForm() ) {
                 is Result.Success -> {
                     _loading.postValue(View.GONE)
-                    Log.i("login:", "${result.data}")
-                   if (result.data?.status == "Authenticated") {
-                        withContext(Dispatchers.Main) {
-                            _isLogin.postValue(true)
-                            modelRepository.setLogin(true)
-                            loginRequest.email?.let { modelRepository.setEmail(it) }
-                            loginRequest.password?.let { modelRepository.setPass(it) }
-                            result.data.token?.let { modelRepository.setToken(it) }
-                            result.data.refreshToken?.let { modelRepository.setRefreshToken(it) }
-                            Log.i("login:", "valid email")
-
-                        }
-                    }
+                    Log.i("getServiceData:", "${result.data}")
+                    _getServicesData.postValue(result.data!!)
                 }
                 is Result.Error -> {
-                    Log.e("login:", "${result.exception.message}")
+                    Log.e("getServiceData:", "${result.exception.message}")
                     _setError.postValue(result.exception.message)
                     _loading.postValue(View.GONE)
 
                 }
                 is Result.Loading -> {
-                    Log.i("login", "Loading")
+                    Log.i("getServiceData", "Loading")
                     _loading.postValue(View.VISIBLE)
                 }
             }

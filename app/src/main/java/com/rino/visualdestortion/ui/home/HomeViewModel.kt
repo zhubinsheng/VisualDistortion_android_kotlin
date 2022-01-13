@@ -12,7 +12,6 @@ class HomeViewModel (application: Application) : AndroidViewModel(application) {
 
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
-    private val _isLogin = MutableLiveData<Boolean>()
 
     val loading: LiveData<Int>
         get() = _loading
@@ -20,6 +19,5 @@ class HomeViewModel (application: Application) : AndroidViewModel(application) {
     val setError: LiveData<String>
         get() = _setError
 
-    val isLogin: LiveData<Boolean>
-        get() = _isLogin
+
 }

@@ -5,11 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.rino.visualdestortion.R
+import android.widget.Toast
+import com.rino.visualdestortion.databinding.FragmentAddServiceBinding
+
 
 
 class AddServiceFragment : Fragment() {
-
+    private lateinit var viewModel: AddServiceViewModel
+    private lateinit var binding: FragmentAddServiceBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,9 +23,44 @@ class AddServiceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_service, container, false)
+        viewModel = AddServiceViewModel(requireActivity().application)
+        binding = FragmentAddServiceBinding.inflate(inflater, container, false)
+        init()
+        return binding.root
     }
+
+    private fun init() {
+        viewModel.getServicesData()
+        observeData()
+    }
+
+    private fun observeData() {
+        observeGetServicesData()
+        //observeLoading()
+    }
+
+    private fun observeGetServicesData() {
+
+            viewModel.getServicesData.observe(viewLifecycleOwner, {
+                it.let {
+                    Toast.makeText(
+                        requireActivity(),
+                        " getData Successfully"+it.toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                  //  navigateToHome()
+
+                }
+            })
+        }
+
+//    private fun observeLoading() {
+//        viewModel.loading.observe(viewLifecycleOwner, {
+//            it?.let {
+//                binding.progress.visibility=it
+//            }
+//        })
+//    }
 
 
 }

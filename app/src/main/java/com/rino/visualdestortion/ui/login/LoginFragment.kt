@@ -1,6 +1,5 @@
 package com.rino.visualdestortion.ui.login
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentLoginBinding
-import com.rino.visualdestortion.model.pojo.LoginRequest
+import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.ui.MainActivity
 
 
@@ -35,10 +34,6 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        loginButtonOnClick()
-    }
-
     private fun loginButtonOnClick() {
         binding.loginButton.setOnClickListener {
             binding.progress.visibility = View.VISIBLE
@@ -49,6 +44,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun init() {
+        loginButtonOnClick()
         observeData()
 
     }

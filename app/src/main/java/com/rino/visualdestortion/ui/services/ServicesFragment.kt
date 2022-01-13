@@ -76,7 +76,7 @@ class ServicesFragment : Fragment() {
     private fun observeNavToAddService() {
         viewModel.navToAddService.observe(viewLifecycleOwner, {
             it?.let {
-                val action = ServicesFragmentDirections.actionServiceToAddService()
+                val action = ServicesFragmentDirections.actionServiceToAddService( )
                 findNavController().navigate(action)
             }
         })
