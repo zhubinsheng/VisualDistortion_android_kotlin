@@ -6,6 +6,7 @@ import com.rino.visualdestortion.model.localDataSource.MySharedPreference
 import com.rino.visualdestortion.model.localDataSource.Preference
 import com.rino.visualdestortion.model.localDataSource.PreferenceDataSource
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -61,8 +62,9 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
 
     override suspend fun refreshToken(refreshTokenRequest: RefreshTokenRequest?): Result<LoginResponse?> {
         var result: Result<LoginResponse?> = Result.Loading
+
         try {
-            val response = apiDataSource.refreshToken(refreshTokenRequest)
+            val response = apiDataSource.refreshToken(refreshTokenRequest!!)
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Result $result")
@@ -73,6 +75,10 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
+                        Log.i("ModelRepository refresh token:", "Result $result")
+                        result = Result.Error(Exception("Login Required"))
+
+
                     }
                     404 -> {
                         Log.e("Error 404", "Not Found")
@@ -100,7 +106,7 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
         return result
     }
 
-    override suspend fun setServiceForm(serviceForm: Map<String, String>): Result<QRCode?> {
+    override suspend fun setServiceForm(serviceForm: FormData):Result<QRCode?> {
         var result: Result<QRCode?> = Result.Loading
         try {
 
@@ -124,6 +130,8 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
     override suspend fun getServiceForm(): Result<AddServiceResponse?> {
         var result: Result<AddServiceResponse?> = Result.Loading
         try {
+            Log.i("ModelRepository:@@", "Token ${getToken()}")
+
             val response = apiDataSource.getServiceForm("Bearer "+getToken())
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
@@ -133,7 +141,7 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
-                        result = Result.Error(Exception("Email or Password invalid"))
+                        result = Result.Error(Exception("Bad Request getData"))
                     }
                     404 -> {
                         Log.e("Error 404", "Not Found")
@@ -145,8 +153,9 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
                     401 -> {
                         Log.e("Error 401", "Not Auth")
                         if(isLogin())
-                          refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
-
+                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
+                        //  refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
+                         //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
                     }
                     else -> {
                         Log.e("Error", "Generic Error")
@@ -162,8 +171,6 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
         }
         return result    }
 
-
-
     override fun isLogin(): Boolean {
         return sharedPreference.isLogin()
     }
@@ -171,7 +178,6 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
     override fun setLogin(login: Boolean) {
         sharedPreference.setLogin(login)
     }
-
 
     override fun setEmail(email: String) {
         sharedPreference.setEmail(email)

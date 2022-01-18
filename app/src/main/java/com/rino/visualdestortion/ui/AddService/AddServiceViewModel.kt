@@ -48,6 +48,8 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
                     _loading.postValue(View.GONE)
                     Log.i("getServiceData:", "${result.data}")
                     _getServicesData.postValue(result.data!!)
+                    _loading.postValue(View.GONE)
+
                 }
                 is Result.Error -> {
                     Log.e("getServiceData:", "${result.exception.message}")

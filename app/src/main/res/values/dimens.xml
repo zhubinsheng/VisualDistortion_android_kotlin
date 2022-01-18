@@ -2,5 +2,9 @@
 <resources>
     <dimen name="newsMoreTextSize">14sp</dimen>
     <dimen name="loginViewsMargin">20dp</dimen>
-    <dimen name="headerTextSize">25sp</dimen>
+    <dimen name="headerTextSize">20sp</dimen>
+    <dimen name="subHeaderTextSize">18sp</dimen>
+    <dimen name="paddingLayout">15dp</dimen>
+    <dimen name="paddingText">8dp</dimen>
+    <dimen name="marginTextField">8dp</dimen>
 </resources>

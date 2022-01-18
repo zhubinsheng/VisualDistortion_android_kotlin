@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="30dp"
-            android:background="@drawable/card"
+            android:background="@color/white"
             android:focusableInTouchMode="true"
             android:layout_gravity="center">
 

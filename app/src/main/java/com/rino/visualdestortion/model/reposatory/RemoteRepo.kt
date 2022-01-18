@@ -1,6 +1,7 @@
 package com.rino.visualdestortion.model.reposatory
 
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -14,7 +15,7 @@ interface RemoteRepo {
 
     suspend fun refreshToken(refreshTokenRequest: RefreshTokenRequest?): Result<LoginResponse?>
 
-    suspend fun setServiceForm(serviceForm: Map<String, String>): Result<QRCode?>
+    suspend fun setServiceForm(serviceForm: FormData): Result<QRCode?>
 
     suspend fun getServiceForm(): Result<AddServiceResponse?>
 

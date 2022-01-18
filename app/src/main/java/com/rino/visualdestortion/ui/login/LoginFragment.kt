@@ -22,8 +22,6 @@ class LoginFragment : Fragment() {
     private var email = ""
     private var pass = ""
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
