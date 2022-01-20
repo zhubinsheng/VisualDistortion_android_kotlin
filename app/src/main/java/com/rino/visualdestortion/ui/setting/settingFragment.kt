@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import com.rino.visualdestortion.R
-import com.rino.visualdestortion.ui.MainActivity
+import com.rino.visualdestortion.ui.home.MainActivity
 
 
 class settingFragment : Fragment() {

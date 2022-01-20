@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.remoteDataSource.Result
@@ -24,7 +25,8 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     private var _navigateToQRCode = MutableLiveData<String>()
     private var _getServicesData = MutableLiveData<AddServiceResponse>()
     private var _setServiceForm = MutableLiveData<QRCode>()
-
+    private var _equipmentsDeleteItem = MutableLiveData<EquipmentItem>()
+    private var _workerTypeDeleteItem = MutableLiveData<EquipmentItem>()
 
     val loading: LiveData<Int>
         get() = _loading
@@ -38,6 +40,12 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
 
     val setServiceForm: LiveData<QRCode>
         get() = _setServiceForm
+
+    val equipmentsDeleteItem: LiveData<EquipmentItem>
+        get() = _equipmentsDeleteItem
+
+    val workerTypeDeleteItem: LiveData<EquipmentItem>
+        get() = _workerTypeDeleteItem
 
 
     fun getServicesData() {
@@ -66,4 +74,35 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
 
     }
 
+    fun setFormData(serviceForm: FormData) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            when (val result =  modelRepository.setServiceForm(serviceForm) ) {
+                is Result.Success -> {
+                    _loading.postValue(View.GONE)
+                    Log.i("setServiceForm:", "${result.data}")
+                    _setServiceForm.postValue(result.data!!)
+                    _loading.postValue(View.GONE)
+
+                }
+                is Result.Error -> {
+                    Log.e("setServiceForm:", "${result.exception.message}")
+                    _setError.postValue(result.exception.message)
+                    _loading.postValue(View.GONE)
+
+                }
+                is Result.Loading -> {
+                    Log.i("setServiceForm", "Loading")
+                    _loading.postValue(View.VISIBLE)
+                }
+            }
+        }
+
+    }
+   fun setEquipmentDeletedItem(equipmentItem: EquipmentItem){
+       _equipmentsDeleteItem.value=equipmentItem
+   }
+    fun setWorkerTypeDeletedItem(workerTypeItem: EquipmentItem){
+       _workerTypeDeleteItem.value = workerTypeItem
+    }
 }

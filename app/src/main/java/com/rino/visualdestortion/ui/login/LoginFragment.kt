@@ -12,7 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentLoginBinding
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
-import com.rino.visualdestortion.ui.MainActivity
+import com.rino.visualdestortion.ui.home.MainActivity
 
 
 class LoginFragment : Fragment() {

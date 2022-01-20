@@ -8,11 +8,12 @@ import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
 import com.rino.visualdestortion.model.pojo.login.RefreshTokenRequest
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 
 
 class ApiDataSource:ApiInterface {
-    val retrofit = ApiClient.getApi()
+    private val retrofit = ApiClient.getApi()
     override suspend fun login(loginRequest: LoginRequest?): Response<LoginResponse> {
           return  retrofit.login(loginRequest!!)
 
@@ -29,7 +30,11 @@ class ApiDataSource:ApiInterface {
                                         serviceForm.beforeImg,serviceForm.afterImg,
                                         serviceForm.equipmentList,serviceForm.WorkersTypesList,
                                         serviceForm.mSquare,serviceForm.mCube,serviceForm.numberR,
-                                        serviceForm.notes)
+                                        serviceForm.notes,serviceForm.Percentage)
+
+
+
+   //     return retrofit.uploadData()
     }
 
     override suspend fun getServiceForm(auth:String): Response<AddServiceResponse> {

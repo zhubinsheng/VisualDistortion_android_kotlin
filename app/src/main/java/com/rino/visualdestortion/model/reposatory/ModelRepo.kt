@@ -113,9 +113,35 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
             val response = apiDataSource.setServiceForm("Bearer "+getToken(),serviceForm)
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
-                Log.i("ModelRepository", "Result $result")
+                Log.i("ModelRepositoryForm", "Result $result")
             } else {
-                Log.i("ModelRepository", "Error${response.errorBody()}")
+                Log.i("ModelRepositoryForm", "Error${response.errorBody()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        Log.e("Error 400", "SetForm: "+response.body())
+                        result = Result.Error(Exception("Bad Request getData"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth")
+                        if(isLogin())
+                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
+                         // refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
+                          refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
+                          // refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                    }
+                }
+
             }
 
         }catch (e: IOException){
@@ -154,6 +180,7 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
                         Log.e("Error 401", "Not Auth")
                         if(isLogin())
                             Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
+                        refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
                         //  refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
                          //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
                     }

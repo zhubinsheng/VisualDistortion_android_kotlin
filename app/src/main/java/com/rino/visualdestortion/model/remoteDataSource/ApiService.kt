@@ -2,6 +2,7 @@ package com.rino.visualdestortion.model.remoteDataSource
 
 import android.graphics.Bitmap
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -27,18 +28,21 @@ interface ApiService {
                                ,@Field("streetName"      ) streetName: String
                                ,@Field("lat"             ) lat: String
                                ,@Field("lng"             ) lng: String
-                               ,@Field("beforeImg"       ) beforeImg: Bitmap
+                               ,@Field("beforeIm"        ) beforeImg: Bitmap
                                ,@Field("afterImg"        ) afterImg: Bitmap
-                               ,@Field("WorkersTypesList") WorkersTypesList: Map<Long,Int>
-                               ,@Field("EquipmentList"   ) equipmentList: Map<Long,Int>
+                               ,@FieldMap WorkersTypesList: Map<String,Map<Long?,Int?>>
+                               ,@FieldMap equipmentList: Map<String,Map<Long?,Int?>>
                                ,@Field("mSquare"         ) mSquare: Int?
                                ,@Field("mCube"           ) mCube: Int?
                                ,@Field("numberR"         ) numberR: Int?
                                ,@Field("notes"           ) notes: String?
-
+                               ,@Field("Percentage"      ) percentage: String?
 
     ): Response<QRCode>
 
+    @Multipart
+    @POST("api/form/storeForm")
+    suspend fun uploadData(@PartMap map: HashMap<String?, FormData?>): Response<QRCode>
 
     @GET("api/form/createFrom")
     suspend fun getServiceForm( @Header("Authorization") auth: String): Response<AddServiceResponse>

@@ -1,4 +1,4 @@
-package com.rino.visualdestortion.ui
+package com.rino.visualdestortion.ui.home
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

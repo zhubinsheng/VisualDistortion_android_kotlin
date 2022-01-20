@@ -9,7 +9,7 @@ import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.rino.visualdestortion.databinding.FragmentServicesBinding
-import com.rino.visualdestortion.ui.MainActivity
+import com.rino.visualdestortion.ui.home.MainActivity
 
 
 
@@ -76,7 +76,7 @@ class ServicesFragment : Fragment() {
     private fun observeNavToAddService() {
         viewModel.navToAddService.observe(viewLifecycleOwner, {
             it?.let {
-                val action = ServicesFragmentDirections.actionServiceToAddService( )
+                val action = ServicesFragmentDirections.actionServiceToAddService("","1")
                 findNavController().navigate(action)
             }
         })

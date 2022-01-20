@@ -31,6 +31,8 @@
     <string name="numberR">عدد الردود</string>
     <string name="notes">الملاحظات</string>
     <string name="submit">تسجيل</string>
+    <string name="QRCode">الرقم التكويدى</string>
+    <string name="navigateToHome">العودة للقائمة الرئيسية</string>
 
 
 </resources>
