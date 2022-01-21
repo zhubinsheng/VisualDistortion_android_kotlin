@@ -53,7 +53,15 @@ class WorkerTypesAdapter(private var itemsList: ArrayList<EquipmentItem>, privat
         itemsList.addAll(newFavoriteList)
         notifyDataSetChanged()
     }
-
+    fun getWorkerTypesMap():Map<Long,Int>
+    {
+        var hashmap = HashMap<Long,Int>()
+        for (item in itemsList)
+        {
+            hashmap[item.id] = item.count
+        }
+        return hashmap
+    }
 
     inner class ItemViewHolder(val binding: EquipmentItemBinding) :
         RecyclerView.ViewHolder(binding.root)

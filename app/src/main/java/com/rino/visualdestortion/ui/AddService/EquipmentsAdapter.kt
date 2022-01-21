@@ -36,8 +36,10 @@ class EquipmentsAdapter(private var itemsList: ArrayList<EquipmentItem>, private
                   holder.binding.itemCount.text = itemsList[position].count.toString()
             })
             holder.binding.minImg.setOnClickListener({
-                itemsList[position].count = itemsList[position].count?.minus(1)
-                holder.binding.itemCount.text = itemsList[position].count.toString()
+                if(itemsList[position].count!!>1) {
+                    itemsList[position].count = itemsList[position].count?.minus(1)
+                    holder.binding.itemCount.text = itemsList[position].count.toString()
+                }
             })
             holder.binding.deleteItem.setOnClickListener({
                 println("deleted item"+itemsList[position])
@@ -53,7 +55,15 @@ class EquipmentsAdapter(private var itemsList: ArrayList<EquipmentItem>, private
             itemsList.addAll(newFavoriteList)
             notifyDataSetChanged()
         }
-
+    fun getEquipmentMap():Map<Long,Int>
+    {
+        var hashmap = HashMap<Long,Int>()
+        for (item in itemsList)
+        {
+           hashmap[item.id] = item.count
+        }
+        return hashmap
+    }
 
         inner class ItemViewHolder(val binding: EquipmentItemBinding) :
             RecyclerView.ViewHolder(binding.root)

@@ -33,6 +33,9 @@
     <string name="submit">تسجيل</string>
     <string name="QRCode">الرقم التكويدى</string>
     <string name="navigateToHome">العودة للقائمة الرئيسية</string>
+    <string name="Percentage">نسبة الانجاز الكلية</string>
+    <string name="afterImage">الصورة بعد المهمة</string>
+    <string name="beforeImage">الصورة قبل المهمة</string>
 
 
 </resources>

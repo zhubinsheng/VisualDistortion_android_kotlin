@@ -1,28 +1,39 @@
 package com.rino.visualdestortion.ui.AddService
 
+import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.core.graphics.drawable.toBitmap
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentAddServiceBinding
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.ui.home.MainActivity
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
 
 
 class AddServiceFragment : Fragment() {
@@ -41,9 +52,14 @@ class AddServiceFragment : Fragment() {
     private lateinit var workersTypeMap: HashMap<Int?,Int?>
     private lateinit var equipmentsCountList: ArrayList<EquipmentItem>
     private lateinit var workerTypesCountList: ArrayList<EquipmentItem>
+    private lateinit var equipmentsCountMap: HashMap<Long?,Int?>
+    private lateinit var workerTypesCountMap: HashMap<Long?,Int?>
     private lateinit var formData: FormData
+    private lateinit var beforeImgBody:MultipartBody.Part
+    private lateinit var afterImgBody:MultipartBody.Part
     private val CAMERA_REQUEST_CODE = 200
     val REQUEST_CODE = 100
+    private var serviceTypeId = ""
 
 
 
@@ -76,6 +92,10 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun setUpUI() {
+     //   requestPermissionLauncher.launch((Manifest.permission.CAMERA))
+        requestPermissionLauncher.launch((Manifest.permission.READ_EXTERNAL_STORAGE))
+    //    requestPermissionLauncher.launch((Manifest.permission.WRITE_EXTERNAL_STORAGE))
+
         equipmentsAdapter = EquipmentsAdapter(arrayListOf(),viewModel)
         workerTypesAdapter = WorkerTypesAdapter(arrayListOf(),viewModel)
         binding.equipmentsRecycle.apply {
@@ -97,30 +117,48 @@ class AddServiceFragment : Fragment() {
             getFormDataFromUi()
             viewModel.setFormData(formData)
         })
+        if(getArguments() != null) {
+            // The getPrivacyPolicyLink() method will be created automatically.
+           binding.serviceTypeNameTxt.text = getArguments()?.get("serviceName").toString()
+            serviceTypeId = getArguments()?.get("serviceID").toString()
+        }
     }
 
     private fun getFormDataFromUi() {
-        var hashmap = hashMapOf<Long?,Int?>()
-        hashmap.put(1, 2)
-        hashmap.put(2, 3)
-        hashmap.put(3, 3)
-        var hashMap2 = hashMapOf<String,Map<Long?,Int?>>()
-        hashMap2.put("WorkersTypesList",hashmap)
-        formData.serviceTypeId = addServiceResponse.serviceTypes[0].id.toString()
+
+        formData.serviceTypeId = serviceTypeId
         formData.sectorName= binding.sectorTextView.text.toString()
         formData.municipalityName=binding.municipalitesTextView.text.toString()
         formData.districtName=binding.districtsTextView.text.toString()
         formData.streetName=binding.streetTextView.text.toString()
         formData.lat="0"
         formData.lng="0"
-        formData.WorkersTypesList = hashMap2
-        hashMap2.remove("WorkersTypesList")
-        hashMap2.put("EquipmentList",hashmap)
-        formData.equipmentList = hashMap2
-        formData.notes=binding.notesEditTxt.text.toString()
-        formData.beforeImg=binding.beforPic.drawable.toBitmap()
-        formData.afterImg=binding.afterPic.drawable.toBitmap()
-        formData.Percentage="50"
+        formData.WorkersTypesList = workerTypesAdapter.getWorkerTypesMap()
+        formData.equipmentList = equipmentsAdapter.getEquipmentMap()
+        formData.notes         = binding.notesEditTxt.text.toString()
+        formData.mSquare = binding.editTextMSquare.text.toString().toInt()
+        formData.mCube = binding.editTextMCube.text.toString().toInt()
+        formData.numberR = binding.editTextNumberR.text.toString().toInt()
+        formData.beforeImg     = beforeImgBody
+        formData.afterImg      = afterImgBody
+        formData.percentage    = binding.precentageEditTxt.text.toString()
+        Log.e("serviceTypeId",formData.serviceTypeId)
+        Log.e("Sectors",formData.sectorName)
+        Log.e("municipalites",formData.municipalityName)
+        Log.e(".districts",formData.districtName)
+        Log.e("street", formData.streetName)
+        Log.e("lat",formData.lat)
+        Log.e("lng",formData.lng)
+        Log.e("workerTypes",formData.WorkersTypesList.toString())
+        Log.e("equipments",formData.equipmentList.toString())
+        Log.e("beforeImg", formData.beforeImg.toString())
+        Log.e("afterImg", formData.afterImg.toString())
+        Log.e("mSquare", formData.mSquare.toString()!!)
+        Log.e("mCube", formData.mCube.toString()!!)
+        Log.e("numberR", formData.numberR.toString()!!)
+        Log.e("notes", formData.notes!!)
+        Log.e("percentage", formData.percentage!!)
+
     }
 
     private fun afterPicOnClick() {
@@ -146,6 +184,8 @@ class AddServiceFragment : Fragment() {
         workersTypeMap = HashMap()
         equipmentsCountList = ArrayList()
         workerTypesCountList = ArrayList()
+        equipmentsCountMap =  HashMap()
+        workerTypesCountMap = HashMap()
     }
 
     private fun observeData() {
@@ -296,8 +336,10 @@ class AddServiceFragment : Fragment() {
         binding.equipmentsTextView.onItemClickListener = AdapterView.OnItemClickListener{
                 parent,view,position,id->
             val selectedItem = parent.getItemAtPosition(position).toString()
-            var item = EquipmentItem(selectedItem, equipmentsMap[position],1)
-            equipmentsCountList.add(item)
+            var item = equipmentsMap[position]?.toLong()?.let { EquipmentItem(selectedItem, it,1) }
+            if (item != null) {
+                equipmentsCountList.add(item)
+            }
             equipmentsAdapter.updateItems(equipmentsCountList)
             // Display the clicked item using toast
             Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
@@ -320,8 +362,10 @@ class AddServiceFragment : Fragment() {
         binding.workersTypeTextView.onItemClickListener = AdapterView.OnItemClickListener{
                 parent,view,position,id->
             val selectedItem = parent.getItemAtPosition(position).toString()
-            var item = EquipmentItem(selectedItem, workersTypeMap[position],1)
-            workerTypesCountList.add(item)
+            var item = workersTypeMap[position]?.toLong()?.let { EquipmentItem(selectedItem, it,1) }
+            if (item != null) {
+                workerTypesCountList.add(item)
+            }
             workerTypesAdapter.updateItems(workerTypesCountList)
             // Display the clicked item using toast
             Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
@@ -352,13 +396,74 @@ class AddServiceFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST_CODE && data != null){
+        if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST_CODE && data != null) {
             binding.afterPic.setImageBitmap(data.extras?.get("data") as Bitmap)
-            var bitmap = (binding.afterPic.drawable as BitmapDrawable).bitmap
+            var bitmap = data.extras?.get("data") as Bitmap
+            try {
+                val file = File(getRealPathFromURI(getImageUri(requireContext(),bitmap)!!))
+                println("filePath" + data?.data?.path)
+                if (file != null) {
+                    val requestFile: RequestBody =
+                        RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
+                    afterImgBody = MultipartBody.Part.createFormData(
+                        "afterImg",
+                        file?.name.trim(),
+                        requestFile
+                    )
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+
         }
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE){
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             binding.beforPic.setImageURI(data?.data) // handle chosen image
-            var bitmap = (binding.beforPic.drawable as BitmapDrawable).bitmap
+            try {
+
+                val file = File(
+                getRealPathFromURI(data?.data!!)
+                )
+                println("filePath" + data?.data?.path)
+                if (file != null) {
+                    val requestFile: RequestBody =
+                        RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
+                    beforeImgBody = MultipartBody.Part.createFormData(
+                        "beforeImg",
+                        file?.name.trim(),
+                        requestFile
+                    )
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         }
     }
+    fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
+        return Uri.parse(path)
+    }
+
+    fun getRealPathFromURI(uri: Uri): String? {
+        val cursor: Cursor? = requireActivity().getContentResolver().query(uri, null, null, null, null)
+        cursor?.moveToFirst()
+        val idx: Int? = cursor?.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+        return idx?.let { cursor?.getString(it) }
+    }
+    val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission is granted. Continue the action or workflow in your
+                // app.
+            } else {
+                // Explain to the user that the feature is unavailable because the
+                // features requires a permission that the user has denied. At the
+                // same time, respect the user's decision. Don't link to system
+                // settings in an effort to convince the user to change their
+                // decision.
+            }
+        }
 }

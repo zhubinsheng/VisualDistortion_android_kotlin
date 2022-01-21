@@ -2,13 +2,14 @@ package com.rino.visualdestortion.model.remoteDataSource
 
 
 
+import android.util.Log
+import com.google.gson.Gson
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
 import com.rino.visualdestortion.model.pojo.login.RefreshTokenRequest
-import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 
 
@@ -24,13 +25,16 @@ class ApiDataSource:ApiInterface {
     }
 
     override suspend fun setServiceForm(auth:String,serviceForm: FormData): Response<QRCode> {
+
+        Log.e("ApiDataSource",serviceForm.beforeImg.toString())
+        Log.e("ApiDataSource",serviceForm.afterImg.toString())
           return retrofit.setServiceForm(auth,serviceForm.serviceTypeId,serviceForm.sectorName,
                                         serviceForm.municipalityName,serviceForm.districtName,
                                         serviceForm.streetName,serviceForm.lat,serviceForm.lng,
                                         serviceForm.beforeImg,serviceForm.afterImg,
-                                        serviceForm.equipmentList,serviceForm.WorkersTypesList,
+                                       serviceForm.equipmentList,serviceForm.WorkersTypesList,
                                         serviceForm.mSquare,serviceForm.mCube,serviceForm.numberR,
-                                        serviceForm.notes,serviceForm.Percentage)
+                                        serviceForm.notes,serviceForm.percentage)
 
 
 

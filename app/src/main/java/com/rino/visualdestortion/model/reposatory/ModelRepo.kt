@@ -110,7 +110,7 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
         var result: Result<QRCode?> = Result.Loading
         try {
 
-            val response = apiDataSource.setServiceForm("Bearer "+getToken(),serviceForm)
+            val response = apiDataSource.setServiceForm("Bearer ${getToken()}",serviceForm)
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepositoryForm", "Result $result")
@@ -119,7 +119,7 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
-                        Log.e("Error 400", "SetForm: "+response.body())
+                        Log.e("Error 400", "SetForm: "+response.errorBody()?.string())
                         result = Result.Error(Exception("Bad Request getData"))
                     }
                     404 -> {
