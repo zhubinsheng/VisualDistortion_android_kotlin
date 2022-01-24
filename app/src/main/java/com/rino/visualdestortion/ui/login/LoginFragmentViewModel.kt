@@ -53,8 +53,9 @@ class LoginFragmentViewModel(application: Application) : AndroidViewModel(applic
                 }
                 is Result.Error -> {
                     Log.e("login:", "${result.exception.message}")
-                    _setError.postValue(result.exception.message)
                     _loading.postValue(View.GONE)
+                    _setError.postValue(result.exception.message)
+
 
                 }
                 is Result.Loading -> {

@@ -55,7 +55,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/editTextEmail"
                     android:textSize="@dimen/newsMoreTextSize"
-                    android:textDirection="rtl"
                     android:backgroundTint="@color/teal"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
@@ -67,6 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:passwordToggleEnabled="true"
+
                 android:layoutDirection="rtl"
                 app:passwordToggleDrawable="@drawable/show_password_selector"
                 android:layout_marginTop="10dp"
@@ -76,7 +76,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/editTextPassword"
-                    android:textDirection="rtl"
                     android:layoutDirection="rtl"
                     android:textSize="@dimen/newsMoreTextSize"
                     android:backgroundTint="@color/black"
@@ -98,10 +97,12 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/login" />
             <TextView
+                android:id="@+id/resetPass_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/newsMoreTextSize"
                 android:text="@string/forgot_password"
+                android:clickable="true"
                 android:layout_marginTop="16dp"
                 android:textColor="@color/dark_gray"
                 android:layout_gravity="center"/>

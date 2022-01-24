@@ -22,15 +22,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:padding="@dimen/paddingText"
                 android:gravity="center"
+                android:padding="@dimen/paddingText"
                 android:text="الاتربه والاحجام الكبيره من مخلفات الهدم "
                 android:textColor="@color/teal"
                 android:textSize="@dimen/headerTextSize"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                />
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/address_txt"
                 android:layout_width="wrap_content"
@@ -38,10 +38,11 @@
                 android:layout_marginTop="@dimen/marginTextField"
                 android:padding="@dimen/paddingText"
                 android:text="@string/address"
-                android:textColor="@color/teal"
+                android:textColor="@color/dark_gray"
                 android:textSize="@dimen/headerTextSize"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/serviceTypeName_txt" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/AddressCard"
                 android:layout_width="match_parent"
@@ -54,9 +55,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="@dimen/paddingLayout"
                     android:background="@drawable/rectangle"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/paddingLayout">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/sectorTextInputLayout"
@@ -65,6 +66,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/marginTextField"
                         android:layoutDirection="rtl"
+                        android:textDirection="rtl"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -76,10 +78,10 @@
                             android:layout_weight="1"
                             android:inputType="none"
                             android:layoutDirection="rtl"
-                            android:textSize="@dimen/newsMoreTextSize"
-                            android:textColor="@color/black"
                             android:text="@string/sector"
-                            android:textDirection="rtl" />
+                            android:textColor="@color/black"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -89,6 +91,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/marginTextField"
                         android:layoutDirection="rtl"
+                        android:textDirection="rtl"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent">
 
@@ -99,10 +102,10 @@
                             android:layout_weight="1"
                             android:inputType="none"
                             android:layoutDirection="rtl"
-                            android:textSize="@dimen/newsMoreTextSize"
-                            android:textColor="@color/black"
                             android:text="@string/municipalites"
-                            android:textDirection="rtl" />
+                            android:textColor="@color/black"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -112,6 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/marginTextField"
                         android:layoutDirection="rtl"
+                        android:textDirection="rtl"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent">
 
@@ -122,10 +126,10 @@
                             android:layout_weight="1"
                             android:inputType="none"
                             android:layoutDirection="rtl"
-                            android:textSize="@dimen/newsMoreTextSize"
-                            android:textColor="@color/black"
                             android:text="@string/districts"
-                            android:textDirection="rtl" />
+                            android:textColor="@color/black"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -135,6 +139,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/marginTextField"
                         android:layoutDirection="rtl"
+                        android:textDirection="rtl"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent">
 
@@ -145,10 +150,10 @@
                             android:layout_weight="1"
                             android:inputType="none"
                             android:layoutDirection="rtl"
-                            android:textSize="@dimen/newsMoreTextSize"
-                            android:textColor="@color/black"
                             android:text="@string/street"
-                            android:textDirection="rtl" />
+                            android:textColor="@color/black"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -160,10 +165,11 @@
                 android:layout_marginTop="10dp"
                 android:padding="@dimen/paddingText"
                 android:text="@string/equipments"
-                android:textColor="@color/teal"
+                android:textColor="@color/dark_gray"
                 android:textSize="@dimen/headerTextSize"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/AddressCard" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/equipmentCard"
                 android:layout_width="match_parent"
@@ -176,9 +182,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="@dimen/paddingLayout"
                     android:background="@drawable/rectangle"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/paddingLayout">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/equipmentsTextInputLayout"
@@ -187,6 +193,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/marginTextField"
                         android:layoutDirection="rtl"
+                        android:textDirection="rtl"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -198,10 +205,10 @@
                             android:layout_weight="1"
                             android:inputType="none"
                             android:layoutDirection="rtl"
-                            android:textSize="@dimen/newsMoreTextSize"
-                            android:textColor="@color/black"
                             android:text="@string/select"
-                            android:textDirection="rtl" />
+                            android:textColor="@color/black"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -222,10 +229,11 @@
                 android:layout_marginTop="10dp"
                 android:padding="@dimen/paddingText"
                 android:text="@string/workersType"
-                android:textColor="@color/teal"
+                android:textColor="@color/dark_gray"
                 android:textSize="@dimen/headerTextSize"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/equipmentCard" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/workersTypeCard"
                 android:layout_width="match_parent"
@@ -238,9 +246,10 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="@dimen/paddingLayout"
                     android:background="@drawable/rectangle"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/paddingLayout">
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/workersTypeTextInputLayout"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -248,6 +257,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/marginTextField"
                         android:layoutDirection="rtl"
+                        android:textDirection="rtl"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -259,10 +269,10 @@
                             android:layout_weight="1"
                             android:inputType="none"
                             android:layoutDirection="rtl"
-                            android:textSize="@dimen/newsMoreTextSize"
-                            android:textColor="@color/black"
                             android:text="@string/select"
-                            android:textDirection="rtl" />
+                            android:textColor="@color/black"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -283,10 +293,11 @@
                 android:layout_marginTop="10dp"
                 android:padding="@dimen/paddingText"
                 android:text="@string/spicialItems"
-                android:textColor="@color/teal"
+                android:textColor="@color/dark_gray"
                 android:textSize="@dimen/headerTextSize"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/workersTypeCard" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/spicialItemsCard"
                 android:layout_width="match_parent"
@@ -300,64 +311,70 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/rectangle"
-                    android:padding="@dimen/paddingLayout"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/paddingLayout">
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputMSquare"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/marginTextField"
                         android:layoutDirection="rtl"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:textDirection="rtl"
                         app:errorEnabled="true">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTextMSquare"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/editTextMSquare"
-                            android:textSize="@dimen/newsMoreTextSize"
-                            android:textDirection="rtl"
-                            android:backgroundTint="@color/teal"
+                            android:backgroundTint="@color/dark_gray"
+                            android:hint="@string/mSquare"
                             android:maxLines="1"
-                            android:hint="@string/mSquare" />
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
                     </com.google.android.material.textfield.TextInputLayout>
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputMCube"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/marginTextField"
                         android:layoutDirection="rtl"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:textDirection="rtl"
                         app:errorEnabled="true">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTextMCube"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/editTextMCube"
-                            android:textSize="@dimen/newsMoreTextSize"
-                            android:textDirection="rtl"
                             android:backgroundTint="@color/teal"
+                            android:hint="@string/mCube"
                             android:maxLines="1"
-                            android:hint="@string/mCube" />
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
                     </com.google.android.material.textfield.TextInputLayout>
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputNumberR"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/marginTextField"
                         android:layoutDirection="rtl"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:textDirection="rtl"
                         app:errorEnabled="true">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTextNumberR"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/editTextNumberR"
-                            android:textSize="@dimen/newsMoreTextSize"
-                            android:textDirection="rtl"
                             android:backgroundTint="@color/teal"
+                            android:hint="@string/numberR"
                             android:maxLines="1"
-                            android:hint="@string/numberR" />
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -369,10 +386,11 @@
                 android:layout_marginTop="10dp"
                 android:padding="@dimen/paddingText"
                 android:text="@string/attachments"
-                android:textColor="@color/teal"
+                android:textColor="@color/dark_gray"
                 android:textSize="@dimen/headerTextSize"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/spicialItemsCard" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/attachPicCard"
                 android:layout_width="match_parent"
@@ -381,58 +399,87 @@
                 app:cardElevation="4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/attachPic_txt">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/rectangle"
-    android:gravity="center"
-    android:padding="@dimen/paddingLayout"
-    android:orientation="vertical">
-             <androidx.constraintlayout.widget.ConstraintLayout
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content">
-                    <ImageView
-                        android:id="@+id/afterPic"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:src="@drawable/picture" />
-                    <TextView
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/paddingLayout">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/afterImage"
-                        android:layout_marginTop="@dimen/paddingLayout"
-                        android:textColor="@color/dark_gray"
-                        app:layout_constraintLeft_toLeftOf="@id/afterPic"
-                        app:layout_constraintRight_toRightOf="@id/afterPic"
-                       app:layout_constraintTop_toBottomOf="@id/afterPic"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:padding="@dimen/paddingText">
 
-                        />
-                    <ImageView
-                        android:id="@+id/beforPic"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:layout_marginLeft="80dp"
-                        app:layout_constraintLeft_toRightOf="@id/afterPic"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        android:src="@drawable/picture" />
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/textInputAfterImg"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layoutDirection="rtl"
+                            android:textDirection="rtl"
+                            app:errorEnabled="true"
+                            app:layout_constraintEnd_toEndOf="@+id/afterPicText"
+                            app:layout_constraintStart_toStartOf="@id/afterPicText"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                 <TextView
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:layout_marginTop="@dimen/paddingLayout"
-                     android:text="@string/beforeImage"
-                     android:textColor="@color/dark_gray"
-                     app:layout_constraintRight_toRightOf="@id/beforPic"
-                     app:layout_constraintStart_toStartOf="@+id/beforPic"
+                            <ImageView
+                                android:id="@+id/afterPic"
+                                android:layout_width="70dp"
+                                android:layout_height="70dp"
+                                android:src="@drawable/picture" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                     app:layout_constraintTop_toBottomOf="@id/beforPic" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-</LinearLayout>
+                        <TextView
+                            android:id="@+id/afterPicText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/paddingLayout"
+                            android:padding="@dimen/paddingText"
+                            android:text="@string/afterImage"
+                            android:textColor="@color/dark_gray"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/textInputAfterImg" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/textInputbeforeImg"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layoutDirection="rtl"
+                            android:textDirection="rtl"
+                            app:errorEnabled="true"
+                            app:layout_constraintEnd_toEndOf="@+id/beforPicText"
+                            app:layout_constraintStart_toStartOf="@id/beforPicText"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/beforPic"
+                                android:layout_width="70dp"
+                                android:layout_height="70dp"
+                                android:src="@drawable/picture" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <TextView
+                            android:id="@+id/beforPicText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="80dp"
+                            android:layout_marginTop="@dimen/paddingLayout"
+                            android:padding="@dimen/paddingText"
+                            android:text="@string/beforeImage"
+                            android:textColor="@color/dark_gray"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintRight_toRightOf="@id/textInputbeforeImg"
+                            app:layout_constraintStart_toEndOf="@id/afterPicText"
+                            app:layout_constraintTop_toBottomOf="@id/textInputbeforeImg" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
+
             <TextView
                 android:id="@+id/percentage_txt"
                 android:layout_width="wrap_content"
@@ -440,10 +487,11 @@
                 android:layout_marginTop="10dp"
                 android:padding="8dp"
                 android:text="@string/Percentage"
-                android:textColor="@color/teal"
+                android:textColor="@color/dark_gray"
                 android:textSize="@dimen/headerTextSize"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/attachPicCard" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/percentageCard"
                 android:layout_width="match_parent"
@@ -460,14 +508,26 @@
                     android:background="@drawable/rectangle"
                     android:orientation="vertical">
 
-                    <EditText
-                        android:id="@+id/precentage_Edit_txt"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputPercentage"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
-                        android:layout_margin="20dp"
-                        android:layout_height="match_parent"
-                        />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layoutDirection="rtl"
+                        android:layout_marginTop="20dp"
+                        android:textDirection="rtl"
+                        app:errorEnabled="true">
+
+                        <EditText
+                            android:id="@+id/precentage_Edit_txt"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="20dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
             <TextView
                 android:id="@+id/notes_txt"
                 android:layout_width="wrap_content"
@@ -475,10 +535,11 @@
                 android:layout_marginTop="10dp"
                 android:padding="8dp"
                 android:text="@string/notes"
-                android:textColor="@color/teal"
+                android:textColor="@color/dark_gray"
                 android:textSize="@dimen/headerTextSize"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/percentageCard" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/notesCard"
                 android:layout_width="match_parent"
@@ -498,36 +559,37 @@
                     <EditText
                         android:id="@+id/notes_Edit_txt"
                         android:layout_width="match_parent"
-                        android:layout_margin="20dp"
                         android:layout_height="match_parent"
-                        />
+                        android:layout_margin="20dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
 
             <Button
-                android:layout_height="wrap_content"
                 android:id="@+id/submitButton"
-                android:textColor="@color/white"
-                android:background="@drawable/rectangle_button"
-                android:textStyle="bold"
-                android:textSize="@dimen/subHeaderTextSize"
                 android:layout_width="230dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
+                android:layout_marginBottom="@dimen/paddingLayout"
+                android:background="@drawable/rectangle_button"
                 android:text="@string/submit"
-                app:layout_constraintTop_toBottomOf="@id/notesCard"
+                android:textColor="@color/white"
+                android:textSize="@dimen/subHeaderTextSize"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@id/notesCard" />
+
             <ProgressBar
                 android:id="@+id/progress"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

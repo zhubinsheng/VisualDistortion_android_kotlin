@@ -36,8 +36,10 @@ class WorkerTypesAdapter(private var itemsList: ArrayList<EquipmentItem>, privat
             holder.binding.itemCount.text = itemsList[position].count.toString()
         })
         holder.binding.minImg.setOnClickListener({
-            itemsList[position].count = itemsList[position].count?.minus(1)
-            holder.binding.itemCount.text = itemsList[position].count.toString()
+            if(itemsList[position].count!!>1) {
+                itemsList[position].count = itemsList[position].count?.minus(1)
+                holder.binding.itemCount.text = itemsList[position].count.toString()
+            }
         })
         holder.binding.deleteItem.setOnClickListener({
             println("deleted item"+itemsList[position])

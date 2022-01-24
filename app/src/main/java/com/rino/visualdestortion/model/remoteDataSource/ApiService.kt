@@ -4,10 +4,12 @@ import android.graphics.Bitmap
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
+import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
 import com.rino.visualdestortion.model.pojo.login.RefreshTokenRequest
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -22,30 +24,30 @@ interface ApiService {
     @Multipart
     @POST("api/form/storeForm")
     suspend fun setServiceForm(@Header("Authorization"   ) auth: String
-                               ,@Part("serviceTypeId"   ) serviceTypeId: String
-                               ,@Part("sectorName"      ) sectorName: String
-                               ,@Part("municipalityName") municipalityName: String
-                               ,@Part("districtName"    ) districtName: String
-                               ,@Part("streetName"      ) streetName: String
-                               ,@Part("lat"             ) lat: String
-                               ,@Part("lng"             ) lng: String
+                               ,@Part("serviceTypeId"   ) serviceTypeId: RequestBody
+                               ,@Part("sectorName"      ) sectorName: RequestBody
+                               ,@Part("municipalityName") municipalityName: RequestBody
+                               ,@Part("districtName"    ) districtName: RequestBody
+                               ,@Part("streetName"      ) streetName: RequestBody
+                               ,@Part("lat"             ) lat: RequestBody
+                               ,@Part("lng"             ) lng: RequestBody
                                ,@Part beforeImg: MultipartBody.Part
                                ,@Part afterImg: MultipartBody.Part
-                               ,@Part("WorkersTypesList") WorkersTypesList : Map<Long,Int>
-                               ,@Part("EquipmentList"   ) equipmentList :  Map<Long,Int>
+                               ,@PartMap WorkersTypesList : HashMap<String, RequestBody>
+                               ,@PartMap equipmentList : HashMap<String, RequestBody>
                                ,@Part("mSquare"         ) mSquare: Int?
                                ,@Part("mCube"           ) mCube: Int?
                                ,@Part("numberR"         ) numberR: Int?
-                               ,@Part("notes"           ) notes: String?
-                               ,@Part("Percentage"      ) percentage: String?
+                               ,@Part("notes"           ) notes: RequestBody ?
+                               ,@Part("Percentage"      ) percentage: RequestBody ?
     ): Response<QRCode>
 
-    @Multipart
-    @POST("api/form/storeForm")
-    suspend fun uploadData(@PartMap map: HashMap<String?, FormData?>): Response<QRCode>
+
 
     @GET("api/form/createFrom")
     suspend fun getServiceForm( @Header("Authorization") auth: String): Response<AddServiceResponse>
 
+    @GET("api/home/HomeApi")
+    suspend fun getHomeData( @Header("Authorization") auth: String): Response<HomeServicesResponse>
 
 }

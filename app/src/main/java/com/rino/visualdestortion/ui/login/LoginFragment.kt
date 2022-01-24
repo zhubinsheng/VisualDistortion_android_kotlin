@@ -32,6 +32,16 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+
+
+    private fun init() {
+        loginButtonOnClick()
+        resetPassOnClick()
+        observeData()
+
+    }
+
+
     private fun loginButtonOnClick() {
         binding.loginButton.setOnClickListener {
             binding.progress.visibility = View.VISIBLE
@@ -40,11 +50,13 @@ class LoginFragment : Fragment() {
             validateData()
         }
     }
-
-    private fun init() {
-        loginButtonOnClick()
-        observeData()
-
+    private fun resetPassOnClick() {
+        binding.resetPassTxt.setOnClickListener {
+            binding.progress.visibility = View.VISIBLE
+            email = binding.editTextEmail.text.toString()
+            pass = binding.editTextPassword.text.toString()
+            validateData()
+        }
     }
 
     private fun observeData() {
@@ -107,13 +119,13 @@ class LoginFragment : Fragment() {
     private fun validateEmail(): Boolean {
         val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
         return if (email.isEmpty()) {
-            binding.textInputEmail.error = "Field cannot be empty"
+            binding.textInputEmail.error = " برجاء ادخال العنصر"
             false
         }else if(email.length>50) {
-            binding.textInputEmail.error = "Email Must not be more than 50 characters"
+            binding.textInputEmail.error = "البريد الالكترونى يجيب الا يزيد عن 50 حرف "
             false
         }else if (!email.matches(emailPattern)) {
-            binding.textInputEmail.error = "Invalid email address"
+            binding.textInputEmail.error = "بريد الكترونى خاطئ "
             false
         } else {
             binding.textInputEmail.error = null
@@ -132,10 +144,10 @@ class LoginFragment : Fragment() {
                 ".{8,}"  //at least 8 characters
 //                "$"
         return if (pass.isEmpty()) {
-            binding.textInputPassword.error = "Field cannot be empty"
+            binding.textInputPassword.error = "برجاء ادخال ها العنصر"
             false
         } else if (!pass.matches(passwordVal.toRegex())) {
-            binding.textInputPassword.error = "Password is too weak"
+            binding.textInputPassword.error = "كلمة المرور ضعيفة"
             false
         } else {
             binding.textInputPassword.error = null

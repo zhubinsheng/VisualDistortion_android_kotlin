@@ -105,4 +105,5 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     fun setWorkerTypeDeletedItem(workerTypeItem: EquipmentItem){
        _workerTypeDeleteItem.value = workerTypeItem
     }
+
 }

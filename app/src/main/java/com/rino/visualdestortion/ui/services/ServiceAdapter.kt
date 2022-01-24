@@ -4,8 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.databinding.ServiceItemBinding
+import com.rino.visualdestortion.model.pojo.home.ServiceTypes
 
-class ServiceAdapter(private var servicesList: ArrayList<String>, private val serviceViewModel: ServiceViewModel) :
+class ServiceAdapter(private var servicesList: ArrayList<ServiceTypes>, private val serviceViewModel: ServiceViewModel) :
     RecyclerView.Adapter<ServiceAdapter.ServiceViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -29,14 +30,14 @@ class ServiceAdapter(private var servicesList: ArrayList<String>, private val se
 
     override fun onBindViewHolder(holder: ServiceViewHolder, position: Int) {
 
-        holder.binding.serviceName.text=servicesList[position]
+        holder.binding.serviceName.text=servicesList[position].name
         holder.binding.card.setOnClickListener({
-        serviceViewModel.navToAddService(servicesList[position])
+            servicesList[position].let { it1 -> serviceViewModel.navToAddService(it1) }
         })
 
     }
 
-    fun updateServices(newFavoriteList: List<String>) {
+    fun updateServices(newFavoriteList: List<ServiceTypes>) {
         servicesList.clear()
         servicesList.addAll(newFavoriteList)
         print("@@@@@@@@@@@@@@@@@"+newFavoriteList.toString())

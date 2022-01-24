@@ -3,6 +3,7 @@ package com.rino.visualdestortion.model.remoteDataSource
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
+import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
 import com.rino.visualdestortion.model.pojo.login.RefreshTokenRequest
@@ -18,4 +19,7 @@ interface ApiInterface{
     suspend fun setServiceForm(auth:String,serviceForm: FormData): Response<QRCode>
 
     suspend fun getServiceForm(auth:String): Response<AddServiceResponse>
+
+    suspend fun getHomeData(auth:String): Response<HomeServicesResponse>
+
 }

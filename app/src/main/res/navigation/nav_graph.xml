@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment2">
+    app:startDestination="@id/splashFragment">
 
     <fragment
         android:id="@+id/welcomeFragment"
@@ -54,7 +54,11 @@
         android:id="@+id/settingFragment"
         android:name="com.rino.visualdestortion.ui.setting.settingFragment"
         android:label="fragment_setting"
-        tools:layout="@layout/fragment_setting" />
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_setting_to_login"
+            app:destination="@id/loginFragment2" />
+    </fragment>
     <fragment
         android:id="@+id/addServiceFragment"
         android:name="com.rino.visualdestortion.ui.AddService.AddServiceFragment"

@@ -1,10 +1,12 @@
 package com.rino.visualdestortion.ui.qrCode
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import com.rino.visualdestortion.databinding.FragmentQRCodeBinding
@@ -16,7 +18,6 @@ class QRCodeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -25,12 +26,15 @@ class QRCodeFragment : Fragment() {
     ): View? {
         binding = FragmentQRCodeBinding.inflate(inflater, container, false)
         binding.progress.isGone = false
+
         if(getArguments() != null) {
             // The getPrivacyPolicyLink() method will be created automatically.
             val url = getArguments()?.get("QRCodeURL").toString()
+            Log.e("QRCodeURL",url)
+            downloadQRCode(url)
         }
-         downloadQRCode( "https://amanat-jeddah-staging.azurewebsites.net/QrCodes/60c15bff-6329-4c77-82f4-3278c5bdab5a.jpeg")
-         binding.progress.isGone = true
+   //      downloadQRCode( "https://amanat-jeddah-staging.azurewebsites.net/QrCodes/60c15bff-6329-4c77-82f4-3278c5bdab5a.jpeg")
+
          binding.navigateToHome.setOnClickListener({
           navigateToHome()
         })
@@ -46,6 +50,7 @@ class QRCodeFragment : Fragment() {
         Picasso.with(requireContext())
             .load( url)
             .into(binding.qrCodeImg)
+        binding.progress.isGone = true
     }
 
 }

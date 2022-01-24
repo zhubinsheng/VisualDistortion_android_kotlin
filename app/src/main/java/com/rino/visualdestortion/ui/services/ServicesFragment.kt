@@ -8,7 +8,10 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentServicesBinding
+import com.rino.visualdestortion.model.pojo.home.ServiceTypes
 import com.rino.visualdestortion.ui.home.MainActivity
 
 
@@ -17,7 +20,7 @@ class ServicesFragment : Fragment() {
     private lateinit var viewModel: ServiceViewModel
     private lateinit var binding: FragmentServicesBinding
     private lateinit var serviceAdapter: ServiceAdapter
-    private lateinit var servicesList: List<String>
+    private lateinit var servicesList: List<ServiceTypes>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,13 +38,12 @@ class ServicesFragment : Fragment() {
 
     private fun init() {
         viewModel = ServiceViewModel(requireActivity().application)
-//        binding.shimmer.startShimmerAnimation()
         binding.serviceRecycle.visibility = View.VISIBLE
         serviceAdapter = ServiceAdapter(arrayListOf(), viewModel)
         setUpUI()
         observeData()
-        val list = arrayListOf("الباعة الجائلين وأصحاب البسطات المخالفة","المظلات المخالفة","اللوحات الاعلانية المخالفة الكبيرة","الملصقات واللوحات الدعائية الصغيرة","الكتابات المشوهة على الجدران","الأتربة والاحجام الكبيرة من مخلفات الهدم")
-        serviceAdapter.updateServices(list)
+     //   val list = arrayListOf("الباعة الجائلين وأصحاب البسطات المخالفة","المظلات المخالفة","اللوحات الاعلانية المخالفة الكبيرة","الملصقات واللوحات الدعائية الصغيرة","الكتابات المشوهة على الجدران","الأتربة والاحجام الكبيرة من مخلفات الهدم")
+        serviceAdapter.updateServices(emptyList())
 
     }
 
@@ -50,15 +52,15 @@ class ServicesFragment : Fragment() {
         observeService()
     }
     private fun observeService() {
-//        viewModel.fetchData()
-//        viewModel.articles.observe(viewLifecycleOwner, {
-//            it?.let {
-//                servicesAdapter.updateHome(it)
-//                servicesList = it
-//                binding.serviceRecycle.visibility = View.VISIBLE
-//             //   binding.shimmer.visibility = View.GONE
-//            }
-//        })
+        viewModel.getServicesData()
+        viewModel.getServicesData.observe(viewLifecycleOwner, {
+            it?.let {
+                serviceAdapter.updateServices(it.serviceTypes)
+                servicesList = it.serviceTypes
+                binding.serviceRecycle.visibility = View.VISIBLE
+
+            }
+        })
     }
 
     private fun setUpUI() {
@@ -76,8 +78,30 @@ class ServicesFragment : Fragment() {
     private fun observeNavToAddService() {
         viewModel.navToAddService.observe(viewLifecycleOwner, {
             it?.let {
-                val action = ServicesFragmentDirections.actionServiceToAddService("","1")
+                val action = ServicesFragmentDirections.actionServiceToAddService(it.name,
+                    it.id.toString()
+                )
                 findNavController().navigate(action)
+            }
+        })
+    }
+    private fun observeLoading() {
+        viewModel.loading.observe(viewLifecycleOwner, {
+            it?.let {
+                binding.progress.visibility = it
+            }
+        })
+    }
+
+    private fun observeShowError() {
+        viewModel.setError.observe(viewLifecycleOwner, {
+            it?.let {
+                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
+                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(getResources().getColor(
+                        R.color.teal))
+                    .setActionTextColor(getResources().getColor(R.color.white)) .setAction("Ok")
+                    {
+                    }.show()
             }
         })
     }
