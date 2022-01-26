@@ -105,5 +105,10 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     fun setWorkerTypeDeletedItem(workerTypeItem: EquipmentItem){
        _workerTypeDeleteItem.value = workerTypeItem
     }
-
+    fun isFirstTimeLaunch():Boolean{
+     return   modelRepository.getFirstTimeLaunch()
+    }
+    fun setFirstTimeLaunch(firstTimeLaunch:Boolean){
+           modelRepository.setFirstTimeLaunch(firstTimeLaunch)
+    }
 }

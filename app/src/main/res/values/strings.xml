@@ -2,7 +2,7 @@
     <string name="app_name">VisualDestortion</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="company_name"> شركة رينو لعمليات الصيانة </string>
-    <string name="welcome_msg"> مرحبابك فى تطبيق رينو لمعالجة التشوة البصرى</string>
+    <string name="welcome_msg"> مرحبا بك فى تطبيق رينو لمعالجة التشوة البصرى</string>
     <string name="login_msg"> قم بتسجيل الدخول بحسابك الشخصى لتسجيل الخدمات من كافة الأدارات فى المؤسسة </string>
     <string name="login">تسجيل الدخول</string>
     <string name="login_userName_hint">البريد الألكترونى</string>
@@ -36,6 +36,7 @@
     <string name="Percentage">نسبة الانجاز الكلية</string>
     <string name="afterImage">الصورة بعد المهمة</string>
     <string name="beforeImage">الصورة قبل المهمة</string>
+    <string name="reset_password_hint">كلمة المرور الجديدة</string>
 
 
 </resources>

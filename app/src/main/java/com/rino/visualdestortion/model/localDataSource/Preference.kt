@@ -1,7 +1,8 @@
 package com.rino.visualdestortion.model.localDataSource
 
 interface Preference {
-
+    fun getFirstTimeLaunch():Boolean
+    fun setFirstTimeLaunch(firstTimeLaunch:Boolean)
     fun isLogin():Boolean
     fun setLogin(login:Boolean)
     fun setEmail(email:String)

@@ -2,14 +2,14 @@ package com.rino.visualdestortion.model.localDataSource
 
 import android.content.SharedPreferences
 
-class MySharedPreferance class MySharedPreference(private val sharedPreference: SharedPreferences) {
+ class MySharedPreference(private val sharedPreference: SharedPreferences) {
 
     fun setBoolean (key: String,value: Boolean = false ){
         sharedPreference.edit().putBoolean(key,value)?.apply()
     }
 
-    fun getBoolean(key: String):Boolean{
-        return sharedPreference.getBoolean(key,false)?:false
+    fun getBoolean(key: String,defualtValue: Boolean = false):Boolean{
+        return sharedPreference.getBoolean(key,defualtValue)?:false
     }
     fun setString (key: String,value: String ){
         sharedPreference.edit().putString(key,value)?.apply()

@@ -23,7 +23,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/card"
         android:paddingTop="30dp"
         android:layout_marginTop="50dp"
@@ -48,7 +48,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         tools:listitem="@layout/service_item"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>

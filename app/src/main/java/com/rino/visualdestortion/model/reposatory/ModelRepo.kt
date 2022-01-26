@@ -247,6 +247,14 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
         return result
     }
 
+    override fun getFirstTimeLaunch(): Boolean {
+        return sharedPreference.getFirstTimeLaunch()
+    }
+
+    override fun setFirstTimeLaunch(firstTimeLaunch: Boolean) {
+        sharedPreference.setFirstTimeLaunch(firstTimeLaunch)
+    }
+
     override fun isLogin(): Boolean {
         return sharedPreference.isLogin()
     }
