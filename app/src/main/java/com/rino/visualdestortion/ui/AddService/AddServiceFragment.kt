@@ -164,7 +164,6 @@ class AddServiceFragment : Fragment() {
         })
         }
 
-
     private fun getFormDataFromUi(serviceName : String):FormData {
         var formData = FormData()
         if (serviceName.equals("مخلفات الهدم")) {
@@ -349,6 +348,7 @@ class AddServiceFragment : Fragment() {
          //   Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun validateData(): Boolean {
     var flag = true
          if (binding.sectorTextView.text.toString().equals(R.string.sector.toString())) {
@@ -386,6 +386,7 @@ class AddServiceFragment : Fragment() {
         }
         return flag
     }
+
     private fun setStreetsMenuItems(posSector: Int, posMunicipalite: Int, posDistricts: Int) {
         streetList.clear()
         binding.streetTextView.clearListSelection()
@@ -545,6 +546,7 @@ class AddServiceFragment : Fragment() {
             }
         }
     }
+
     fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
         val bytes = ByteArrayOutputStream()
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
