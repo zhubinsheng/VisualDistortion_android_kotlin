@@ -21,14 +21,14 @@ class LoginFragmentViewModel(application: Application) : AndroidViewModel(applic
     private var _loading = MutableLiveData<Int>(View.GONE)
     private val _isLogin = MutableLiveData<Boolean>()
 
+    val isLogin: LiveData<Boolean>
+        get() = _isLogin
+
     val loading: LiveData<Int>
         get() = _loading
 
     val setError: LiveData<String>
         get() = _setError
-
-    val isLogin: LiveData<Boolean>
-        get() = _isLogin
 
 
     fun login(loginRequest: LoginRequest?) {

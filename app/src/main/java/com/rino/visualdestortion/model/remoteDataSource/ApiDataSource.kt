@@ -12,6 +12,9 @@ import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
 import com.rino.visualdestortion.model.pojo.login.RefreshTokenRequest
+import com.rino.visualdestortion.model.pojo.resetPassword.RequestOTP
+import com.rino.visualdestortion.model.pojo.resetPassword.ResetPasswordRequest
+import com.rino.visualdestortion.model.pojo.resetPassword.ResponseOTP
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
@@ -32,9 +35,16 @@ class ApiDataSource:ApiInterface {
         return retrofit.refreshToken(refreshTokenRequest)
     }
 
+    override suspend fun requestOTP(requestOTP: RequestOTP): Response<ResponseOTP> {
+        return retrofit.requestOTP(requestOTP)
+    }
+
+    override suspend fun resetPassword(resetPasswrdRequest: ResetPasswordRequest): Response<ResponseOTP> {
+        return retrofit.resetPassword(resetPasswrdRequest)
+    }
+
 
     override suspend fun setServiceForm(auth:String, serviceForm: FormData): Response<QRCode> {
-
         Log.e("ApiDataSource",serviceForm.beforeImg.toString())
         Log.e("ApiDataSource",serviceForm.afterImg.toString())
         val serviceTypeIdBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.serviceTypeId)

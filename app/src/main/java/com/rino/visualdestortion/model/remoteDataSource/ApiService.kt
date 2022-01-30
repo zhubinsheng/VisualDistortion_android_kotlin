@@ -8,6 +8,9 @@ import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
 import com.rino.visualdestortion.model.pojo.login.RefreshTokenRequest
+import com.rino.visualdestortion.model.pojo.resetPassword.RequestOTP
+import com.rino.visualdestortion.model.pojo.resetPassword.ResetPasswordRequest
+import com.rino.visualdestortion.model.pojo.resetPassword.ResponseOTP
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -20,6 +23,12 @@ interface ApiService {
 
     @POST("api/auth/refreshToken")
     suspend fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Response<LoginResponse>
+
+    @POST("api/auth/resetPassword")
+    suspend fun requestOTP(@Body requestOTP: RequestOTP): Response<ResponseOTP>
+
+    @POST("api/auth/confirmResetPW")
+    suspend fun resetPassword(@Body resetPasswordRequest: ResetPasswordRequest): Response<ResponseOTP>
 
     @Multipart
     @POST("api/form/storeForm")

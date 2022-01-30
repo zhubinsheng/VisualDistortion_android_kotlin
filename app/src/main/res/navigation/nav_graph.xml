@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_login_to_ServiceFragment"
             app:destination="@id/servicesFragment" />
+        <action
+            android:id="@+id/action_login_to_resetPass"
+            app:destination="@id/resetPasswordFragment" />
     </fragment>
 
     <fragment
@@ -87,6 +90,15 @@
             android:defaultValue="http://sohamerp.com/avo/avo_privacy_policy.html"/>
         <action
             android:id="@+id/action_QRCode_to_Services"
+            app:destination="@id/servicesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.rino.visualdestortion.ui.resetPassward.ResetPasswordFragment"
+        android:label="fragment_reset_password"
+        tools:layout="@layout/fragment_reset_password" >
+        <action
+            android:id="@+id/action_resetPass_to_Services"
             app:destination="@id/servicesFragment" />
     </fragment>
 </navigation>

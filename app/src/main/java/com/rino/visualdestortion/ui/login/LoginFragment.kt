@@ -38,7 +38,6 @@ class LoginFragment : Fragment() {
         loginButtonOnClick()
         resetPassOnClick()
         observeData()
-
     }
 
 
@@ -52,11 +51,13 @@ class LoginFragment : Fragment() {
     }
     private fun resetPassOnClick() {
         binding.resetPassTxt.setOnClickListener {
-            binding.progress.visibility = View.VISIBLE
-            email = binding.editTextEmail.text.toString()
-            pass = binding.editTextPassword.text.toString()
-            validateData()
+           navigateToResetPass()
         }
+    }
+
+    private fun navigateToResetPass() {
+        val action = LoginFragmentDirections.actionLoginToResetPass()
+        findNavController().navigate(action)
     }
 
     private fun observeData() {

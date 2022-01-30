@@ -49,7 +49,7 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
 
 
     fun getServicesData() {
-
+        _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
             when (val result =  modelRepository.getServiceForm() ) {
                 is Result.Success -> {
@@ -75,6 +75,7 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun setFormData(serviceForm: FormData) {
+        _loading.postValue(View.VISIBLE)
 
         viewModelScope.launch(Dispatchers.IO) {
             when (val result =  modelRepository.setServiceForm(serviceForm) ) {

@@ -13,7 +13,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.MediaStore
-import android.provider.MediaStore.ACTION_IMAGE_CAPTURE
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +20,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -69,6 +67,7 @@ class AddServiceFragment : Fragment() {
     private val CAMERA_REQUEST_CODE = 200
     private val REQUEST_CODE = 100
     private var serviceTypeId = ""
+    private var serviceName = ""
     private var lat = ""
     private var lng = ""
 
@@ -77,17 +76,23 @@ class AddServiceFragment : Fragment() {
         super.onCreate(savedInstanceState)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity().application)
-        checkPermissions()
     }
 
-    private fun checkPermissions() {
-
-       //    requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-       //    requestExternalStoragePermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-       // checkCamerPermission()
-     //   checkExternalStoragePermission()
-
+    private fun requestAllPermissions() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+            ,
+            REQUEST_CODE
+        )
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,6 +100,11 @@ class AddServiceFragment : Fragment() {
     ): View? {
         viewModel = AddServiceViewModel(requireActivity().application)
         binding = FragmentAddServiceBinding.inflate(inflater, container, false)
+        if(viewModel.isFirstTimeLaunch())
+        {
+            viewModel.setFirstTimeLaunch(false)
+            requestAllPermissions()
+        }
         init()
         return binding.root
     }
@@ -119,9 +129,7 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun setUpUI() {
-       // getLatestLocation()
-       // requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-        requestExternalStoragePermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        getLatestLocation()
         equipmentsAdapter = EquipmentsAdapter(arrayListOf(),viewModel)
         workerTypesAdapter = WorkerTypesAdapter(arrayListOf(),viewModel)
         binding.equipmentsRecycle.apply {
@@ -133,7 +141,7 @@ class AddServiceFragment : Fragment() {
             adapter = workerTypesAdapter
         }
         viewModel.getServicesData()
-        var serviceName = ""
+
         if(getArguments() != null) {
 
              serviceName = getArguments()?.get("serviceName").toString()
@@ -169,15 +177,8 @@ class AddServiceFragment : Fragment() {
         if (serviceName.equals("مخلفات الهدم")) {
             formData.mCube = binding.editTextMCube.text.toString().toInt()
             formData.numberR = binding.editTextNumberR.text.toString().toInt()
-            formData.mSquare = null
         } else if (serviceName.equals("الكتابات المشوهة")) {
             formData.mSquare = binding.editTextMSquare.text.toString().toInt()
-            formData.mCube   = null
-            formData.numberR = null
-        } else {
-            formData.mSquare = null
-            formData.mCube   = null
-            formData.numberR = null
         }
 
         formData.serviceTypeId = serviceTypeId
@@ -194,36 +195,15 @@ class AddServiceFragment : Fragment() {
         formData.afterImg      = afterImgBody
         formData.percentage    = binding.precentageEditTxt.text.toString()
         return  formData
-//        Log.e("serviceTypeId",formData.serviceTypeId)
-//        Log.e("Sectors",formData.sectorName)
-//        Log.e("municipalites",formData.municipalityName)
-//        Log.e(".districts",formData.districtName)
-//        Log.e("street", formData.streetName)
-//        Log.e("lat",formData.lat)
-//        Log.e("lng",formData.lng)
-//        Log.e("workerTypes",formData.WorkersTypesList.toString())
-//        Log.e("equipments",formData.equipmentList.toString())
-//        Log.e("beforeImg", formData.beforeImg.toString())
-//        Log.e("afterImg", formData.afterImg.toString())
-//        Log.e("mSquare", formData.mSquare.toString()!!)
-//        Log.e("mCube", formData.mCube.toString()!!)
-//        Log.e("numberR", formData.numberR.toString()!!)
-//        Log.e("notes", formData.notes!!)
-//        Log.e("percentage", formData.percentage!!)
-
     }
 
     private fun afterPicOnClick() {
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
+        checkCameraPermission()
     }
 
     private fun beforePicOnClick() {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, REQUEST_CODE)
-
-        }
+        checkExternalStoragePermission()
+    }
 
     private fun initLists() {
         sectorsList = ArrayList()
@@ -351,20 +331,20 @@ class AddServiceFragment : Fragment() {
 
     private fun validateData(): Boolean {
     var flag = true
-         if (binding.sectorTextView.text.toString().equals(R.string.sector.toString())) {
+         if (binding.sectorTextView.text.toString().equals(R.string.sector)) {
              binding.sectorTextInputLayout.error = "برجاء ادخال هذا العنصر"
              flag = false
          }
 
-         if (binding.districtsTextView.text.toString().equals(R.string.districts.toString())) {
+         if (binding.districtsTextView.text.toString().equals(R.string.districts)) {
              binding.districtsTextInputLayout.error = "برجاء ادخال هذا العنصر"
              flag = false
          }
-        if (binding.municipalitesTextView.text.toString().equals(R.string.municipalites.toString())) {
+        if (binding.municipalitesTextView.text.toString().equals(R.string.municipalites)) {
             binding.municipalitesTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
-        if (binding.streetTextView.text.toString().equals( R.string.street.toString())) {
+        if (binding.streetTextView.text.toString().equals( R.string.street)) {
             binding.streetTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
@@ -380,9 +360,26 @@ class AddServiceFragment : Fragment() {
             binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
-        if (binding.beforPic.resources.equals(R.drawable.picture)){
-            binding.workersTypeTextInputLayout.error = "برجاء ادخال هذا العنصر"
+        if (binding.beforPic.resources.toString().equals(R.drawable.picture.toString()) ){
+            binding.textInputbeforeImg.error = "برجاء ادخال هذا العنصر"
             flag = false
+        }
+        if (serviceName.equals("مخلفات الهدم")) {
+            if (binding.editTextMCube.text.toString().isEmpty() ){
+                binding.textInputMCube.error = "برجاء ادخال هذا العنصر"
+                flag = false
+            }
+            if (binding.editTextNumberR.text.toString().isEmpty() ){
+                binding.textInputNumberR.error = "برجاء ادخال هذا العنصر"
+                flag = false
+            }
+
+        } else if (serviceName.equals("الكتابات المشوهة")) {
+            if (binding.editTextMSquare.text.toString().isEmpty() ){
+                binding.textInputMSquare.error = "برجاء ادخال هذا العنصر"
+                flag = false
+            }
+
         }
         return flag
     }
@@ -610,7 +607,7 @@ class AddServiceFragment : Fragment() {
             // TODO use current location long and lat
              lng = location.longitude.toString()
              lat = location.latitude.toString()
-          Toast.makeText(context, "lat:" + lat + ", lng:" + lng, Toast.LENGTH_SHORT).show()
+       //   Toast.makeText(context, "lat:" + lat + ", lng:" + lng, Toast.LENGTH_SHORT).show()
 
         }
     }
@@ -631,53 +628,61 @@ class AddServiceFragment : Fragment() {
             1
         )
     }
+
     //camera permission
     @SuppressLint("MissingPermission")
-    fun checkCamerPermission() {
+    fun checkCameraPermission() {
         if (!isCameraPermissionGranted()) {
-            requestCameraPermission()
+            navigateToAppSetting()
         } else {
-            enableCameraPermission()
+            enableCamera()
         }
     }
+
     private fun isCameraPermissionGranted(): Boolean {
         return ActivityCompat.checkSelfPermission(
             requireActivity().application,
             Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
     }
-    private fun requestCameraPermission() {
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(
-                Manifest.permission.CAMERA)
-          ,
-            CAMERA_REQUEST_CODE
-        )
-    }
-    private fun enableCameraPermission() {
-        val intent = Intent(Settings.ACTION_SETTINGS)
-        startActivity(intent)
-    }
-    val requestCameraPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (!isGranted) {
-            //  enablePermission()
-            } else {
 
-            }
-        }
+    private fun navigateToAppSetting() {
+        startActivity(Intent().apply {
+            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            data = Uri.fromParts("package", requireContext().packageName, null)
+        })
+    }
+
+    private fun enableCamera() {
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
+    }
+//
+//    val requestCameraPermissionLauncher =
+//        registerForActivityResult(
+//            ActivityResultContracts.RequestPermission()
+//        ) { isGranted: Boolean ->
+//            if (!isGranted) {
+//            //  enablePermission()
+//            } else {
+//
+//            }
+//        }
 
   //external storage
     @SuppressLint("MissingPermission")
     fun checkExternalStoragePermission() {
         if (!isExternalStoragePermissionGranted()) {
-            requestExternalStoragePermission()
+            navigateToAppSetting()
         } else {
-            enableCameraPermission()
+            enablePhotoes()
         }
+    }
+
+    private fun enablePhotoes() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, REQUEST_CODE)
     }
 
     private fun isExternalStoragePermissionGranted(): Boolean {
@@ -687,25 +692,16 @@ class AddServiceFragment : Fragment() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun requestExternalStoragePermission() {
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-            ,
-            REQUEST_CODE
-        )
-    }
-    val requestExternalStoragePermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (!isGranted) {
-
-            } else {
-
-            }
-        }
+//    val requestExternalStoragePermissionLauncher =
+//        registerForActivityResult(
+//            ActivityResultContracts.RequestPermission()
+//        ) { isGranted: Boolean ->
+//            if (!isGranted) {
+//
+//            } else {
+//
+//            }
+//        }
 
 
 

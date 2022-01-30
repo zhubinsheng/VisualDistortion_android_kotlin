@@ -2,6 +2,7 @@ package com.rino.visualdestortion.model.reposatory
 
 import android.content.Context
 import android.util.Log
+import com.google.gson.Gson
 import com.rino.visualdestortion.model.localDataSource.MySharedPreference
 import com.rino.visualdestortion.model.localDataSource.Preference
 import com.rino.visualdestortion.model.localDataSource.PreferenceDataSource
@@ -12,6 +13,9 @@ import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
 import com.rino.visualdestortion.model.pojo.login.RefreshTokenRequest
+import com.rino.visualdestortion.model.pojo.resetPassword.RequestOTP
+import com.rino.visualdestortion.model.pojo.resetPassword.ResetPasswordRequest
+import com.rino.visualdestortion.model.pojo.resetPassword.ResponseOTP
 import com.rino.visualdestortion.model.remoteDataSource.ApiDataSource
 import com.rino.visualdestortion.model.remoteDataSource.ApiInterface
 import com.rino.visualdestortion.model.remoteDataSource.Result
@@ -96,6 +100,85 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
                     }
                     else -> {
                         Log.e("Error", "Generic Error")
+                    }
+                }
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+
+    override suspend fun requestOTP(requestOTP: RequestOTP): Result<ResponseOTP?> {
+        var result: Result<ResponseOTP?> = Result.Loading
+        try {
+            val response = apiDataSource.requestOTP(requestOTP)
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Result $result")
+            } else {
+                Log.i("ModelRepository", "Error${response.errorBody()?.string()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        result = Result.Error(Exception("Couldn't find user"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                        result = Result.Error(Exception("Not Found"))
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("Server is down"))
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                  //      result = Result.Error(Exception("Error"))
+                    }
+                }
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+
+    override suspend fun resetPassword(resetPasswrdRequest: ResetPasswordRequest): Result<ResponseOTP?> {
+        var result: Result<ResponseOTP?> = Result.Loading
+        try {
+            val response = apiDataSource.resetPassword(resetPasswrdRequest)
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Result $result")
+            } else {
+                val gson = Gson()
+                val eventResponse = gson.fromJson(response.errorBody()?.string(),ResponseOTP::class.java)
+                Log.i("ModelRepository", "Error${response.errorBody()?.string()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        result = Result.Error(Exception(eventResponse.status))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                        result = Result.Error(Exception(eventResponse.status))
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("Server is down"))
+
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                        //      result = Result.Error(Exception("Error"))
                     }
                 }
             }
