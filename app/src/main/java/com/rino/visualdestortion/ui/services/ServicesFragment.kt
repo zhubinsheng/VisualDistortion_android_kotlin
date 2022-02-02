@@ -15,7 +15,6 @@ import com.rino.visualdestortion.model.pojo.home.ServiceTypes
 import com.rino.visualdestortion.ui.home.MainActivity
 
 
-
 class ServicesFragment : Fragment() {
     private lateinit var viewModel: ServiceViewModel
     private lateinit var binding: FragmentServicesBinding
@@ -38,11 +37,9 @@ class ServicesFragment : Fragment() {
 
     private fun init() {
         viewModel = ServiceViewModel(requireActivity().application)
-        binding.serviceRecycle.visibility = View.VISIBLE
         serviceAdapter = ServiceAdapter(arrayListOf(), viewModel)
         setUpUI()
         observeData()
-     //   val list = arrayListOf("الباعة الجائلين وأصحاب البسطات المخالفة","المظلات المخالفة","اللوحات الاعلانية المخالفة الكبيرة","الملصقات واللوحات الدعائية الصغيرة","الكتابات المشوهة على الجدران","الأتربة والاحجام الكبيرة من مخلفات الهدم")
         serviceAdapter.updateServices(emptyList())
 
     }
@@ -50,22 +47,26 @@ class ServicesFragment : Fragment() {
     private fun observeData() {
         observeNavToAddService()
         observeService()
+        observeLoading()
+        observeShowError()
     }
+
     private fun observeService() {
         viewModel.getServicesData()
-        viewModel.getServicesData.observe(viewLifecycleOwner, {
+        viewModel.getServicesData.observe(viewLifecycleOwner) {
             it?.let {
                 serviceAdapter.updateServices(it.serviceTypes)
                 servicesList = it.serviceTypes
                 binding.serviceRecycle.visibility = View.VISIBLE
 
             }
-        })
+        }
     }
 
     private fun setUpUI() {
+        binding.serviceRecycle.visibility = View.VISIBLE
         binding.serviceRecycle.apply {
-            layoutManager = GridLayoutManager(requireContext(),2 )
+            layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = serviceAdapter
         }
 
@@ -75,34 +76,40 @@ class ServicesFragment : Fragment() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = false
     }
+
     private fun observeNavToAddService() {
-        viewModel.navToAddService.observe(viewLifecycleOwner, {
+        viewModel.navToAddService.observe(viewLifecycleOwner) {
             it?.let {
-                val action = ServicesFragmentDirections.actionServiceToAddService(it.name,
+                val action = ServicesFragmentDirections.actionServiceToAddService(
+                    it.name,
                     it.id.toString()
                 )
                 findNavController().navigate(action)
             }
-        })
+        }
     }
+
     private fun observeLoading() {
-        viewModel.loading.observe(viewLifecycleOwner, {
+        viewModel.loading.observe(viewLifecycleOwner) {
             it?.let {
                 binding.progress.visibility = it
             }
-        })
+        }
     }
 
     private fun observeShowError() {
-        viewModel.setError.observe(viewLifecycleOwner, {
+        viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
                 Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(getResources().getColor(
-                        R.color.teal))
-                    .setActionTextColor(getResources().getColor(R.color.white)) .setAction("Ok")
+                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                        resources.getColor(
+                            R.color.teal
+                        )
+                    )
+                    .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
                     {
                     }.show()
             }
-        })
+        }
     }
 }

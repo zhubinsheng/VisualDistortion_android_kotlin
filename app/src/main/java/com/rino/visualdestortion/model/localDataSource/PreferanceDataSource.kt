@@ -9,7 +9,6 @@ import com.rino.visualdestortion.utils.*
 
     override fun setFirstTimeLaunch(firstTimeLaunch: Boolean) {
         return sharedPreference.setBoolean(FIRST_TIME_LAUNCH_KEY,firstTimeLaunch)
-
     }
 
     override fun isLogin(): Boolean {

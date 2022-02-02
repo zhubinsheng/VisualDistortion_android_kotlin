@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ResetPasswordViewModel (application: Application) : AndroidViewModel(application) {
+class ResetPasswordViewModel(application: Application) : AndroidViewModel(application) {
     private val modelRepository: ModelRepo = ModelRepo(application)
 
     private var _setError = MutableLiveData<String>()
@@ -40,20 +40,16 @@ class ResetPasswordViewModel (application: Application) : AndroidViewModel(appli
     fun requestOTP(email: String) {
         _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
-            when (val result = modelRepository.requestOTP(RequestOTP(email)) ) {
+            when (val result = modelRepository.requestOTP(RequestOTP(email))) {
                 is Result.Success -> {
                     _getOTP.postValue(result.data)
                     _loading.postValue(View.GONE)
                     Log.i("requestOTP:", "${result.data}")
-
-
                 }
                 is Result.Error -> {
                     Log.e("requestOTP:", "${result.exception.message}")
                     _loading.postValue(View.GONE)
                     _setError.postValue(result.exception.message)
-
-
                 }
                 is Result.Loading -> {
                     Log.i("requestOTP", "Loading")
@@ -64,30 +60,27 @@ class ResetPasswordViewModel (application: Application) : AndroidViewModel(appli
 
     }
 
-    fun  resetPass(email:String, otp:String, newPass:String){
-      _loading.postValue(View.VISIBLE)
-      viewModelScope.launch(Dispatchers.IO) {
-          when (val result = modelRepository.resetPassword(ResetPasswordRequest(email,otp,newPass)) ) {
-              is Result.Success -> {
-                  _resetPass.postValue(result.data)
-                  _loading.postValue(View.GONE)
-                  Log.i("resetPass:", "${result.data}")
+    fun resetPass(email: String, otp: String, newPass: String) {
+        _loading.postValue(View.VISIBLE)
+        viewModelScope.launch(Dispatchers.IO) {
+            when (val result =
+                modelRepository.resetPassword(ResetPasswordRequest(email, otp, newPass))) {
+                is Result.Success -> {
+                    _resetPass.postValue(result.data)
+                    _loading.postValue(View.GONE)
+                    Log.i("resetPass:", "${result.data}")
+                }
+                is Result.Error -> {
+                    Log.e("resetPass:", "${result.exception.message}")
+                    _loading.postValue(View.GONE)
+                    _setError.postValue(result.exception.message)
+                }
+                is Result.Loading -> {
+                    Log.i("resetPass", "Loading")
+                    _loading.postValue(View.VISIBLE)
+                }
+            }
+        }
 
-
-              }
-              is Result.Error -> {
-                  Log.e("resetPass:", "${result.exception.message}")
-                  _loading.postValue(View.GONE)
-                  _setError.postValue(result.exception.message)
-
-
-              }
-              is Result.Loading -> {
-                  Log.i("resetPass", "Loading")
-                  _loading.postValue(View.VISIBLE)
-              }
-          }
-      }
-
-  }
+    }
 }

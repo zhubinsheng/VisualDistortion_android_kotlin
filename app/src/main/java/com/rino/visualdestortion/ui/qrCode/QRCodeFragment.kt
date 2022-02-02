@@ -6,8 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import com.rino.visualdestortion.databinding.FragmentQRCodeBinding
 import com.squareup.picasso.Picasso
@@ -25,20 +23,17 @@ class QRCodeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentQRCodeBinding.inflate(inflater, container, false)
-        binding.progress.isGone = false
-
-        if(getArguments() != null) {
+        binding.progress.visibility = View.VISIBLE
+        if (getArguments() != null) {
             // The getPrivacyPolicyLink() method will be created automatically.
             val url = getArguments()?.get("QRCodeURL").toString()
-            Log.e("QRCodeURL",url)
+            Log.e("QRCodeURL", url)
             downloadQRCode(url)
         }
-   //      downloadQRCode( "https://amanat-jeddah-staging.azurewebsites.net/QrCodes/60c15bff-6329-4c77-82f4-3278c5bdab5a.jpeg")
-
-         binding.navigateToHome.setOnClickListener({
-          navigateToHome()
+        binding.navigateToHome.setOnClickListener({
+            navigateToHome()
         })
-       return binding.root
+        return binding.root
     }
 
     private fun navigateToHome() {
@@ -48,9 +43,9 @@ class QRCodeFragment : Fragment() {
 
     private fun downloadQRCode(url: String) {
         Picasso.with(requireContext())
-            .load( url)
+            .load(url)
             .into(binding.qrCodeImg)
-        binding.progress.isGone = true
+        binding.progress.visibility = View.GONE
     }
 
 }

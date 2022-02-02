@@ -34,7 +34,6 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     val setError: LiveData<String>
         get() = _setError
 
-
     val getServicesData: LiveData<AddServiceResponse>
         get() = _getServicesData
 
@@ -49,9 +48,8 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
 
 
     fun getServicesData() {
-        _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
-            when (val result =  modelRepository.getServiceForm() ) {
+            when (val result = modelRepository.getServiceForm()) {
                 is Result.Success -> {
                     _loading.postValue(View.GONE)
                     Log.i("getServiceData:", "${result.data}")
@@ -75,10 +73,8 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun setFormData(serviceForm: FormData) {
-        _loading.postValue(View.VISIBLE)
-
         viewModelScope.launch(Dispatchers.IO) {
-            when (val result =  modelRepository.setServiceForm(serviceForm) ) {
+            when (val result = modelRepository.setServiceForm(serviceForm)) {
                 is Result.Success -> {
                     _loading.postValue(View.GONE)
                     Log.i("setServiceForm:", "${result.data}")
@@ -100,16 +96,20 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
         }
 
     }
-   fun setEquipmentDeletedItem(equipmentItem: EquipmentItem){
-       _equipmentsDeleteItem.value=equipmentItem
-   }
-    fun setWorkerTypeDeletedItem(workerTypeItem: EquipmentItem){
-       _workerTypeDeleteItem.value = workerTypeItem
+
+    fun setEquipmentDeletedItem(equipmentItem: EquipmentItem) {
+        _equipmentsDeleteItem.value = equipmentItem
     }
-    fun isFirstTimeLaunch():Boolean{
-     return   modelRepository.getFirstTimeLaunch()
+
+    fun setWorkerTypeDeletedItem(workerTypeItem: EquipmentItem) {
+        _workerTypeDeleteItem.value = workerTypeItem
     }
-    fun setFirstTimeLaunch(firstTimeLaunch:Boolean){
-           modelRepository.setFirstTimeLaunch(firstTimeLaunch)
+
+    fun isFirstTimeLaunch(): Boolean {
+        return modelRepository.getFirstTimeLaunch()
+    }
+
+    fun setFirstTimeLaunch(firstTimeLaunch: Boolean) {
+        modelRepository.setFirstTimeLaunch(firstTimeLaunch)
     }
 }

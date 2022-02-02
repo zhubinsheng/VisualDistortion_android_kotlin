@@ -22,7 +22,6 @@ class ResetPasswordFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -42,24 +41,20 @@ class ResetPasswordFragment : Fragment() {
 
     private fun requestOTPButtonOnClick() {
 
-        binding.reuestOtpButton.setOnClickListener({
+        binding.reuestOtpButton.setOnClickListener {
             email = binding.editTextEmail.text.toString()
-//            Toast.makeText(
-//                requireActivity(),
-//                "validateEmail: "+email,
-//                Toast.LENGTH_SHORT).show()
-        if(validateEmail()){
-          viewModel.requestOTP(email)
-          }
-        })
+            if (validateEmail()) {
+                viewModel.requestOTP(email)
+            }
+        }
 
     }
 
     private fun saveNewPassOnClick() {
-        binding.saveButton.setOnClickListener({
+        binding.saveButton.setOnClickListener {
             getDataFromUI()
             validateData()
-        })
+        }
 
     }
 
@@ -77,7 +72,7 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun observeSuccessResetPass() {
-        viewModel.resetPass.observe(viewLifecycleOwner, {
+        viewModel.resetPass.observe(viewLifecycleOwner) {
             it.let {
                 Toast.makeText(
                     requireActivity(),
@@ -87,11 +82,11 @@ class ResetPasswordFragment : Fragment() {
                 navigateToHome()
 
             }
-        })
+        }
     }
 
     private fun observeSuccessOTP() {
-        viewModel.getOTP.observe(viewLifecycleOwner, {
+        viewModel.getOTP.observe(viewLifecycleOwner) {
             it.let {
                 binding.otpCodeTextInput.visibility = View.VISIBLE
                 binding.textInputPassword.visibility = View.VISIBLE
@@ -104,7 +99,8 @@ class ResetPasswordFragment : Fragment() {
                 ).show()
 
             }
-        })    }
+        }
+    }
 
     private fun navigateToHome() {
         val action = ResetPasswordFragmentDirections.actionResetPassToServices()
@@ -112,24 +108,27 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun observeLoading() {
-        viewModel.loading.observe(viewLifecycleOwner, {
+        viewModel.loading.observe(viewLifecycleOwner) {
             it?.let {
-                binding.progress.visibility=it
+                binding.progress.visibility = it
             }
-        })
+        }
     }
 
     private fun observeShowError() {
-        viewModel.setError.observe(viewLifecycleOwner, {
+        viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
                 Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(getResources().getColor(
-                        R.color.teal))
-                    .setActionTextColor(getResources().getColor(R.color.white)) .setAction("Ok")
+                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                        resources.getColor(
+                            R.color.teal
+                        )
+                    )
+                    .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
                     {
                     }.show()
             }
-        })
+        }
     }
 
     private fun validateData() {

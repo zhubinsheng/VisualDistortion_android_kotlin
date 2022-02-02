@@ -4,10 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.rino.visualdestortion.model.reposatory.ModelRepo
 
-class SettingViewModel (application: Application) : AndroidViewModel(application) {
+class SettingViewModel(application: Application) : AndroidViewModel(application) {
     private val modelRepository: ModelRepo = ModelRepo(application)
 
-    fun logout(){
+    fun logout() {
         modelRepository.setLogin(false)
         modelRepository.setToken("")
         modelRepository.setRefreshToken("")

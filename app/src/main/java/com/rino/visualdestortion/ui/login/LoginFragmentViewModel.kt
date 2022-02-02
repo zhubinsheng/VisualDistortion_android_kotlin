@@ -32,13 +32,12 @@ class LoginFragmentViewModel(application: Application) : AndroidViewModel(applic
 
 
     fun login(loginRequest: LoginRequest?) {
-
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = loginRequest?.let { modelRepository.login(it) }) {
                 is Result.Success -> {
                     _loading.postValue(View.GONE)
                     Log.i("login:", "${result.data}")
-                   if (result.data?.status == "Authenticated") {
+                    if (result.data?.status == "Authenticated") {
                         withContext(Dispatchers.Main) {
                             _isLogin.postValue(true)
                             modelRepository.setLogin(true)

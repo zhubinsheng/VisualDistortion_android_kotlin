@@ -12,11 +12,10 @@ import com.rino.visualdestortion.ui.home.MainActivity
 
 
 class WelcomeFragment : Fragment() {
-lateinit var binding : FragmentWelcomeBinding
+    lateinit var binding: FragmentWelcomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -26,15 +25,17 @@ lateinit var binding : FragmentWelcomeBinding
         // Inflate the layout for this fragment
 
         binding = FragmentWelcomeBinding.inflate(inflater, container, false)
-        binding.loginBtn.setOnClickListener({
-           navigateToLogin()
-        })
+        binding.loginBtn.setOnClickListener {
+            navigateToLogin()
+        }
         return binding.root
     }
+
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true
     }
+
     private fun navigateToLogin() {
         val action = WelcomeFragmentDirections.actionWelcomeToLogin()
         findNavController().navigate(action)

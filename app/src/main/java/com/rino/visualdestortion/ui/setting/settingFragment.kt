@@ -9,7 +9,6 @@ import androidx.navigation.fragment.findNavController
 import com.rino.visualdestortion.databinding.FragmentSettingBinding
 
 
-
 class settingFragment : Fragment() {
     private lateinit var viewModel: SettingViewModel
     private lateinit var binding: FragmentSettingBinding
@@ -17,8 +16,7 @@ class settingFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        }
-
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

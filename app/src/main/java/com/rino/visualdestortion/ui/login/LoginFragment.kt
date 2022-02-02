@@ -32,14 +32,11 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
-
-
     private fun init() {
         loginButtonOnClick()
         resetPassOnClick()
         observeData()
     }
-
 
     private fun loginButtonOnClick() {
         binding.loginButton.setOnClickListener {
@@ -49,9 +46,10 @@ class LoginFragment : Fragment() {
             validateData()
         }
     }
+
     private fun resetPassOnClick() {
         binding.resetPassTxt.setOnClickListener {
-           navigateToResetPass()
+            navigateToResetPass()
         }
     }
 
@@ -66,8 +64,9 @@ class LoginFragment : Fragment() {
         observeShowError()
 
     }
+
     private fun observeSuccessLogin() {
-        viewModel.isLogin.observe(viewLifecycleOwner, {
+        viewModel.isLogin.observe(viewLifecycleOwner) {
             if (it) {
                 binding.progress.visibility = View.GONE
                 Toast.makeText(
@@ -84,48 +83,52 @@ class LoginFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        })
+        }
     }
+
     private fun navigateToHome() {
         val action = LoginFragmentDirections.actionLoginToServiceFragment()
         findNavController().navigate(action)
     }
 
     private fun observeLoading() {
-        viewModel.loading.observe(viewLifecycleOwner, {
+        viewModel.loading.observe(viewLifecycleOwner) {
             it?.let {
-           binding.progress.visibility=it
+                binding.progress.visibility = it
             }
-        })
+        }
     }
 
     private fun observeShowError() {
-        viewModel.setError.observe(viewLifecycleOwner, {
+        viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
                 Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(getResources().getColor(R.color.teal))
-                    .setActionTextColor(getResources().getColor(R.color.white)) .setAction("Ok")
+                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+                    .setBackgroundTint(getResources().getColor(R.color.teal))
+                    .setActionTextColor(getResources().getColor(R.color.white)).setAction("Ok")
                     {
                     }.show()
             }
-        })
+        }
     }
+
     private fun validateData() {
         validateEmail()
         validatPassword()
         if (validateEmail() && validatPassword()) {
-            viewModel.login(LoginRequest(email,pass))
+            viewModel.login(LoginRequest(email, pass))
         }
     }
+
     private fun validateEmail(): Boolean {
         val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
         return if (email.isEmpty()) {
             binding.textInputEmail.error = " برجاء ادخال العنصر"
             false
-        }else if(email.length>50) {
+        } else if (email.length > 50) {
             binding.textInputEmail.error = "البريد الالكترونى يجيب الا يزيد عن 50 حرف "
             false
-        }else if (!email.matches(emailPattern)) {
+        } else if (!email.matches(emailPattern)) {
             binding.textInputEmail.error = "بريد الكترونى خاطئ "
             false
         } else {
@@ -136,11 +139,11 @@ class LoginFragment : Fragment() {
     }
 
     private fun validatPassword(): Boolean {
-        val passwordVal = "^" +  "(?=.*[0-9])" +         //at least 1 digit
+        val passwordVal = "^" + "(?=.*[0-9])" +         //at least 1 digit
                 "(?=.*[a-z])" +         //at least 1 lower case letter
                 "(?=.*[A-Z])" +         //at least 1 upper case letter
                 //   "(?=.*[a-zA-Z])" +  //any letter
-                  "(?=.*[@#$%^&+=])" +  //at least 1 special character
+                "(?=.*[@#$%^&+=])" +  //at least 1 special character
                 "(?=\\S+$)" +  //no white spaces
                 ".{8,}"  //at least 8 characters
 //                "$"
@@ -156,6 +159,7 @@ class LoginFragment : Fragment() {
             true
         }
     }
+
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true

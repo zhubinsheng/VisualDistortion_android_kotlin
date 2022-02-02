@@ -42,7 +42,7 @@ class ServiceViewModel(application: Application) : AndroidViewModel(application)
 
     fun getServicesData() {
         viewModelScope.launch(Dispatchers.IO) {
-            when (val result =  modelRepository.getHomeData() ) {
+            when (val result = modelRepository.getHomeData()) {
                 is Result.Success -> {
                     _loading.postValue(View.GONE)
                     Log.i("getServiceData:", "${result.data}")
