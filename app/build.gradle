@@ -38,6 +38,10 @@ android {
 }
 
 dependencies {
+    //fingerPrint
+    def biometricLibraryVersion = "1.0.1"
+    implementation "androidx.biometric:biometric:$biometricLibraryVersion"
+
      //location
     implementation 'com.google.android.gms:play-services-location:19.0.1'
     // ViewModel and LiveData
