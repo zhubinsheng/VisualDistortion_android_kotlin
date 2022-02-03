@@ -1,21 +1,12 @@
 package com.rino.visualdestortion.ui.home
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import com.etebarian.meowbottomnavigation.MeowBottomNavigation
-import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentHomeBinding
-import com.rino.visualdestortion.databinding.FragmentLoginBinding
-import com.rino.visualdestortion.ui.MainActivity
-import com.rino.visualdestortion.ui.login.LoginFragmentViewModel
 
 
 class HomeFragment : Fragment() {

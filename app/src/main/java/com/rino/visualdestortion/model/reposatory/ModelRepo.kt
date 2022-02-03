@@ -2,11 +2,20 @@ package com.rino.visualdestortion.model.reposatory
 
 import android.content.Context
 import android.util.Log
+import com.google.gson.Gson
 import com.rino.visualdestortion.model.localDataSource.MySharedPreference
 import com.rino.visualdestortion.model.localDataSource.Preference
 import com.rino.visualdestortion.model.localDataSource.PreferenceDataSource
-import com.rino.visualdestortion.model.pojo.LoginRequest
-import com.rino.visualdestortion.model.pojo.LoginResponse
+import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.addService.FormData
+import com.rino.visualdestortion.model.pojo.addService.QRCode
+import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
+import com.rino.visualdestortion.model.pojo.login.LoginRequest
+import com.rino.visualdestortion.model.pojo.login.LoginResponse
+import com.rino.visualdestortion.model.pojo.login.RefreshTokenRequest
+import com.rino.visualdestortion.model.pojo.resetPassword.RequestOTP
+import com.rino.visualdestortion.model.pojo.resetPassword.ResetPasswordRequest
+import com.rino.visualdestortion.model.pojo.resetPassword.ResponseOTP
 import com.rino.visualdestortion.model.remoteDataSource.ApiDataSource
 import com.rino.visualdestortion.model.remoteDataSource.ApiInterface
 import com.rino.visualdestortion.model.remoteDataSource.Result
@@ -19,9 +28,9 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
         MySharedPreference(context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE))
     private val sharedPreference: Preference = PreferenceDataSource(preference)
 
+
     override suspend fun login(loginRequest: LoginRequest?): Result<LoginResponse?> {
         var result: Result<LoginResponse?> = Result.Loading
-
         try {
             val response = apiDataSource.login(loginRequest)
             if (response.isSuccessful) {
@@ -36,10 +45,58 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
                     }
                     404 -> {
                         Log.e("Error 404", "Not Found")
+                        result = Result.Error(Exception("Not Found"))
                     }
                     500 -> {
                         Log.e("Error 500", "Server Error")
                         result = Result.Error(Exception("server is down"))
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                        result = Result.Error(Exception("Error"))
+                    }
+                }
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+
+    override suspend fun refreshToken(refreshTokenRequest: RefreshTokenRequest?): Result<LoginResponse?> {
+        var result: Result<LoginResponse?> = Result.Loading
+
+        try {
+            val response = apiDataSource.refreshToken(refreshTokenRequest!!)
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Result $result")
+                setToken(response.body()?.token!!)
+                setRefreshToken(response.body()?.refreshToken!!)
+            } else {
+                Log.i("ModelRepository", "Error${response.message()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        Log.i("ModelRepository refresh token:", "Result $result")
+                        result = Result.Error(Exception("Login Required"))
+
+
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth")
+                        result = Result.Error(Exception("Not Auth"))
                     }
                     else -> {
                         Log.e("Error", "Generic Error")
@@ -56,6 +113,231 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
         return result
     }
 
+    override suspend fun requestOTP(requestOTP: RequestOTP): Result<ResponseOTP?> {
+        var result: Result<ResponseOTP?> = Result.Loading
+        try {
+            val response = apiDataSource.requestOTP(requestOTP)
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Result $result")
+            } else {
+                Log.i("ModelRepository", "Error${response.errorBody()?.string()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        result = Result.Error(Exception("Couldn't find user"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                        result = Result.Error(Exception("Not Found"))
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("Server is down"))
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                  //      result = Result.Error(Exception("Error"))
+                    }
+                }
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+
+    override suspend fun resetPassword(resetPasswrdRequest: ResetPasswordRequest): Result<ResponseOTP?> {
+        var result: Result<ResponseOTP?> = Result.Loading
+        try {
+            val response = apiDataSource.resetPassword(resetPasswrdRequest)
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Result $result")
+            } else {
+                val gson = Gson()
+                val eventResponse = gson.fromJson(response.errorBody()?.string(),ResponseOTP::class.java)
+                Log.i("ModelRepository", "Error${response.errorBody()?.string()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        result = Result.Error(Exception(eventResponse.status))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                        result = Result.Error(Exception(eventResponse.status))
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("Server is down"))
+
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                        //      result = Result.Error(Exception("Error"))
+                    }
+                }
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+
+    override suspend fun setServiceForm(serviceForm: FormData):Result<QRCode?> {
+        var result: Result<QRCode?> = Result.Loading
+        try {
+
+            val response = apiDataSource.setServiceForm("Bearer ${getToken()}",serviceForm)
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepositoryForm", "Result $result")
+            } else {
+                Log.i("ModelRepositoryForm", "Error${response.errorBody()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        Log.e("Error 400", "SetForm: "+response.errorBody()?.string())
+                        result = Result.Error(Exception("Bad Request getData"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth")
+                        if(isLogin())
+                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
+                         // refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
+                          refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
+                          // refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                    }
+                }
+
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+
+    override suspend fun getServiceForm(): Result<AddServiceResponse?> {
+        var result: Result<AddServiceResponse?> = Result.Loading
+        try {
+            Log.i("ModelRepository:@@", "Token ${getToken()}")
+
+            val response = apiDataSource.getServiceForm("Bearer "+getToken())
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Result $result")
+            } else {
+                Log.i("ModelRepository", "Error${response.message().toString()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        result = Result.Error(Exception("Bad Request getData"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth")
+                        if(isLogin())
+                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
+                      //  refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
+                          refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
+                         //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                    }
+                }
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result    }
+
+    override suspend fun getHomeData(): Result<HomeServicesResponse?> {
+        var result: Result<HomeServicesResponse?> = Result.Loading
+        try {
+            Log.i("ModelRepository:@@", "Token ${getToken()}")
+
+            val response = apiDataSource.getHomeData("Bearer "+getToken())
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Result $result")
+            } else {
+                Log.i("ModelRepository", "Error${response.errorBody()?.string()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        result = Result.Error(Exception("Bad Request getData"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth")
+                        if(isLogin())
+                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
+                        //refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
+                         refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
+                        //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                    }
+                }
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+
+    override fun getFirstTimeLaunch(): Boolean {
+        return sharedPreference.getFirstTimeLaunch()
+    }
+
+    override fun setFirstTimeLaunch(firstTimeLaunch: Boolean) {
+        sharedPreference.setFirstTimeLaunch(firstTimeLaunch)
+    }
+
     override fun isLogin(): Boolean {
         return sharedPreference.isLogin()
     }
@@ -63,7 +345,6 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
     override fun setLogin(login: Boolean) {
         sharedPreference.setLogin(login)
     }
-
 
     override fun setEmail(email: String) {
         sharedPreference.setEmail(email)

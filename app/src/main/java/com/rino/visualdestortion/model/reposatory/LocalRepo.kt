@@ -1,6 +1,8 @@
 package com.rino.visualdestortion.model.reposatory
 
 interface LocalRepo {
+    fun getFirstTimeLaunch():Boolean
+    fun setFirstTimeLaunch(firstTimeLaunch:Boolean)
     fun isLogin():Boolean
     fun setLogin(login:Boolean)
     fun setEmail(email:String)

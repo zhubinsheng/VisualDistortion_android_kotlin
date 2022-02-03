@@ -5,29 +5,40 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isGone
-import com.rino.visualdestortion.R
-import com.rino.visualdestortion.ui.MainActivity
+import androidx.navigation.fragment.findNavController
+import com.rino.visualdestortion.databinding.FragmentSettingBinding
 
 
 class settingFragment : Fragment() {
+    private lateinit var viewModel: SettingViewModel
+    private lateinit var binding: FragmentSettingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        }
-
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false)
+        viewModel = SettingViewModel(requireActivity().application)
+        binding = FragmentSettingBinding.inflate(inflater, container, false)
+        init()
+        return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        (activity as MainActivity).bottomNavigation.isGone = false
+    private fun init() {
+        binding.logoutTxt.setOnClickListener {
+            viewModel.logout()
+            navToLogin()
+        }
     }
+
+    private fun navToLogin() {
+        val action = settingFragmentDirections.actionSettingToLogin()
+        findNavController().navigate(action)
+    }
+
+
 }

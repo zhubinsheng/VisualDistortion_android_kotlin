@@ -1,4 +1,4 @@
-package com.rino.visualdestortion.model.pojo
+package com.rino.visualdestortion.model.pojo.login
 
 import com.google.gson.annotations.SerializedName
 

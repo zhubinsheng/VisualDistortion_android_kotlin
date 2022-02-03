@@ -2,7 +2,7 @@
     <string name="app_name">VisualDestortion</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="company_name"> شركة رينو لعمليات الصيانة </string>
-    <string name="welcome_msg"> مرحبابك فى تطبيق رينو لمعالجة التشوة البصرى</string>
+    <string name="welcome_msg"> مرحبا بك فى تطبيق رينو لمعالجة التشوة البصرى</string>
     <string name="login_msg"> قم بتسجيل الدخول بحسابك الشخصى لتسجيل الخدمات من كافة الأدارات فى المؤسسة </string>
     <string name="login">تسجيل الدخول</string>
     <string name="login_userName_hint">البريد الألكترونى</string>
@@ -16,6 +16,30 @@
     <string name="setting">الاعدادات</string>
     <string name="complaints">الشكاوى</string>
     <string name="services">الخدمات</string>
+    <string name="street">الشارع</string>
+    <string name="municipalites">البلدية</string>
+    <string name="sector">القطاع</string>
+    <string name="districts">الحى</string>
+    <string name="address">البيانات الأساسية</string>
+    <string name="attachments">المرفقات</string>
+    <string name="equipments">المعدات المستخدمة</string>
+    <string name="select">اختر</string>
+    <string name="workersType">الأفراد المشاركين</string>
+    <string name="spicialItems">بيانات خاصة</string>
+    <string name="mSquare">متر مربع</string>
+    <string name="mCube">متر مكعب</string>
+    <string name="numberR">عدد الردود</string>
+    <string name="notes">الملاحظات</string>
+    <string name="submit">تسجيل</string>
+    <string name="QRCode">الرقم التكويدى</string>
+    <string name="navigateToHome">العودة للقائمة الرئيسية</string>
+    <string name="Percentage">نسبة الانجاز الكلية</string>
+    <string name="afterImage">الصورة بعد المهمة</string>
+    <string name="beforeImage">الصورة قبل المهمة</string>
+    <string name="reset_password_hint">كلمة المرور الجديدة</string>
+    <string name="code">كود التفعيل</string>
+    <string name="saveNewPaswword">حفظ كلمة المرور الجديدة</string>
+    <string name="requestotpCode">"ارسال الكود "</string>
 
 
 </resources>

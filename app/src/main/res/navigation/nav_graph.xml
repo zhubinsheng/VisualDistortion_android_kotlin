@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/loginFragment2">
 
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="com.rino.visualdestortion.ui.WelcomeFragment"
+        android:name="com.rino.visualdestortion.ui.welcome.WelcomeFragment"
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_welcome">
     <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.rino.visualdestortion.ui.SplashFragment"
+        android:name="com.rino.visualdestortion.ui.splash.SplashFragment"
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash" />
     <fragment
@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_login_to_ServiceFragment"
             app:destination="@id/servicesFragment" />
+        <action
+            android:id="@+id/action_login_to_resetPass"
+            app:destination="@id/resetPasswordFragment" />
     </fragment>
 
     <fragment
@@ -54,10 +57,57 @@
         android:id="@+id/settingFragment"
         android:name="com.rino.visualdestortion.ui.setting.settingFragment"
         android:label="fragment_setting"
-        tools:layout="@layout/fragment_setting" />
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_setting_to_login"
+            app:destination="@id/loginFragment2" />
+    </fragment>
     <fragment
         android:id="@+id/addServiceFragment"
         android:name="com.rino.visualdestortion.ui.AddService.AddServiceFragment"
         android:label="fragment_add_service"
-        tools:layout="@layout/fragment_add_service" />
+        tools:layout="@layout/fragment_add_service" >
+        <action
+            android:id="@+id/action_addService_to_QRCode"
+            app:destination="@id/QRCodeFragment" />
+        <argument
+            android:name="serviceName"
+            app:argType="string"
+            android:defaultValue=""/>
+        <argument
+            android:name="serviceID"
+            app:argType="string"
+            android:defaultValue=""/>
+    </fragment>
+    <fragment
+        android:id="@+id/QRCodeFragment"
+        android:name="com.rino.visualdestortion.ui.qrCode.QRCodeFragment"
+        android:label="fragment_q_r_code"
+        tools:layout="@layout/fragment_q_r_code" >
+        <argument
+            android:name="QRCodeURL"
+            app:argType="string"
+            android:defaultValue="http://sohamerp.com/avo/avo_privacy_policy.html"/>
+        <action
+            android:id="@+id/action_QRCode_to_Services"
+            app:destination="@id/servicesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.rino.visualdestortion.ui.resetPassward.ResetPasswordFragment"
+        android:label="fragment_reset_password"
+        tools:layout="@layout/fragment_reset_password" >
+        <action
+            android:id="@+id/action_resetPass_to_Services"
+            app:destination="@id/servicesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fingerPrintFragment"
+        android:name="com.rino.visualdestortion.ui.fingerPrint.FingerPrintFragment"
+        android:label="fragment_finger_print"
+        tools:layout="@layout/fragment_finger_print" >
+        <action
+            android:id="@+id/action_fingerPrint_to_login"
+            app:destination="@id/loginFragment2" />
+    </fragment>
 </navigation>

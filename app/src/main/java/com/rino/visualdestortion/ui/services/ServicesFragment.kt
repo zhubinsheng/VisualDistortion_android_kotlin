@@ -1,28 +1,34 @@
 package com.rino.visualdestortion.ui.services
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentServicesBinding
-import com.rino.visualdestortion.ui.MainActivity
-
+import com.rino.visualdestortion.model.pojo.home.ServiceTypes
+import com.rino.visualdestortion.ui.home.MainActivity
 
 
 class ServicesFragment : Fragment() {
     private lateinit var viewModel: ServiceViewModel
     private lateinit var binding: FragmentServicesBinding
     private lateinit var serviceAdapter: ServiceAdapter
-    private lateinit var servicesList: List<String>
+    private lateinit var servicesList: List<ServiceTypes>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,35 +41,36 @@ class ServicesFragment : Fragment() {
 
     private fun init() {
         viewModel = ServiceViewModel(requireActivity().application)
-//        binding.shimmer.startShimmerAnimation()
-        binding.serviceRecycle.visibility = View.VISIBLE
         serviceAdapter = ServiceAdapter(arrayListOf(), viewModel)
         setUpUI()
         observeData()
-        val list = arrayListOf("الباعة الجائلين وأصحاب البسطات المخالفة","المظلات المخالفة","اللوحات الاعلانية المخالفة الكبيرة","الملصقات واللوحات الدعائية الصغيرة","الكتابات المشوهة على الجدران","الأتربة والاحجام الكبيرة من مخلفات الهدم")
-        serviceAdapter.updateServices(list)
+        serviceAdapter.updateServices(emptyList())
 
     }
 
     private fun observeData() {
         observeNavToAddService()
         observeService()
+        observeLoading()
+        observeShowError()
     }
+
     private fun observeService() {
-//        viewModel.fetchData()
-//        viewModel.articles.observe(viewLifecycleOwner, {
-//            it?.let {
-//                servicesAdapter.updateHome(it)
-//                servicesList = it
-//                binding.serviceRecycle.visibility = View.VISIBLE
-//             //   binding.shimmer.visibility = View.GONE
-//            }
-//        })
+        viewModel.getServicesData()
+        viewModel.getServicesData.observe(viewLifecycleOwner) {
+            it?.let {
+                serviceAdapter.updateServices(it.serviceTypes)
+                servicesList = it.serviceTypes
+                binding.serviceRecycle.visibility = View.VISIBLE
+
+            }
+        }
     }
 
     private fun setUpUI() {
+        binding.serviceRecycle.visibility = View.VISIBLE
         binding.serviceRecycle.apply {
-            layoutManager = GridLayoutManager(requireContext(),2 )
+            layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = serviceAdapter
         }
 
@@ -73,12 +80,40 @@ class ServicesFragment : Fragment() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = false
     }
+
     private fun observeNavToAddService() {
-        viewModel.navToAddService.observe(viewLifecycleOwner, {
+        viewModel.navToAddService.observe(viewLifecycleOwner) {
             it?.let {
-                val action = ServicesFragmentDirections.actionServiceToAddService()
+                val action = ServicesFragmentDirections.actionServiceToAddService(
+                    it.name,
+                    it.id.toString()
+                )
                 findNavController().navigate(action)
             }
-        })
+        }
+    }
+
+    private fun observeLoading() {
+        viewModel.loading.observe(viewLifecycleOwner) {
+            it?.let {
+                binding.progress.visibility = it
+            }
+        }
+    }
+
+    private fun observeShowError() {
+        viewModel.setError.observe(viewLifecycleOwner) {
+            it?.let {
+                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
+                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                        resources.getColor(
+                            R.color.teal
+                        )
+                    )
+                    .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
+                    {
+                    }.show()
+            }
+        }
     }
 }

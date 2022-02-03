@@ -1,6 +1,5 @@
 package com.rino.visualdestortion.ui.login
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,8 +11,8 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentLoginBinding
-import com.rino.visualdestortion.model.pojo.LoginRequest
-import com.rino.visualdestortion.ui.MainActivity
+import com.rino.visualdestortion.model.pojo.login.LoginRequest
+import com.rino.visualdestortion.ui.home.MainActivity
 
 
 class LoginFragment : Fragment() {
@@ -22,8 +21,6 @@ class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private var email = ""
     private var pass = ""
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,8 +32,10 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    private fun init() {
         loginButtonOnClick()
+        resetPassOnClick()
+        observeData()
     }
 
     private fun loginButtonOnClick() {
@@ -48,9 +47,15 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun init() {
-        observeData()
+    private fun resetPassOnClick() {
+        binding.resetPassTxt.setOnClickListener {
+            navigateToResetPass()
+        }
+    }
 
+    private fun navigateToResetPass() {
+        val action = LoginFragmentDirections.actionLoginToResetPass()
+        findNavController().navigate(action)
     }
 
     private fun observeData() {
@@ -59,8 +64,9 @@ class LoginFragment : Fragment() {
         observeShowError()
 
     }
+
     private fun observeSuccessLogin() {
-        viewModel.isLogin.observe(viewLifecycleOwner, {
+        viewModel.isLogin.observe(viewLifecycleOwner) {
             if (it) {
                 binding.progress.visibility = View.GONE
                 Toast.makeText(
@@ -77,49 +83,53 @@ class LoginFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        })
+        }
     }
+
     private fun navigateToHome() {
         val action = LoginFragmentDirections.actionLoginToServiceFragment()
         findNavController().navigate(action)
     }
 
     private fun observeLoading() {
-        viewModel.loading.observe(viewLifecycleOwner, {
+        viewModel.loading.observe(viewLifecycleOwner) {
             it?.let {
-           binding.progress.visibility=it
+                binding.progress.visibility = it
             }
-        })
+        }
     }
 
     private fun observeShowError() {
-        viewModel.setError.observe(viewLifecycleOwner, {
+        viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
                 Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(getResources().getColor(R.color.teal))
-                    .setActionTextColor(getResources().getColor(R.color.white)) .setAction("Ok")
+                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+                    .setBackgroundTint(getResources().getColor(R.color.teal))
+                    .setActionTextColor(getResources().getColor(R.color.white)).setAction("Ok")
                     {
                     }.show()
             }
-        })
+        }
     }
+
     private fun validateData() {
         validateEmail()
         validatPassword()
         if (validateEmail() && validatPassword()) {
-            viewModel.login(LoginRequest(email,pass))
+            viewModel.login(LoginRequest(email, pass))
         }
     }
+
     private fun validateEmail(): Boolean {
         val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
         return if (email.isEmpty()) {
-            binding.textInputEmail.error = "Field cannot be empty"
+            binding.textInputEmail.error = " برجاء ادخال العنصر"
             false
-        }else if(email.length>50) {
-            binding.textInputEmail.error = "Email Must not be more than 50 characters"
+        } else if (email.length > 50) {
+            binding.textInputEmail.error = "البريد الالكترونى يجيب الا يزيد عن 50 حرف "
             false
-        }else if (!email.matches(emailPattern)) {
-            binding.textInputEmail.error = "Invalid email address"
+        } else if (!email.matches(emailPattern)) {
+            binding.textInputEmail.error = "بريد الكترونى خاطئ "
             false
         } else {
             binding.textInputEmail.error = null
@@ -129,19 +139,19 @@ class LoginFragment : Fragment() {
     }
 
     private fun validatPassword(): Boolean {
-        val passwordVal = "^" +  "(?=.*[0-9])" +         //at least 1 digit
+        val passwordVal = "^" + "(?=.*[0-9])" +         //at least 1 digit
                 "(?=.*[a-z])" +         //at least 1 lower case letter
                 "(?=.*[A-Z])" +         //at least 1 upper case letter
                 //   "(?=.*[a-zA-Z])" +  //any letter
-                  "(?=.*[@#$%^&+=])" +  //at least 1 special character
+                "(?=.*[@#$%^&+=])" +  //at least 1 special character
                 "(?=\\S+$)" +  //no white spaces
                 ".{8,}"  //at least 8 characters
 //                "$"
         return if (pass.isEmpty()) {
-            binding.textInputPassword.error = "Field cannot be empty"
+            binding.textInputPassword.error = "برجاء ادخال ها العنصر"
             false
         } else if (!pass.matches(passwordVal.toRegex())) {
-            binding.textInputPassword.error = "Password is too weak"
+            binding.textInputPassword.error = "كلمة المرور ضعيفة"
             false
         } else {
             binding.textInputPassword.error = null
@@ -149,6 +159,7 @@ class LoginFragment : Fragment() {
             true
         }
     }
+
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true

@@ -20,9 +20,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/card"
         android:paddingTop="30dp"
         android:layout_marginTop="50dp"
@@ -33,12 +34,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_marginTop="30dp"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foregroundGravity="center"
+            android:layout_gravity="center_horizontal"
+            />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/serviceRecycle"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         tools:listitem="@layout/service_item"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>

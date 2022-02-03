@@ -2,7 +2,15 @@ package com.rino.visualdestortion.model.localDataSource
 
 import com.rino.visualdestortion.utils.*
 
-open class PreferenceDataSource(private val sharedPreference: MySharedPreference):Preference {
+  open class PreferenceDataSource(private val sharedPreference: MySharedPreference):Preference {
+    override fun getFirstTimeLaunch(): Boolean {
+        return sharedPreference.getBoolean(FIRST_TIME_LAUNCH_KEY,true)
+    }
+
+    override fun setFirstTimeLaunch(firstTimeLaunch: Boolean) {
+        return sharedPreference.setBoolean(FIRST_TIME_LAUNCH_KEY,firstTimeLaunch)
+    }
+
     override fun isLogin(): Boolean {
         return sharedPreference.getBoolean(LOGIN_KEY)
     }
