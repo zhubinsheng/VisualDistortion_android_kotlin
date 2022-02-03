@@ -31,23 +31,23 @@ class EquipmentsAdapter(private var itemsList: ArrayList<EquipmentItem>, private
         override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
             holder.binding.itemCount.text = itemsList[position].count.toString()
             holder.binding.nameTxt.text = itemsList[position].name
-            holder.binding.plusImg.setOnClickListener({
-                  itemsList[position].count = itemsList[position].count?.plus(1)
-                  holder.binding.itemCount.text = itemsList[position].count.toString()
-            })
-            holder.binding.minImg.setOnClickListener({
-                if(itemsList[position].count!!>1) {
+            holder.binding.plusImg.setOnClickListener {
+                itemsList[position].count = itemsList[position].count?.plus(1)
+                holder.binding.itemCount.text = itemsList[position].count.toString()
+            }
+            holder.binding.minImg.setOnClickListener {
+                if (itemsList[position].count!! > 1) {
                     itemsList[position].count = itemsList[position].count?.minus(1)
                     holder.binding.itemCount.text = itemsList[position].count.toString()
                 }
-            })
-            holder.binding.deleteItem.setOnClickListener({
-                println("deleted item"+itemsList[position])
-                println("listAfterDeleted"+itemsList.toString())
+            }
+            holder.binding.deleteItem.setOnClickListener {
+                println("deleted item" + itemsList[position])
+                println("listAfterDeleted" + itemsList.toString())
                 viewModel.setEquipmentDeletedItem(itemsList[position])
                 itemsList.remove(itemsList[position])
                 notifyDataSetChanged()
-            })
+            }
         }
 
         fun updateItems(newFavoriteList: List<EquipmentItem>) {

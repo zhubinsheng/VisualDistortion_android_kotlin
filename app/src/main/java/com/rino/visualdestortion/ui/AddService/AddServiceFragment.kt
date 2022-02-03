@@ -240,6 +240,7 @@ class AddServiceFragment : Fragment() {
         viewModel.workerTypeDeleteItem.observe(viewLifecycleOwner) {
             it?.let {
                 workerTypesCountList.remove(it)
+                workersTypeList.add(it.name)
             }
         }
     }
@@ -248,6 +249,7 @@ class AddServiceFragment : Fragment() {
         viewModel.equipmentsDeleteItem.observe(viewLifecycleOwner) {
             it?.let {
                 equipmentsCountList.remove(it)
+                equipmentList.add(it.name)
             }
         }
     }
@@ -426,17 +428,12 @@ class AddServiceFragment : Fragment() {
                 val selectedItem = parent.getItemAtPosition(position).toString()
                 var item =
                     equipmentsMap[position]?.toLong()?.let { EquipmentItem(selectedItem, it, 1) }
-                //    Toast.makeText(requireContext(),"Selected : ${equipmentsCountList.(item)}",Toast.LENGTH_SHORT).show()
                 if (item != null) {
-                    val foundedIndex = item?.let { isListContainsItem(it.id, equipmentsCountList) }
-                    if (foundedIndex == -1) {
-                        equipmentsCountList.add(item)
-                    } else {
-                        equipmentsCountList[foundedIndex].count++
-                    }
+                    equipmentsCountList.add(item)
+                    equipmentList.remove(item.name)
                 }
+                //    Toast.makeText(requireContext(),"Selected : ${equipmentsCountList.(item)}",Toast.LENGTH_SHORT).show()
                 equipmentsAdapter.updateItems(equipmentsCountList)
-                // Display the clicked item using toast
             }
 
     }
@@ -476,18 +473,13 @@ class AddServiceFragment : Fragment() {
                 var item =
                     workersTypeMap[position]?.toLong()?.let { EquipmentItem(selectedItem, it, 1) }
                 if (item != null) {
-                    val foundedIndex = item?.let { isListContainsItem(it.id, workerTypesCountList) }
-                    if (foundedIndex == -1) {
-                        workerTypesCountList.add(item)
-                    } else {
-                        workerTypesCountList[foundedIndex].count++
-                    }
+                    workerTypesCountList.add(item)
+                    workersTypeList.remove(item.name)
+                    workerTypesAdapter.updateItems(workerTypesCountList)
+                    //Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
                 }
-                workerTypesAdapter.updateItems(workerTypesCountList)
-                // Display the clicked item using toast
-                //Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
-            }
 
+            }
     }
 
     private fun observeLoading() {
