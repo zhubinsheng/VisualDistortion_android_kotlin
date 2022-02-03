@@ -12,8 +12,8 @@ import retrofit2.http.Field
    lateinit var streetName: String
    lateinit var lat: String
    lateinit var lng: String
-   lateinit var beforeImg: MultipartBody.Part
-   lateinit var afterImg: MultipartBody.Part
+   var beforeImg: MultipartBody.Part? = null
+   var afterImg: MultipartBody.Part? = null
    lateinit var WorkersTypesList: Map<Long,Int>
    lateinit var equipmentList: Map<Long,Int>
      var mSquare: Int? = null

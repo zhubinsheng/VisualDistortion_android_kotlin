@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -60,8 +61,8 @@ class AddServiceFragment : Fragment() {
     private lateinit var workerTypesCountList: ArrayList<EquipmentItem>
     private lateinit var equipmentsCountMap: HashMap<Long?, Int?>
     private lateinit var workerTypesCountMap: HashMap<Long?, Int?>
-    private lateinit var beforeImgBody: MultipartBody.Part
-    private lateinit var afterImgBody: MultipartBody.Part
+    private  var beforeImgBody: MultipartBody.Part? = null
+    private  var afterImgBody: MultipartBody.Part? = null
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val CAMERA_REQUEST_CODE = 200
     private val REQUEST_CODE = 100
@@ -125,8 +126,8 @@ class AddServiceFragment : Fragment() {
 
     private fun setUpUI() {
         getLatestLocation()
-        equipmentsAdapter = EquipmentsAdapter(arrayListOf(), viewModel)
-        workerTypesAdapter = WorkerTypesAdapter(arrayListOf(), viewModel)
+        equipmentsAdapter = EquipmentsAdapter(arrayListOf(), viewModel,requireContext())
+        workerTypesAdapter = WorkerTypesAdapter(arrayListOf(), viewModel,requireContext())
         binding.equipmentsRecycle.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = equipmentsAdapter
@@ -152,19 +153,19 @@ class AddServiceFragment : Fragment() {
             binding.serviceTypeNameTxt.text = serviceName
             serviceTypeId = getArguments()?.get("serviceID").toString()
         }
-        binding.submitButton.setOnClickListener({
+        binding.submitButton.setOnClickListener {
+           val formData = getFormDataFromUi(serviceName)
+            if (validateData(formData) && lat != "" && lng != "")
 
-            if (validateData() && lat != "" && lng != "")
+                viewModel.setFormData(formData)
 
-                viewModel.setFormData(getFormDataFromUi(serviceName))
-
-        })
-        binding.beforPic.setOnClickListener({
+        }
+        binding.beforPic.setOnClickListener {
             beforePicOnClick()
-        })
-        binding.afterPic.setOnClickListener({
+        }
+        binding.afterPic.setOnClickListener {
             afterPicOnClick()
-        })
+        }
     }
 
     private fun getFormDataFromUi(serviceName: String): FormData {
@@ -331,53 +332,57 @@ class AddServiceFragment : Fragment() {
             }
     }
 
-    private fun validateData(): Boolean {
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun validateData(formData: FormData): Boolean {
         var flag = true
-        if (binding.sectorTextView.text.toString().equals(R.string.sector)) {
+       Toast.makeText(requireContext(),"Selected : ${formData.sectorName == R.string.sector.toString()}",Toast.LENGTH_SHORT).show()
+        if (formData.sectorName == R.string.sector.toString()) {
             binding.sectorTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
 
-        if (binding.districtsTextView.text.toString().equals(R.string.districts)) {
+        if (formData.districtName == R.string.districts.toString()) {
             binding.districtsTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
-        if (binding.municipalitesTextView.text.toString().equals(R.string.municipalites)) {
+        if (formData.municipalityName == R.string.municipalites.toString()) {
             binding.municipalitesTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
-        if (binding.streetTextView.text.toString().equals(R.string.street)) {
+        if (formData.streetName == R.string.street.toString()) {
             binding.streetTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
-        if (equipmentsCountList.size == 0) {
+        if (formData.equipmentList.isEmpty()) {
             binding.equipmentsTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
-        if (workerTypesCountList.size == 0) {
+        if (formData.WorkersTypesList.isEmpty()) {
             binding.workersTypeTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
-        if (binding.precentageEditTxt.text.toString().isEmpty()) {
-            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
-            flag = false
-        }
-        if (binding.beforPic.resources.toString().equals(R.drawable.picture.toString())) {
+
+        //binding.beforPic.drawable == resources.getDrawable(R.drawable.picture)
+        if (formData.beforeImg == null) {
             binding.textInputbeforeImg.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
+        if (formData.percentage == null) {
+            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
+            flag = false
+        }
         if (serviceName.equals("مخلفات الهدم")) {
-            if (binding.editTextMCube.text.toString().isEmpty()) {
+            if (formData.mCube == null) {
                 binding.textInputMCube.error = "برجاء ادخال هذا العنصر"
                 flag = false
             }
-            if (binding.editTextNumberR.text.toString().isEmpty()) {
+            if (formData.numberR == null) {
                 binding.textInputNumberR.error = "برجاء ادخال هذا العنصر"
                 flag = false
             }
 
         } else if (serviceName.equals("الكتابات المشوهة")) {
-            if (binding.editTextMSquare.text.toString().isEmpty()) {
+            if (formData.mSquare == null) {
                 binding.textInputMSquare.error = "برجاء ادخال هذا العنصر"
                 flag = false
             }
@@ -436,21 +441,6 @@ class AddServiceFragment : Fragment() {
                 equipmentsAdapter.updateItems(equipmentsCountList)
             }
 
-    }
-
-    private fun isListContainsItem(
-        itemID: Long,
-        equipmentsCountList: ArrayList<EquipmentItem>
-    ): Int {
-        var index = -1
-        var i = 0
-        for (equipment in equipmentsCountList) {
-            if (equipment.id == itemID) {
-                index = i
-            }
-            i++
-        }
-        return index
     }
 
     private fun setWorkersTypeMenuItems() {

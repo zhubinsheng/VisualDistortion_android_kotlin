@@ -40,6 +40,9 @@
     <string name="code">كود التفعيل</string>
     <string name="saveNewPaswword">حفظ كلمة المرور الجديدة</string>
     <string name="requestotpCode">"ارسال الكود "</string>
+    <string name="dialogMessage">هل تريد حذف هذا العنصر؟</string>
+    <string name="NoMessage">لا</string>
+    <string name="yesMessage">نعم</string>
 
 
 </resources>

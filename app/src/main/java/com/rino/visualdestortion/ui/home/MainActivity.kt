@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity() {
         handler = Handler()
         runnable = Runnable {
             Toast.makeText(this, "the session ended please login again", Toast.LENGTH_SHORT).show()
-//            navController.popBackStack()
-//            navController.navigate(R.id.fingerPrintFragment)
+            navController.popBackStack()
+            navController.navigate(R.id.fingerPrintFragment)
         }
         startHandler()
     }
