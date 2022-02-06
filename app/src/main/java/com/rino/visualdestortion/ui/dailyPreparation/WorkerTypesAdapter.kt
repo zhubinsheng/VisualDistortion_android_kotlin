@@ -1,4 +1,4 @@
-package com.rino.visualdestortion.ui.AddService
+package com.rino.visualdestortion.ui.dailyPreparation
 
 import android.app.AlertDialog
 import android.content.Context
@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.EquipmentItemBinding
+import com.rino.visualdestortion.ui.AddService.EquipmentItem
 import com.rino.visualdestortion.ui.dailyPreparation.DailyPreparationViewModel
 
 
-class WorkerTypesAdapter(private var itemsList: ArrayList<EquipmentItem>, private var viewModel: AddServiceViewModel, private  var context: Context) :
+class WorkerTypesAdapter(private var itemsList: ArrayList<EquipmentItem>, private var viewModel: DailyPreparationViewModel, private  var context: Context) :
     RecyclerView.Adapter<WorkerTypesAdapter.ItemViewHolder>() {
 
     override fun onCreateViewHolder(

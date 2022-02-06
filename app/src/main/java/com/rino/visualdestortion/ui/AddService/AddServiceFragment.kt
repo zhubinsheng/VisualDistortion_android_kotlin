@@ -143,10 +143,12 @@ class AddServiceFragment : Fragment() {
             serviceName = getArguments()?.get("serviceName").toString()
             if (serviceName.equals("مخلفات الهدم")) {
                 binding.textInputMSquare.isGone = true
-            } else if (serviceName.equals("الكتابات المشوهة")) {
+            }
+            else if (serviceName.equals("الكتابات المشوهة")) {
                 binding.textInputMCube.isGone = true
                 binding.textInputNumberR.isGone = true
-            } else {
+            }
+            else {
                 binding.spicialItemsCard.isGone = true
                 binding.spicialItemsTxt.isGone = true
             }
@@ -607,7 +609,6 @@ class AddServiceFragment : Fragment() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val location = locationResult.lastLocation
-            // TODO use current location long and lat
             lng = location.longitude.toString()
             lat = location.latitude.toString()
             //   Toast.makeText(context, "lat:" + lat + ", lng:" + lng, Toast.LENGTH_SHORT).show()

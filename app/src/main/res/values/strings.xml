@@ -43,6 +43,7 @@
     <string name="dialogMessage">هل تريد حذف هذا العنصر؟</string>
     <string name="NoMessage">لا</string>
     <string name="yesMessage">نعم</string>
+    <string name="next">التالى</string>
 
 
 </resources>

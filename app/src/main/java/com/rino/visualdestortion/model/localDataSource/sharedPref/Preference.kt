@@ -1,4 +1,4 @@
-package com.rino.visualdestortion.model.localDataSource
+package com.rino.visualdestortion.model.localDataSource.sharedPref
 
 interface Preference {
     fun getFirstTimeLaunch():Boolean

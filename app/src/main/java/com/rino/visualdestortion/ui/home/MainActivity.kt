@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
         startHandler()
     }
     override fun onUserInteraction() {
-        // TODO Auto-generated method stub
         super.onUserInteraction()
         stopHandler()
         startHandler()
