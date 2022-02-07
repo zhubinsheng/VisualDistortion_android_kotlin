@@ -18,6 +18,7 @@ class ResetPasswordFragment : Fragment() {
     private lateinit var binding: FragmentResetPasswordBinding
     private var email = ""
     private var newPass = ""
+    private var newPassCongirm = ""
     private var otp = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +34,7 @@ class ResetPasswordFragment : Fragment() {
         init()
         return binding.root
     }
+
     private fun init() {
         requestOTPButtonOnClick()
         saveNewPassOnClick()
@@ -61,6 +63,7 @@ class ResetPasswordFragment : Fragment() {
     private fun getDataFromUI() {
         email = binding.editTextEmail.text.toString()
         newPass = binding.editTextPassword.text.toString()
+        newPassCongirm = binding.editTextConfirmPassword.text.toString()
         otp = binding.editTextOTPCode.text.toString()
     }
 
@@ -90,6 +93,7 @@ class ResetPasswordFragment : Fragment() {
             it.let {
                 binding.otpCodeTextInput.visibility = View.VISIBLE
                 binding.textInputPassword.visibility = View.VISIBLE
+                binding.textInputConfirmPassword.visibility = View.VISIBLE
                 binding.saveButton.visibility = View.VISIBLE
                 binding.reuestOtpButton.visibility = View.GONE
                 Toast.makeText(
@@ -134,22 +138,27 @@ class ResetPasswordFragment : Fragment() {
     private fun validateData() {
         validateEmail()
         validatPassword()
+        validatConfirmPassword()
         validateOTP()
-        if (validateEmail() && validatPassword() && validateOTP()) {
-            viewModel.resetPass(email,otp,newPass)
+        if (validateEmail() && validatPassword() && validateOTP() && validatConfirmPassword()) {
+            viewModel.resetPass(email, otp, newPass)
         }
     }
 
     private fun validateOTP(): Boolean {
-      if(otp.isEmpty()){
-          binding.otpCodeTextInput.error = "برجاء ادخال هذا العنصر"
-          return false
-      }
-        if(otp.length!=4){
-            binding.otpCodeTextInput.error = "الكود التفعيلى يجب ان يحتوى على 4 ارقام"
-            return false
+      return if (otp.isEmpty()) {
+            binding.otpCodeTextInput.error = "برجاء ادخال هذا العنصر"
+             false
         }
-        return true
+       else if (otp.length != 4) {
+            binding.otpCodeTextInput.error = "الكود التفعيلى يجب ان يحتوى على 4 ارقام"
+             false
+        }
+        else {
+            binding.otpCodeTextInput.error = null
+            binding.otpCodeTextInput.isErrorEnabled = false
+            true
+        }
     }
 
     private fun validateEmail(): Boolean {
@@ -157,10 +166,10 @@ class ResetPasswordFragment : Fragment() {
         return if (email.isEmpty()) {
             binding.textInputEmail.error = " برجاء ادخال العنصر"
             false
-        }else if(email.length>50) {
+        } else if (email.length > 50) {
             binding.textInputEmail.error = "البريد الالكترونى يجب الا يزيد عن 50 حرف "
             false
-        }else if (!email.matches(emailPattern)) {
+        } else if (!email.matches(emailPattern)) {
             binding.textInputEmail.error = "بريد الكترونى خاطئ "
             false
         } else {
@@ -171,7 +180,7 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun validatPassword(): Boolean {
-        val passwordVal = "^" +  "(?=.*[0-9])" +         //at least 1 digit
+        val passwordVal = "^" + "(?=.*[0-9])" +         //at least 1 digit
                 "(?=.*[a-z])" +         //at least 1 lower case letter
                 "(?=.*[A-Z])" +         //at least 1 upper case letter
                 //   "(?=.*[a-zA-Z])" +  //any letter
@@ -188,6 +197,22 @@ class ResetPasswordFragment : Fragment() {
         } else {
             binding.textInputPassword.error = null
             binding.textInputPassword.isErrorEnabled = false
+            true
+        }
+
+    }
+
+    private fun validatConfirmPassword(): Boolean {
+      return  if (newPassCongirm.isEmpty()) {
+            binding.textInputConfirmPassword.error = "برجاء ادخال ها العنصر"
+            false
+        } else if (newPass != newPassCongirm) {
+          //  Toast.makeText(requireActivity(), "newPass :" + newPass == newPassCongirm, Toast.LENGTH_SHORT).show()
+            binding.textInputConfirmPassword.error = "كلمة المرور غير متطابقة"
+            false
+        } else {
+            binding.textInputConfirmPassword.error = null
+            binding.textInputConfirmPassword.isErrorEnabled = false
             true
         }
     }
