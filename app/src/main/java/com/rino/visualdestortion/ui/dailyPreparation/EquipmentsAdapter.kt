@@ -1,12 +1,15 @@
-package com.rino.visualdestortion.ui.AddService
+package com.rino.visualdestortion.ui.dailyPreparation
 
+import android.app.AlertDialog
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.EquipmentItemBinding
 
 
-class EquipmentsAdapter(private var itemsList: ArrayList<EquipmentItem>, private var viewModel: AddServiceViewModel) :
+class EquipmentsAdapter(private var itemsList: ArrayList<EquipmentItem>, private var viewModel: DailyPreparationViewModel, private var context: Context) :
         RecyclerView.Adapter<EquipmentsAdapter.ItemViewHolder>() {
 
         override fun onCreateViewHolder(
@@ -42,19 +45,39 @@ class EquipmentsAdapter(private var itemsList: ArrayList<EquipmentItem>, private
                 }
             }
             holder.binding.deleteItem.setOnClickListener {
-                println("deleted item" + itemsList[position])
-                println("listAfterDeleted" + itemsList.toString())
+             customTwoButtonsDialog(itemsList[position],position)
+            }
+        }
+        fun customTwoButtonsDialog(equipmentItem: EquipmentItem, position: Int) {
+            val builder = AlertDialog.Builder(context!!)
+            builder.setTitle(R.string.app_name)
+
+            builder.setMessage(R.string.dialogMessage)
+            builder.setIcon(android.R.drawable.ic_dialog_alert)
+
+            builder.setNegativeButton(R.string.NoMessage) { dialogInterface, which ->
+
+            }
+
+            builder.setPositiveButton(R.string.yesMessage) { dialogInterface, which ->
                 viewModel.setEquipmentDeletedItem(itemsList[position])
                 itemsList.remove(itemsList[position])
                 notifyDataSetChanged()
+                updateItems(itemsList)
             }
+            // Create the AlertDialog
+            val alertDialog: AlertDialog = builder.create()
+            // Set other dialog properties
+            alertDialog.setCancelable(false)
+            alertDialog.show()
         }
 
-        fun updateItems(newFavoriteList: List<EquipmentItem>) {
+        fun updateItems(newList: List<EquipmentItem>) {
             itemsList.clear()
-            itemsList.addAll(newFavoriteList)
+            itemsList.addAll(newList)
             notifyDataSetChanged()
         }
+
     fun getEquipmentMap():Map<Long,Int>
     {
         var hashmap = HashMap<Long,Int>()

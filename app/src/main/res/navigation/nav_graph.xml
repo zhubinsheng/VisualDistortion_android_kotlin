@@ -5,6 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
+
     <fragment
         android:id="@+id/welcomeFragment"
         android:name="com.rino.visualdestortion.ui.welcome.WelcomeFragment"
@@ -46,6 +47,9 @@
     <action
         android:id="@+id/action_service_to_addService"
         app:destination="@id/addServiceFragment" />
+        <action
+            android:id="@+id/action_service_to_Dailyprepration"
+            app:destination="@id/dailyPreparationFragment" />
 
     </fragment>
     <fragment
@@ -109,5 +113,22 @@
         <action
             android:id="@+id/action_fingerPrint_to_login"
             app:destination="@id/loginFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/dailyPreparationFragment"
+        android:name="com.rino.visualdestortion.ui.dailyPreparation.DailyPreparationFragment"
+        android:label="fragment_daily_preparation"
+        tools:layout="@layout/fragment_daily_preparation" >
+        <action
+            android:id="@+id/action_dailyPreparation_to_addService"
+            app:destination="@id/addServiceFragment" />
+        <argument
+            android:name="serviceName"
+            app:argType="string"
+            android:defaultValue=""/>
+        <argument
+            android:name="serviceID"
+            app:argType="string"
+            android:defaultValue=""/>
     </fragment>
 </navigation>

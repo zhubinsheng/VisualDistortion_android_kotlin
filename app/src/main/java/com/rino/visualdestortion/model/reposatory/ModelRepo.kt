@@ -1,11 +1,15 @@
 package com.rino.visualdestortion.model.reposatory
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.rino.visualdestortion.model.localDataSource.MySharedPreference
-import com.rino.visualdestortion.model.localDataSource.Preference
+import com.rino.visualdestortion.model.localDataSource.sharedPref.Preference
 import com.rino.visualdestortion.model.localDataSource.PreferenceDataSource
+import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
+import com.rino.visualdestortion.model.localDataSource.room.DailyPreparationDB
+import com.rino.visualdestortion.model.localDataSource.room.DailyPreparationDataSource
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
@@ -20,14 +24,16 @@ import com.rino.visualdestortion.model.remoteDataSource.ApiDataSource
 import com.rino.visualdestortion.model.remoteDataSource.ApiInterface
 import com.rino.visualdestortion.model.remoteDataSource.Result
 import com.rino.visualdestortion.utils.PREF_FILE_NAME
+import kotlinx.coroutines.flow.Flow
 import java.io.IOException
 
-class ModelRepo (context: Context):RemoteRepo,LocalRepo{
+class ModelRepo (application: Application):RemoteRepo,LocalRepo{
     private val apiDataSource: ApiInterface = ApiDataSource()
     private val preference =
-        MySharedPreference(context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE))
+        MySharedPreference(application.applicationContext.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE))
     private val sharedPreference: Preference = PreferenceDataSource(preference)
 
+    private val localDataSource: DailyPreparationDataSource = DailyPreparationDataSource(application)
 
     override suspend fun login(loginRequest: LoginRequest?): Result<LoginResponse?> {
         var result: Result<LoginResponse?> = Result.Loading
@@ -328,6 +334,26 @@ class ModelRepo (context: Context):RemoteRepo,LocalRepo{
 
         }
         return result
+    }
+
+    override fun getAllData(): Flow<List<DailyPreparation>> {
+      return localDataSource.getAllData()
+    }
+
+    override fun getDailyPreparation_By_ServiceTypeID(serviceTypeID: String,date :String): DailyPreparation? {
+       return localDataSource.getDailyPreparation_By_ServiceTypeID(serviceTypeID,date)
+    }
+
+    override  fun insertDailyPreparation(dailyPreparation: DailyPreparation) {
+      localDataSource.insertDailyPreparation(dailyPreparation)
+    }
+
+    override  fun deleteAll() {
+     localDataSource.deleteAll()
+    }
+
+    override fun delete_By_ServiceTypeID(serviceTypeID: String,date :String) {
+        localDataSource.deleteBy_ServiceTypeID(serviceTypeID,date)
     }
 
     override fun getFirstTimeLaunch(): Boolean {

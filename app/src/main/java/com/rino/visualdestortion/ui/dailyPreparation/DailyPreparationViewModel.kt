@@ -1,4 +1,4 @@
-package com.rino.visualdestortion.ui.services
+package com.rino.visualdestortion.ui.dailyPreparation
 
 import android.app.Application
 import android.util.Log
@@ -9,27 +9,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
-import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
-import com.rino.visualdestortion.model.pojo.home.ServiceTypes
 import com.rino.visualdestortion.model.remoteDataSource.Result
 import com.rino.visualdestortion.model.reposatory.ModelRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ServiceViewModel(application: Application) : AndroidViewModel(application) {
+class DailyPreparationViewModel (application: Application) : AndroidViewModel(application) {
     private val modelRepository: ModelRepo = ModelRepo(application)
-    private var _navToAddService: MutableLiveData<ServiceTypes> = MutableLiveData()
-    private var _navToDailyPreparation: MutableLiveData<ServiceTypes> = MutableLiveData()
+
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
-    private var _getServicesData = MutableLiveData<HomeServicesResponse>()
-    private var _getDailyPreparation = MutableLiveData<DailyPreparation?>()
-
-    val navToAddService: LiveData<ServiceTypes>
-        get() = _navToAddService
-
-    val navToDailyPreparation: LiveData<ServiceTypes>
-        get() = _navToDailyPreparation
+    private var _getServicesData = MutableLiveData<AddServiceResponse>()
+    private var _equipmentsDeleteItem = MutableLiveData<EquipmentItem>()
+    private var _workerTypeDeleteItem = MutableLiveData<EquipmentItem>()
 
     val loading: LiveData<Int>
         get() = _loading
@@ -37,33 +29,20 @@ class ServiceViewModel(application: Application) : AndroidViewModel(application)
     val setError: LiveData<String>
         get() = _setError
 
-    val getServicesData: LiveData<HomeServicesResponse>
+    val getServicesData: LiveData<AddServiceResponse>
         get() = _getServicesData
 
-    val getDailyPreparation: LiveData<DailyPreparation?>
-        get() = _getDailyPreparation
+    val equipmentsDeleteItem: LiveData<EquipmentItem>
+        get() = _equipmentsDeleteItem
 
-    fun navToAddService(service: ServiceTypes) {
-        _navToAddService.value = service
-    }
-
-    fun navToDailyPreparation(service: ServiceTypes) {
-        _navToDailyPreparation.value = service
-    }
-
-    fun getDailyPreparationByServiceID(serviceTypeID: String,date :String) {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            val dailyPreparation = modelRepository.getDailyPreparation_By_ServiceTypeID(serviceTypeID,date)
-            Log.e("getDailyPreparation_By_ServiceTypeID",dailyPreparation.toString())
-            _getDailyPreparation.postValue(dailyPreparation)
-        }
-    }
+    val workerTypeDeleteItem: LiveData<EquipmentItem>
+        get() = _workerTypeDeleteItem
 
 
     fun getServicesData() {
+        _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
-            when (val result = modelRepository.getHomeData()) {
+            when (val result = modelRepository.getServiceForm()) {
                 is Result.Success -> {
                     _loading.postValue(View.GONE)
                     Log.i("getServiceData:", "${result.data}")
@@ -83,7 +62,25 @@ class ServiceViewModel(application: Application) : AndroidViewModel(application)
                 }
             }
         }
-
     }
+    fun addDailyPreparation(dailyPreparation: DailyPreparation){
+        viewModelScope.launch(Dispatchers.IO) {
+            modelRepository.insertDailyPreparation(dailyPreparation)
+        }
+    }
+
+    fun getDailyPreparationByServiceID(serviceTypeID: String,date :String){
+        viewModelScope.launch(Dispatchers.IO) {
+            modelRepository.getDailyPreparation_By_ServiceTypeID(serviceTypeID,date)
+        }
+    }
+    fun setEquipmentDeletedItem(equipmentItem: EquipmentItem) {
+        _equipmentsDeleteItem.value = equipmentItem
+    }
+
+    fun setWorkerTypeDeletedItem(workerTypeItem: EquipmentItem) {
+        _workerTypeDeleteItem.value = workerTypeItem
+    }
+
 
 }

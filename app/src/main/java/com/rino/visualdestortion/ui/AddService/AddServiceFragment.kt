@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -37,6 +38,7 @@ import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.text.DateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -50,18 +52,9 @@ class AddServiceFragment : Fragment() {
     private lateinit var municipalitesList: ArrayList<String>
     private lateinit var districtsList: ArrayList<String>
     private lateinit var streetList: ArrayList<String>
-    private lateinit var equipmentList: ArrayList<String>
-    private lateinit var workersTypeList: ArrayList<String>
-    private lateinit var equipmentsAdapter: EquipmentsAdapter
-    private lateinit var workerTypesAdapter: WorkerTypesAdapter
-    private lateinit var equipmentsMap: HashMap<Int?, Int?>
-    private lateinit var workersTypeMap: HashMap<Int?, Int?>
-    private lateinit var equipmentsCountList: ArrayList<EquipmentItem>
-    private lateinit var workerTypesCountList: ArrayList<EquipmentItem>
-    private lateinit var equipmentsCountMap: HashMap<Long?, Int?>
-    private lateinit var workerTypesCountMap: HashMap<Long?, Int?>
-    private lateinit var beforeImgBody: MultipartBody.Part
-    private lateinit var afterImgBody: MultipartBody.Part
+    private  var beforeImgBody: MultipartBody.Part? = null
+    private  var afterImgBody: MultipartBody.Part? = null
+    private lateinit  var formData: FormData
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val CAMERA_REQUEST_CODE = 200
     private val REQUEST_CODE = 100
@@ -125,16 +118,6 @@ class AddServiceFragment : Fragment() {
 
     private fun setUpUI() {
         getLatestLocation()
-        equipmentsAdapter = EquipmentsAdapter(arrayListOf(), viewModel)
-        workerTypesAdapter = WorkerTypesAdapter(arrayListOf(), viewModel)
-        binding.equipmentsRecycle.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = equipmentsAdapter
-        }
-        binding.workersTypeRecycle.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = workerTypesAdapter
-        }
         viewModel.getServicesData()
 
         if (getArguments() != null) {
@@ -142,30 +125,42 @@ class AddServiceFragment : Fragment() {
             serviceName = getArguments()?.get("serviceName").toString()
             if (serviceName.equals("مخلفات الهدم")) {
                 binding.textInputMSquare.isGone = true
-            } else if (serviceName.equals("الكتابات المشوهة")) {
+            }
+            else if (serviceName.equals("الكتابات المشوهة")) {
                 binding.textInputMCube.isGone = true
                 binding.textInputNumberR.isGone = true
-            } else {
+            }
+            else {
                 binding.spicialItemsCard.isGone = true
                 binding.spicialItemsTxt.isGone = true
             }
             binding.serviceTypeNameTxt.text = serviceName
             serviceTypeId = getArguments()?.get("serviceID").toString()
         }
-        binding.submitButton.setOnClickListener({
+        binding.submitButton.setOnClickListener {
+             observeDailyPreparation()
+            formData = getFormDataFromUi(serviceName)
 
-            if (validateData() && lat != "" && lng != "")
-
-                viewModel.setFormData(getFormDataFromUi(serviceName))
-
-        })
-        binding.beforPic.setOnClickListener({
+        }
+        binding.beforPic.setOnClickListener {
             beforePicOnClick()
-        })
-        binding.afterPic.setOnClickListener({
+        }
+        binding.afterPic.setOnClickListener {
             afterPicOnClick()
-        })
+        }
     }
+    private fun observeDailyPreparation() {
+        val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
+        viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
+        viewModel.getDailyPreparation.observe(viewLifecycleOwner) {
+            if (it != null) {
+                formData.WorkersTypesList = it.workerTypesList
+                formData.equipmentList = it.workerTypesList
+                if (validateData(formData) && lat != "" && lng != "")
+                    viewModel.setFormData(formData)
+            }
+            }
+        }
 
     private fun getFormDataFromUi(serviceName: String): FormData {
         var formData = FormData()
@@ -182,8 +177,8 @@ class AddServiceFragment : Fragment() {
         formData.streetName = binding.streetTextView.text.toString()
         formData.lat = lat
         formData.lng = lng
-        formData.WorkersTypesList = workerTypesAdapter.getWorkerTypesMap()
-        formData.equipmentList = equipmentsAdapter.getEquipmentMap()
+     //   formData.WorkersTypesList = workerTypesAdapter.getWorkerTypesMap()
+    //    formData.equipmentList = equipmentsAdapter.getEquipmentMap()
         formData.notes = binding.notesEditTxt.text.toString()
         formData.beforeImg = beforeImgBody
         formData.afterImg = afterImgBody
@@ -204,14 +199,7 @@ class AddServiceFragment : Fragment() {
         municipalitesList = ArrayList()
         districtsList = ArrayList()
         streetList = ArrayList()
-        equipmentList = ArrayList()
-        workersTypeList = ArrayList()
-        equipmentsMap = HashMap()
-        workersTypeMap = HashMap()
-        equipmentsCountList = ArrayList()
-        workerTypesCountList = ArrayList()
-        equipmentsCountMap = HashMap()
-        workerTypesCountMap = HashMap()
+
     }
 
     private fun observeData() {
@@ -219,8 +207,6 @@ class AddServiceFragment : Fragment() {
         observeSetFormData()
         observeLoading()
         observeShowError()
-        observeDeletedEquipmentItem()
-        observeDeletedWorkerTypeItem()
     }
 
     private fun observeSetFormData() {
@@ -236,23 +222,7 @@ class AddServiceFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    private fun observeDeletedWorkerTypeItem() {
-        viewModel.workerTypeDeleteItem.observe(viewLifecycleOwner) {
-            it?.let {
-                workerTypesCountList.remove(it)
-                workersTypeList.add(it.name)
-            }
-        }
-    }
 
-    private fun observeDeletedEquipmentItem() {
-        viewModel.equipmentsDeleteItem.observe(viewLifecycleOwner) {
-            it?.let {
-                equipmentsCountList.remove(it)
-                equipmentList.add(it.name)
-            }
-        }
-    }
 
     private fun observeGetServicesData() {
         viewModel.getServicesData.observe(viewLifecycleOwner) {
@@ -266,8 +236,6 @@ class AddServiceFragment : Fragment() {
 
     private fun prepareMenues() {
         setSectorsMenuItems()
-        setEquipmentsMenuItems()
-        setWorkersTypeMenuItems()
     }
 
     private fun setSectorsMenuItems() {
@@ -331,53 +299,49 @@ class AddServiceFragment : Fragment() {
             }
     }
 
-    private fun validateData(): Boolean {
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun validateData(formData: FormData): Boolean {
         var flag = true
-        if (binding.sectorTextView.text.toString().equals(R.string.sector)) {
+     //  Toast.makeText(requireContext(),"Selected : ${formData.sectorName == R.string.sector.toString()}",Toast.LENGTH_SHORT).show()
+        if (formData.sectorName == R.string.sector.toString()) {
             binding.sectorTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
 
-        if (binding.districtsTextView.text.toString().equals(R.string.districts)) {
+        if (formData.districtName == R.string.districts.toString()) {
             binding.districtsTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
-        if (binding.municipalitesTextView.text.toString().equals(R.string.municipalites)) {
+        if (formData.municipalityName == R.string.municipalites.toString()) {
             binding.municipalitesTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
-        if (binding.streetTextView.text.toString().equals(R.string.street)) {
+        if (formData.streetName == R.string.street.toString()) {
             binding.streetTextInputLayout.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
-        if (equipmentsCountList.size == 0) {
-            binding.equipmentsTextInputLayout.error = "برجاء ادخال هذا العنصر"
-            flag = false
-        }
-        if (workerTypesCountList.size == 0) {
-            binding.workersTypeTextInputLayout.error = "برجاء ادخال هذا العنصر"
-            flag = false
-        }
-        if (binding.precentageEditTxt.text.toString().isEmpty()) {
-            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
-            flag = false
-        }
-        if (binding.beforPic.resources.toString().equals(R.drawable.picture.toString())) {
+
+        //binding.beforPic.drawable == resources.getDrawable(R.drawable.picture)
+        if (formData.beforeImg == null) {
             binding.textInputbeforeImg.error = "برجاء ادخال هذا العنصر"
             flag = false
         }
+        if (formData.percentage == null) {
+            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
+            flag = false
+        }
         if (serviceName.equals("مخلفات الهدم")) {
-            if (binding.editTextMCube.text.toString().isEmpty()) {
+            if (formData.mCube == null) {
                 binding.textInputMCube.error = "برجاء ادخال هذا العنصر"
                 flag = false
             }
-            if (binding.editTextNumberR.text.toString().isEmpty()) {
+            if (formData.numberR == null) {
                 binding.textInputNumberR.error = "برجاء ادخال هذا العنصر"
                 flag = false
             }
 
         } else if (serviceName.equals("الكتابات المشوهة")) {
-            if (binding.editTextMSquare.text.toString().isEmpty()) {
+            if (formData.mSquare == null) {
                 binding.textInputMSquare.error = "برجاء ادخال هذا العنصر"
                 flag = false
             }
@@ -409,78 +373,8 @@ class AddServiceFragment : Fragment() {
             }
     }
 
-    private fun setEquipmentsMenuItems() {
-        equipmentList.clear()
-        var index = 0
-        binding.equipmentsTextView.setText(R.string.select)
-        for (equipment in addServiceResponse.equipment!!) {
-            equipmentList.add(equipment.name.toString())
-            equipmentsMap[index] = equipment.id
-            index++
-        }
-        val adapter = ArrayAdapter(
-            requireContext(), R.layout.dropdown_item,
-            equipmentList
-        )
-        binding.equipmentsTextView.setAdapter(adapter)
-        binding.equipmentsTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                var item =
-                    equipmentsMap[position]?.toLong()?.let { EquipmentItem(selectedItem, it, 1) }
-                if (item != null) {
-                    equipmentsCountList.add(item)
-                    equipmentList.remove(item.name)
-                }
-                //    Toast.makeText(requireContext(),"Selected : ${equipmentsCountList.(item)}",Toast.LENGTH_SHORT).show()
-                equipmentsAdapter.updateItems(equipmentsCountList)
-            }
 
-    }
 
-    private fun isListContainsItem(
-        itemID: Long,
-        equipmentsCountList: ArrayList<EquipmentItem>
-    ): Int {
-        var index = -1
-        var i = 0
-        for (equipment in equipmentsCountList) {
-            if (equipment.id == itemID) {
-                index = i
-            }
-            i++
-        }
-        return index
-    }
-
-    private fun setWorkersTypeMenuItems() {
-        workersTypeList.clear()
-        var index = 0
-        binding.workersTypeTextView.setText(R.string.select)
-        for (workerType in addServiceResponse.workerTypes!!) {
-            workersTypeList.add(workerType.name.toString())
-            workersTypeMap[index] = workerType.id
-            index++
-        }
-        val adapter = ArrayAdapter(
-            requireContext(), R.layout.dropdown_item,
-            workersTypeList
-        )
-        binding.workersTypeTextView.setAdapter(adapter)
-        binding.workersTypeTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                var item =
-                    workersTypeMap[position]?.toLong()?.let { EquipmentItem(selectedItem, it, 1) }
-                if (item != null) {
-                    workerTypesCountList.add(item)
-                    workersTypeList.remove(item.name)
-                    workerTypesAdapter.updateItems(workerTypesCountList)
-                    //Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
-                }
-
-            }
-    }
 
     private fun observeLoading() {
         viewModel.loading.observe(viewLifecycleOwner) {
@@ -617,7 +511,6 @@ class AddServiceFragment : Fragment() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val location = locationResult.lastLocation
-            // TODO use current location long and lat
             lng = location.longitude.toString()
             lat = location.latitude.toString()
             //   Toast.makeText(context, "lat:" + lat + ", lng:" + lng, Toast.LENGTH_SHORT).show()

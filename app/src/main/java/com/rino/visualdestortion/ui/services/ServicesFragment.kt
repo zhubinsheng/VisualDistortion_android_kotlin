@@ -41,7 +41,7 @@ class ServicesFragment : Fragment() {
 
     private fun init() {
         viewModel = ServiceViewModel(requireActivity().application)
-        serviceAdapter = ServiceAdapter(arrayListOf(), viewModel)
+        serviceAdapter = ServiceAdapter(arrayListOf(), viewModel,requireActivity())
         setUpUI()
         observeData()
         serviceAdapter.updateServices(emptyList())
@@ -50,6 +50,7 @@ class ServicesFragment : Fragment() {
 
     private fun observeData() {
         observeNavToAddService()
+        observeNavToDailyPreparation()
         observeService()
         observeLoading()
         observeShowError()
@@ -85,6 +86,17 @@ class ServicesFragment : Fragment() {
         viewModel.navToAddService.observe(viewLifecycleOwner) {
             it?.let {
                 val action = ServicesFragmentDirections.actionServiceToAddService(
+                    it.name,
+                    it.id.toString()
+                )
+                findNavController().navigate(action)
+            }
+        }
+    }
+    private fun observeNavToDailyPreparation() {
+        viewModel.navToDailyPreparation.observe(viewLifecycleOwner) {
+            it?.let {
+                val action = ServicesFragmentDirections.actionServiceToDailyprepration(
                     it.name,
                     it.id.toString()
                 )

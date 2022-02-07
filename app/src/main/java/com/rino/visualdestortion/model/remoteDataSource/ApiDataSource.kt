@@ -75,7 +75,7 @@ class ApiDataSource:ApiInterface {
         return retrofit.setServiceForm(auth,serviceTypeIdBody,sectorNameBody,
                                        municipalityNameBody,districtNameBody,
                                        streetNameBody,latBody,lngBody,
-                                        serviceForm.beforeImg,serviceForm.afterImg,
+            serviceForm.beforeImg!!, serviceForm.afterImg!!,
                                          equipmentList,workerTypesList,
                                         serviceForm.mSquare,serviceForm.mCube,serviceForm.numberR,
                                         notesBody,percentageBody)
