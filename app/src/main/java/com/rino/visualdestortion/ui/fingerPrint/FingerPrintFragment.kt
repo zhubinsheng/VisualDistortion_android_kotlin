@@ -71,16 +71,16 @@ class FingerPrintFragment : Fragment() {
         // Inflate the layout for this fragment
         checkBiometricSupport()
 
-            val biometricPrompt = BiometricPrompt.Builder(requireActivity())
-                .setTitle("Title of Prompt")
-                .setSubtitle("Subtitle")
-                .setDescription("Uses FP")
-                .setNegativeButton("Cancel", requireActivity().mainExecutor, DialogInterface.OnClickListener { dialog, which ->
-                    notifyUser("Authentication Cancelled")
-                }).build()
+        val biometricPrompt = BiometricPrompt.Builder(requireActivity())
+            .setTitle("Title of Prompt")
+            .setSubtitle("Subtitle")
+            .setDescription("Uses FP")
+            .setNegativeButton("Cancel", requireActivity().mainExecutor, DialogInterface.OnClickListener { dialog, which ->
+                notifyUser("Authentication Cancelled")
+            }).build()
 
-            // start the authenticationCallback in mainExecutor
-            biometricPrompt.authenticate(getCancellationSignal(), requireActivity().mainExecutor, authenticationCallback)
+        // start the authenticationCallback in mainExecutor
+        biometricPrompt.authenticate(getCancellationSignal(), requireActivity().mainExecutor, authenticationCallback)
         return inflater.inflate(R.layout.fragment_finger_print, container, false)
 
     }
