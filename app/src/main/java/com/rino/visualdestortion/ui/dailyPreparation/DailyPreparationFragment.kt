@@ -246,6 +246,7 @@ class DailyPreparationFragment : Fragment() {
     }
 
     private fun navigateToAddService(serviceTypeName: String,serviceTypeID: String) {
+        findNavController().popBackStack()
         val action = DailyPreparationFragmentDirections.actionDailyPreparationToAddService(serviceTypeName,serviceTypeID)
         findNavController().navigate(action)
     }
