@@ -203,11 +203,6 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun validatConfirmPassword(): Boolean {
-        Toast.makeText(
-            requireActivity(),
-          "bool${newPass == newPassCongirm}",
-            Toast.LENGTH_SHORT
-        ).show()
       return  if (newPassCongirm.isEmpty()) {
             binding.textInputConfirmPassword.error = "برجاء ادخال ها العنصر"
             false
