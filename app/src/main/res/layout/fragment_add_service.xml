@@ -331,6 +331,7 @@
                             android:layout_height="wrap_content"
                             android:backgroundTint="@color/dark_gray"
                             android:hint="@string/mSquare"
+                            android:inputType="number"
                             android:maxLines="1"
                             android:textDirection="rtl"
                             android:textSize="@dimen/newsMoreTextSize" />
@@ -352,6 +353,7 @@
                             android:layout_height="wrap_content"
                             android:backgroundTint="@color/teal"
                             android:hint="@string/mCube"
+                            android:inputType="number"
                             android:maxLines="1"
                             android:textDirection="rtl"
                             android:textSize="@dimen/newsMoreTextSize" />
@@ -373,6 +375,7 @@
                             android:layout_height="wrap_content"
                             android:backgroundTint="@color/teal"
                             android:hint="@string/numberR"
+                            android:inputType="number"
                             android:maxLines="1"
                             android:textDirection="rtl"
                             android:textSize="@dimen/newsMoreTextSize" />
@@ -523,6 +526,7 @@
                         <EditText
                             android:id="@+id/precentage_Edit_txt"
                             android:layout_width="match_parent"
+                            android:inputType="number"
                             android:layout_height="match_parent"
                             android:layout_margin="20dp" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -582,18 +586,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/notesCard" />
 
-            <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </ScrollView>
-
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center" />
 
 </FrameLayout>
