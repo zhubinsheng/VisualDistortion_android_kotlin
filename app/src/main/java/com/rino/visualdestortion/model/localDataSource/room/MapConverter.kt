@@ -7,12 +7,12 @@ import com.google.gson.reflect.TypeToken
 
 class MapConverter {
     @TypeConverter
-    fun stringToMap(value: JsonElement): Map<String, String> {
-        return Gson().fromJson(value,  object : TypeToken<Map<String, String>>() {}.type)
+    fun stringToMap(value: String): Map<Long, Int> {
+        return Gson().fromJson(value,  object : TypeToken<Map<Long, Int>>() {}.type)
     }
 
     @TypeConverter
-    fun mapToString(value: Map<String, String>?): String {
+    fun mapToString(value: Map<Long, Int>?): String {
         return if(value == null) "" else Gson().toJson(value)
     }
 }

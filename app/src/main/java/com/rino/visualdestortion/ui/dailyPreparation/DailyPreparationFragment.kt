@@ -8,18 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
-import com.rino.visualdestortion.databinding.FragmentAddServiceBinding
 import com.rino.visualdestortion.databinding.FragmentDailyPreparationBinding
+import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
-import com.rino.visualdestortion.model.pojo.addService.FormData
-import com.rino.visualdestortion.ui.AddService.*
 import com.rino.visualdestortion.ui.home.MainActivity
+import java.text.DateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class DailyPreparationFragment : Fragment() {
@@ -42,7 +43,8 @@ class DailyPreparationFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-
+            serviceName = getArguments()?.get("serviceName").toString()
+            serviceTypeId = getArguments()?.get("serviceID").toString()
         }
     }
     override fun onResume() {
@@ -66,6 +68,7 @@ class DailyPreparationFragment : Fragment() {
     }
 
     private fun setUpUI() {
+        binding.serviceTypeNameTxt.text = R.string.DailyPreparation.toString()+"ل"+serviceName
         equipmentsAdapter = EquipmentsAdapter(arrayListOf(), viewModel, requireContext())
         workerTypesAdapter = WorkerTypesAdapter(arrayListOf(), viewModel, requireContext())
         binding.equipmentsRecycle.apply {
@@ -85,6 +88,9 @@ class DailyPreparationFragment : Fragment() {
         }
         binding.nextButton.setOnClickListener {
             if(validateData()) {
+                val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
+                viewModel.addDailyPreparation(DailyPreparation(serviceTypeId, date ,equipmentsAdapter.getEquipmentMap(),workerTypesAdapter.getWorkerTypesMap()))
+             //   Toast.makeText(requireContext(),"item : ${viewModel.getDailyPreparationByServiceID(serviceTypeId).toString()}",Toast.LENGTH_SHORT).show()
                 navigateToAddService(serviceName, serviceTypeId)
             }
         }

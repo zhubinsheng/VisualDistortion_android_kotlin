@@ -14,17 +14,19 @@ class DailyPreparationDataSource {
         return dailyPreparationDao.getAllData()
     }
 
-     fun getDailyPreparation_By_ServiceTypeID(serviceTypeID: String): DailyPreparation{
-        return dailyPreparationDao.getDailyPreparation_By_ServiceTypeID(serviceTypeID)
+     fun getDailyPreparation_By_ServiceTypeID(serviceTypeID: String,date :String): DailyPreparation?{
+        return dailyPreparationDao.getDailyPreparation_By_ServiceTypeID(serviceTypeID,date)
     }
 
-    suspend fun insertDailyPreparation(dailyPreparation: DailyPreparation){
+     fun insertDailyPreparation(dailyPreparation: DailyPreparation){
         dailyPreparationDao.insertDailyPreparation(dailyPreparation)
     }
 
-    suspend fun deleteAll(){
-        dailyPreparationDao.deleteAll()
+     fun deleteAll(){
+      dailyPreparationDao.deleteAll()
     }
-
+     fun deleteBy_ServiceTypeID(serviceTypeID: String,date :String){
+        dailyPreparationDao.deleteBy_ServiceTypeID(serviceTypeID,date)
+    }
 
 }

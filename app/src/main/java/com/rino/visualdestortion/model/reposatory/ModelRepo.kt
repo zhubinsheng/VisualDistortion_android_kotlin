@@ -340,16 +340,20 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
       return localDataSource.getAllData()
     }
 
-    override fun getDailyPreparation_By_ServiceTypeID(serviceTypeID: String): DailyPreparation {
-       return localDataSource.getDailyPreparation_By_ServiceTypeID(serviceTypeID)
+    override fun getDailyPreparation_By_ServiceTypeID(serviceTypeID: String,date :String): DailyPreparation? {
+       return localDataSource.getDailyPreparation_By_ServiceTypeID(serviceTypeID,date)
     }
 
-    override suspend fun insertDailyPreparation(dailyPreparation: DailyPreparation) {
+    override  fun insertDailyPreparation(dailyPreparation: DailyPreparation) {
       localDataSource.insertDailyPreparation(dailyPreparation)
     }
 
-    override suspend fun deleteAll() {
+    override  fun deleteAll() {
      localDataSource.deleteAll()
+    }
+
+    override fun delete_By_ServiceTypeID(serviceTypeID: String,date :String) {
+        localDataSource.deleteBy_ServiceTypeID(serviceTypeID,date)
     }
 
     override fun getFirstTimeLaunch(): Boolean {

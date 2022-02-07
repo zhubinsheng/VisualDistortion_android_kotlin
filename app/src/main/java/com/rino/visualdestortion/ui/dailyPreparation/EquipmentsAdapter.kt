@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.EquipmentItemBinding
-import com.rino.visualdestortion.ui.AddService.EquipmentItem
-import com.rino.visualdestortion.ui.dailyPreparation.DailyPreparationViewModel
 
 
 class EquipmentsAdapter(private var itemsList: ArrayList<EquipmentItem>, private var viewModel: DailyPreparationViewModel, private var context: Context) :

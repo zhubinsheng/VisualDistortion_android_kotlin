@@ -46,6 +46,9 @@
     <action
         android:id="@+id/action_service_to_addService"
         app:destination="@id/addServiceFragment" />
+        <action
+            android:id="@+id/action_service_to_Dailyprepration"
+            app:destination="@id/dailyPreparationFragment" />
 
     </fragment>
     <fragment

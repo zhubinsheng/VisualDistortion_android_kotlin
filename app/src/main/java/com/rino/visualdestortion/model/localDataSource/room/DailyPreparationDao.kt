@@ -12,14 +12,16 @@ interface DailyPreparationDao {
     @Query("SELECT * FROM DailyPreparation")
     fun getAllData(): Flow<List<DailyPreparation>>
 
-    @Query("SELECT * FROM DailyPreparation WHERE serviceTypeID=:serviceTypeID ")
-    fun getDailyPreparation_By_ServiceTypeID(serviceTypeID: String): DailyPreparation
+    @Query("SELECT * FROM DailyPreparation WHERE serviceTypeID=:serviceTypeID and date=:date")
+    fun getDailyPreparation_By_ServiceTypeID(serviceTypeID: String ,date :String): DailyPreparation?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertDailyPreparation(dailyPreparation: DailyPreparation)
+     fun insertDailyPreparation(dailyPreparation: DailyPreparation)
 
     @Query("DELETE FROM DailyPreparation")
-    suspend fun deleteAll()
+     fun deleteAll()
 
+    @Query("DELETE FROM DailyPreparation WHERE serviceTypeID=:serviceTypeID and date=:date")
+     fun deleteBy_ServiceTypeID(serviceTypeID: String,date :String)
 
 }

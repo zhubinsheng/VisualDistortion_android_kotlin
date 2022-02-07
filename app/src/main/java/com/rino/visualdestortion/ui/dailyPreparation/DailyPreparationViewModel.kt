@@ -7,12 +7,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
-import com.rino.visualdestortion.model.pojo.addService.FormData
-import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.remoteDataSource.Result
 import com.rino.visualdestortion.model.reposatory.ModelRepo
-import com.rino.visualdestortion.ui.AddService.EquipmentItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -42,6 +40,7 @@ class DailyPreparationViewModel (application: Application) : AndroidViewModel(ap
 
 
     fun getServicesData() {
+        _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = modelRepository.getServiceForm()) {
                 is Result.Success -> {
@@ -63,9 +62,18 @@ class DailyPreparationViewModel (application: Application) : AndroidViewModel(ap
                 }
             }
         }
-
+    }
+    fun addDailyPreparation(dailyPreparation: DailyPreparation){
+        viewModelScope.launch(Dispatchers.IO) {
+            modelRepository.insertDailyPreparation(dailyPreparation)
+        }
     }
 
+    fun getDailyPreparationByServiceID(serviceTypeID: String,date :String){
+        viewModelScope.launch(Dispatchers.IO) {
+            modelRepository.getDailyPreparation_By_ServiceTypeID(serviceTypeID,date)
+        }
+    }
     fun setEquipmentDeletedItem(equipmentItem: EquipmentItem) {
         _equipmentsDeleteItem.value = equipmentItem
     }
@@ -74,11 +82,5 @@ class DailyPreparationViewModel (application: Application) : AndroidViewModel(ap
         _workerTypeDeleteItem.value = workerTypeItem
     }
 
-    fun isFirstTimeLaunch(): Boolean {
-        return modelRepository.getFirstTimeLaunch()
-    }
 
-    fun setFirstTimeLaunch(firstTimeLaunch: Boolean) {
-        modelRepository.setFirstTimeLaunch(firstTimeLaunch)
-    }
 }

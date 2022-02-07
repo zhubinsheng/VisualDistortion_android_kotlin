@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
@@ -23,10 +24,10 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
     private var _navigateToQRCode = MutableLiveData<String>()
+    private var _getDailyPreparation = MutableLiveData<DailyPreparation?>()
     private var _getServicesData = MutableLiveData<AddServiceResponse>()
     private var _setServiceForm = MutableLiveData<QRCode>()
-    private var _equipmentsDeleteItem = MutableLiveData<EquipmentItem>()
-    private var _workerTypeDeleteItem = MutableLiveData<EquipmentItem>()
+
 
     val loading: LiveData<Int>
         get() = _loading
@@ -40,14 +41,12 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     val setServiceForm: LiveData<QRCode>
         get() = _setServiceForm
 
-    val equipmentsDeleteItem: LiveData<EquipmentItem>
-        get() = _equipmentsDeleteItem
-
-    val workerTypeDeleteItem: LiveData<EquipmentItem>
-        get() = _workerTypeDeleteItem
+    val getDailyPreparation: LiveData<DailyPreparation?>
+        get() = _getDailyPreparation
 
 
     fun getServicesData() {
+        _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = modelRepository.getServiceForm()) {
                 is Result.Success -> {
@@ -73,6 +72,7 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun setFormData(serviceForm: FormData) {
+        _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = modelRepository.setServiceForm(serviceForm)) {
                 is Result.Success -> {
@@ -96,13 +96,18 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
         }
 
     }
+   fun addDailyPreparation(dailyPreparation: DailyPreparation){
+       viewModelScope.launch(Dispatchers.IO) {
+         modelRepository.insertDailyPreparation(dailyPreparation)
+       }
+   }
 
-    fun setEquipmentDeletedItem(equipmentItem: EquipmentItem) {
-        _equipmentsDeleteItem.value = equipmentItem
-    }
-
-    fun setWorkerTypeDeletedItem(workerTypeItem: EquipmentItem) {
-        _workerTypeDeleteItem.value = workerTypeItem
+    fun getDailyPreparationByServiceID(serviceTypeID: String,date :String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val dailyPreparation = modelRepository.getDailyPreparation_By_ServiceTypeID(serviceTypeID,date)
+            Log.e("getDailyPreparation_By_ServiceTypeID",dailyPreparation.toString())
+            _getDailyPreparation.postValue(dailyPreparation)
+        }
     }
 
     fun isFirstTimeLaunch(): Boolean {
