@@ -1,13 +1,16 @@
 package com.rino.visualdestortion.ui.fingerPrint
 
+import android.Manifest
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.biometrics.BiometricPrompt
 import android.os.Build
 import android.os.Bundle
 import android.os.CancellationSignal
+import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +32,7 @@ class FingerPrintFragment : Fragment() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {
                     super.onAuthenticationError(errorCode, errString)
                     notifyUser("Authentication error: $errString")
+                    enablePermission()
                 }
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
                     super.onAuthenticationSucceeded(result)
@@ -44,6 +48,20 @@ class FingerPrintFragment : Fragment() {
         val action = FingerPrintFragmentDirections.actionFingerPrintToLogin()
         findNavController().navigate(action)
     }
+    private fun enablePermission() {
+        val intent = Intent(Settings.ACTION_FINGERPRINT_ENROLL)
+        startActivity(intent)
+    }
+
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(
+                Manifest.permission.USE_BIOMETRIC,
+            ),
+            1
+        )
+    }
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreateView(
@@ -53,16 +71,16 @@ class FingerPrintFragment : Fragment() {
         // Inflate the layout for this fragment
         checkBiometricSupport()
 
-            val biometricPrompt = BiometricPrompt.Builder(requireActivity())
-                .setTitle("Title of Prompt")
-                .setSubtitle("Subtitle")
-                .setDescription("Uses FP")
-                .setNegativeButton("Cancel", requireActivity().mainExecutor, DialogInterface.OnClickListener { dialog, which ->
-                    notifyUser("Authentication Cancelled")
-                }).build()
+        val biometricPrompt = BiometricPrompt.Builder(requireActivity())
+            .setTitle("Title of Prompt")
+            .setSubtitle("Subtitle")
+            .setDescription("Uses FP")
+            .setNegativeButton("Cancel", requireActivity().mainExecutor, DialogInterface.OnClickListener { dialog, which ->
+                notifyUser("Authentication Cancelled")
+            }).build()
 
-            // start the authenticationCallback in mainExecutor
-            biometricPrompt.authenticate(getCancellationSignal(), requireActivity().mainExecutor, authenticationCallback)
+        // start the authenticationCallback in mainExecutor
+        biometricPrompt.authenticate(getCancellationSignal(), requireActivity().mainExecutor, authenticationCallback)
         return inflater.inflate(R.layout.fragment_finger_print, container, false)
 
     }
@@ -82,10 +100,12 @@ class FingerPrintFragment : Fragment() {
         val keyguardManager = requireActivity().getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         if (!keyguardManager.isDeviceSecure) {
             notifyUser("Fingerprint authentication has not been enabled in settings")
+            enablePermission()
             return false
         }
         if (ActivityCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.USE_BIOMETRIC) != PackageManager.PERMISSION_GRANTED) {
             notifyUser("Fingerprint Authentication Permission is not enabled")
+            requestPermission()
             return false
         }
         return if (requireActivity().packageManager.hasSystemFeature(PackageManager.FEATURE_FINGERPRINT)) {
