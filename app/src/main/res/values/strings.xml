@@ -37,6 +37,7 @@
     <string name="afterImage">الصورة بعد المهمة</string>
     <string name="beforeImage">الصورة قبل المهمة</string>
     <string name="reset_password_hint">كلمة المرور الجديدة</string>
+    <string name="reset_confirm_password_hint">تأكيد كلمة المرور الجديدة</string>
     <string name="code">كود التفعيل</string>
     <string name="saveNewPaswword">حفظ كلمة المرور الجديدة</string>
     <string name="requestotpCode">"ارسال الكود "</string>
