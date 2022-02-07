@@ -26,8 +26,8 @@
                 android:padding="@dimen/paddingText"
                 android:text="الاتربه والاحجام الكبيره من مخلفات الهدم "
                 android:textColor="@color/teal"
-                android:textStyle="bold"
                 android:textSize="@dimen/headerTextSize"
+                android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -390,8 +390,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layoutDirection="rtl"
                         android:layout_marginTop="20dp"
+                        android:layoutDirection="rtl"
                         android:textDirection="rtl"
                         app:errorEnabled="true">
 
@@ -463,6 +463,7 @@
 
 
     </ScrollView>
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="50dp"
