@@ -381,6 +381,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:padding="@dimen/paddingLayout"
                     android:background="@drawable/rectangle"
                     android:orientation="vertical">
 
@@ -394,13 +395,16 @@
                         android:layout_marginTop="20dp"
                         android:textDirection="rtl"
                         app:errorEnabled="true">
-
                         <EditText
                             android:id="@+id/precentage_Edit_txt"
                             android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/dark_gray"
                             android:inputType="number"
-                            android:layout_height="match_parent"
-                            android:layout_margin="20dp" />
+                            android:maxLines="1"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
+
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -431,13 +435,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/rectangle"
+                    android:padding="@dimen/paddingLayout"
                     android:orientation="vertical">
-
-                    <EditText
-                        android:id="@+id/notes_Edit_txt"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputNotes"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="20dp" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layoutDirection="rtl"
+                        android:layout_marginTop="20dp"
+                        android:textDirection="rtl"
+                        app:errorEnabled="true">
+                        <EditText
+                            android:id="@+id/notes_Edit_txt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/dark_gray"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/newsMoreTextSize" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

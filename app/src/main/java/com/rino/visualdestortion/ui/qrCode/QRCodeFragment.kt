@@ -23,16 +23,16 @@ class QRCodeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentQRCodeBinding.inflate(inflater, container, false)
-        binding.progress.visibility = View.VISIBLE
         if (getArguments() != null) {
             // The getPrivacyPolicyLink() method will be created automatically.
             val url = getArguments()?.get("QRCodeURL").toString()
             Log.e("QRCodeURL", url)
             downloadQRCode(url)
+            binding.progress.visibility = View.GONE
         }
-        binding.navigateToHome.setOnClickListener({
+        binding.navigateToHome.setOnClickListener {
             navigateToHome()
-        })
+        }
         return binding.root
     }
 
@@ -45,7 +45,7 @@ class QRCodeFragment : Fragment() {
         Picasso.with(requireContext())
             .load(url)
             .into(binding.qrCodeImg)
-        binding.progress.visibility = View.GONE
+
     }
 
 }

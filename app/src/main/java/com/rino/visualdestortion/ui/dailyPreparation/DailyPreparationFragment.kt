@@ -2,13 +2,13 @@ package com.rino.visualdestortion.ui.dailyPreparation
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.view.isGone
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -19,11 +19,9 @@ import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.ui.home.MainActivity
 import java.text.DateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
-class DailyPreparationFragment : Fragment() {
+class DailyPreparationFragment : Fragment()  {
     private lateinit var viewModel: DailyPreparationViewModel
     private lateinit var binding: FragmentDailyPreparationBinding
     private lateinit var addServiceResponse: AddServiceResponse
@@ -246,9 +244,10 @@ class DailyPreparationFragment : Fragment() {
     }
 
     private fun navigateToAddService(serviceTypeName: String,serviceTypeID: String) {
-        findNavController().popBackStack()
         val action = DailyPreparationFragmentDirections.actionDailyPreparationToAddService(serviceTypeName,serviceTypeID)
         findNavController().navigate(action)
+
     }
+
 
 }

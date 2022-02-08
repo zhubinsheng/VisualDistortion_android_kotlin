@@ -63,7 +63,9 @@ class EquipmentsAdapter(private var itemsList: ArrayList<EquipmentItem>, private
                 viewModel.setEquipmentDeletedItem(itemsList[position])
                 itemsList.remove(itemsList[position])
                 notifyDataSetChanged()
-                updateItems(itemsList)
+//                updateItems(itemsList)
+//                notifyDataSetChanged()
+
             }
             // Create the AlertDialog
             val alertDialog: AlertDialog = builder.create()

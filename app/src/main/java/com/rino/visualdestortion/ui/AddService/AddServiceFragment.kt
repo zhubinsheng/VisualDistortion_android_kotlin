@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,6 +63,10 @@ class AddServiceFragment : Fragment() {
     private var serviceName = ""
     private var lat = ""
     private var lng = ""
+    private var isSectorSelected = false
+    private var isMunicipalitySelected = false
+    private var isDistrictSelected = false
+    private var isStreetSelected = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,6 +109,8 @@ class AddServiceFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
+//        beforeImgBody = null
+//        afterImgBody = null
         if (fusedLocationProviderClient != null) {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         }
@@ -119,9 +126,7 @@ class AddServiceFragment : Fragment() {
     private fun setUpUI() {
         getLatestLocation()
         viewModel.getServicesData()
-
         if (getArguments() != null) {
-
             serviceName = getArguments()?.get("serviceName").toString()
             if (serviceName.equals("مخلفات الهدم")) {
                 binding.textInputMSquare.isGone = true
@@ -138,8 +143,8 @@ class AddServiceFragment : Fragment() {
             serviceTypeId = getArguments()?.get("serviceID").toString()
         }
         binding.submitButton.setOnClickListener {
-             observeDailyPreparation()
-            formData = getFormDataFromUi(serviceName)
+
+            observeDailyPreparation()
 
         }
         binding.beforPic.setOnClickListener {
@@ -154,20 +159,32 @@ class AddServiceFragment : Fragment() {
         viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
         viewModel.getDailyPreparation.observe(viewLifecycleOwner) {
             if (it != null) {
+                formData = getFormDataFromUi(serviceName)
                 formData.WorkersTypesList = it.workerTypesList
                 formData.equipmentList = it.workerTypesList
-                if (validateData(formData) && lat != "" && lng != "")
+                if (validateData(formData) && lat != "" && lng != "") {
                     viewModel.setFormData(formData)
-            }
+                }
+//                else{
+//                    getLatestLocation()
+//                    if (validateData(formData) && lat != "" && lng != "") {
+//                        viewModel.setFormData(formData)
+//                    }
+//                }
             }
         }
+    }
 
     private fun getFormDataFromUi(serviceName: String): FormData {
+   //     Toast.makeText(requireContext(),"Before : ${beforeImgBody.toString()}  ,Aftar : ${afterImgBody.toString()}",Toast.LENGTH_SHORT).show()
         var formData = FormData()
         if (serviceName == "مخلفات الهدم") {
+            if(binding.editTextMCube.text.toString()!="")
             formData.mCube = binding.editTextMCube.text.toString().toInt()
+            if(binding.editTextNumberR.text.toString()!="")
             formData.numberR = binding.editTextNumberR.text.toString().toInt()
         } else if (serviceName == "الكتابات المشوهة")
+            if(binding.editTextMSquare.text.toString()!="")
             formData.mSquare = binding.editTextMSquare.text.toString().toInt()
 
         formData.serviceTypeId = serviceTypeId
@@ -180,8 +197,14 @@ class AddServiceFragment : Fragment() {
      //   formData.WorkersTypesList = workerTypesAdapter.getWorkerTypesMap()
     //    formData.equipmentList = equipmentsAdapter.getEquipmentMap()
         formData.notes = binding.notesEditTxt.text.toString()
-        formData.beforeImg = beforeImgBody
-        formData.afterImg = afterImgBody
+        if(beforeImgBody != null) {
+
+            formData.beforeImg = beforeImgBody as MultipartBody.Part
+        }
+        Log.e("Image","Before : ${beforeImgBody.toString()}  ,Aftar : ${afterImgBody.toString()}")
+        if(afterImgBody != null) {
+            formData.afterImg = afterImgBody as MultipartBody.Part
+        }
         formData.percentage = binding.precentageEditTxt.text.toString()
         return formData
     }
@@ -252,6 +275,7 @@ class AddServiceFragment : Fragment() {
         binding.sectorTextView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
+                isSectorSelected = true
                 setMunicipalitesMenuItems(position)
             }
 
@@ -272,6 +296,7 @@ class AddServiceFragment : Fragment() {
         binding.municipalitesTextView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
+                isMunicipalitySelected = true
                 setDistrictsMenuItems(posSector, position)
 
             }
@@ -293,6 +318,7 @@ class AddServiceFragment : Fragment() {
         binding.districtsTextView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
+                isDistrictSelected = true
                 setStreetsMenuItems(posSector, posMunicipalite, position)
                 // Display the clicked item using toast
                 //   Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
@@ -301,52 +327,139 @@ class AddServiceFragment : Fragment() {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun validateData(formData: FormData): Boolean {
-        var flag = true
+        var flagSector = true
+        var flagDistrict = true
+        var flagMunicipality = true
+        var flagStreet = true
+        var flagBeforeImg = true
+        var flagAfterImg = true
+        var flagPrecentage = true
+        var flagNumberR = true
+        var flagMCube = true
+        var flagMSquare = true
+        var flagNotes = true
      //  Toast.makeText(requireContext(),"Selected : ${formData.sectorName == R.string.sector.toString()}",Toast.LENGTH_SHORT).show()
-        if (formData.sectorName == R.string.sector.toString()) {
+        if (!isSectorSelected) {
             binding.sectorTextInputLayout.error = "برجاء ادخال هذا العنصر"
-            flag = false
+            flagSector = false
+        }
+        else {
+            binding.sectorTextInputLayout.error = null
+            binding.sectorTextInputLayout.isErrorEnabled = false
+            flagSector = true
         }
 
-        if (formData.districtName == R.string.districts.toString()) {
+        if (!isDistrictSelected) {
             binding.districtsTextInputLayout.error = "برجاء ادخال هذا العنصر"
-            flag = false
+            flagDistrict = false
         }
-        if (formData.municipalityName == R.string.municipalites.toString()) {
+        else {
+            binding.districtsTextInputLayout.error = null
+            binding.districtsTextInputLayout.isErrorEnabled = false
+            flagDistrict = true
+        }
+        if (!isMunicipalitySelected) {
             binding.municipalitesTextInputLayout.error = "برجاء ادخال هذا العنصر"
-            flag = false
+            flagMunicipality = false
         }
-        if (formData.streetName == R.string.street.toString()) {
+        else {
+            binding.municipalitesTextInputLayout.error = null
+            binding.municipalitesTextInputLayout.isErrorEnabled = false
+            flagMunicipality = true
+        }
+        if (!isStreetSelected) {
             binding.streetTextInputLayout.error = "برجاء ادخال هذا العنصر"
-            flag = false
+            flagStreet = false
+        }
+        else {
+            binding.streetTextInputLayout.error = null
+            binding.streetTextInputLayout.isErrorEnabled = false
+            flagStreet = true
+        }
+        //binding.beforPic.drawable == resources.getDrawable(R.drawable.picture)
+       // Toast.makeText(requireContext(),"Before : ${beforeImgBody == null}  ,Aftar : ${afterImgBody == null}",Toast.LENGTH_SHORT).show()
+        if (beforeImgBody == null) {
+            binding.textInputbeforeImg.error = "      مطلوب"
+            flagBeforeImg = false
+        }
+        else {
+            binding.textInputbeforeImg.error = null
+            binding.textInputbeforeImg.isErrorEnabled = false
+             flagBeforeImg = true
+        }
+        if (afterImgBody == null) {
+            binding.textInputAfterImg.error = "      مطلوب"
+            flagAfterImg = false
+        }
+        else {
+            binding.textInputAfterImg.error = null
+            binding.textInputAfterImg.isErrorEnabled = false
+             flagAfterImg = true
+        }
+        if (formData.percentage == null || formData.percentage =="") {
+            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
+            flagPrecentage = false
+        }
+        else {
+            if (formData.percentage.toInt() > 100) {
+                binding.textInputPercentage.error = "هذا العنصر يجب ان يكون بين 0:100 "
+                flagPrecentage = false
+            }
+            else{
+            binding.textInputPercentage.error = null
+            binding.textInputPercentage.isErrorEnabled = false
+                flagPrecentage = true
+            }
         }
 
-        //binding.beforPic.drawable == resources.getDrawable(R.drawable.picture)
-        if (formData.beforeImg == null) {
-            binding.textInputbeforeImg.error = "برجاء ادخال هذا العنصر"
-            flag = false
-        }
-        if (formData.percentage == null) {
-            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
-            flag = false
+        if (formData.notes != null){
+            if (formData.notes!!.length>500) {
+               binding.textInputNotes.error = "هذا العنصر يجب ان يكون أقل من 500 حرف  "
+                flagNotes = false
+            }
+            else{
+                binding.textInputNotes.error = null
+                binding.textInputNotes.isErrorEnabled = false
+                 flagNotes = true
+            }
         }
         if (serviceName.equals("مخلفات الهدم")) {
             if (formData.mCube == null) {
                 binding.textInputMCube.error = "برجاء ادخال هذا العنصر"
-                flag = false
+                flagMCube = false
+            }
+            else{
+                binding.textInputMCube.error = null
+                binding.textInputMCube.isErrorEnabled = false
+                flagMCube = true
             }
             if (formData.numberR == null) {
                 binding.textInputNumberR.error = "برجاء ادخال هذا العنصر"
-                flag = false
+                flagNumberR = false
+            }
+            else{
+                binding.textInputNumberR.error = null
+                binding.textInputNumberR.isErrorEnabled = false
+                flagNumberR = true
             }
 
         } else if (serviceName.equals("الكتابات المشوهة")) {
             if (formData.mSquare == null) {
                 binding.textInputMSquare.error = "برجاء ادخال هذا العنصر"
-                flag = false
+                flagMSquare = false
+            }
+            else{
+                binding.textInputMSquare.error = null
+                binding.textInputMSquare.isErrorEnabled = false
+                flagMSquare = true
             }
 
         }
+      val flag =(flagSector && flagDistrict && flagMunicipality && flagStreet &&
+              flagAfterImg && flagBeforeImg &&
+              flagMCube && flagMSquare && flagNumberR &&
+              flagPrecentage && flagNotes
+                )
         return flag
     }
 
@@ -367,6 +480,7 @@ class AddServiceFragment : Fragment() {
         binding.streetTextView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
+                isStreetSelected = true
                 //  setStreetsMenuItems(posSector,posMunicipalite,position)
                 // Display the clicked item using toast
                 // Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
@@ -484,6 +598,7 @@ class AddServiceFragment : Fragment() {
             }
         } else {
             requestPermission()
+            navigateToAppSetting()
         }
     }
 

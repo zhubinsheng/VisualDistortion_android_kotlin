@@ -66,8 +66,8 @@ class WorkerTypesAdapter(private var itemsList: ArrayList<EquipmentItem>, privat
         builder.setPositiveButton(R.string.yesMessage) { dialogInterface, which ->
             viewModel.setWorkerTypeDeletedItem(itemsList[position])
             itemsList.remove(itemsList[position])
+        //    updateItems(itemsList)
             notifyDataSetChanged()
-            updateItems(itemsList)
         }
         // Create the AlertDialog
         val alertDialog: AlertDialog = builder.create()
