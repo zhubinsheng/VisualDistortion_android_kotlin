@@ -2,12 +2,13 @@ package com.rino.visualdestortion.ui.qrCode
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.rino.visualdestortion.databinding.FragmentQRCodeBinding
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
 
@@ -28,7 +29,7 @@ class QRCodeFragment : Fragment() {
             val url = getArguments()?.get("QRCodeURL").toString()
             Log.e("QRCodeURL", url)
             downloadQRCode(url)
-            binding.progress.visibility = View.GONE
+
         }
         binding.navigateToHome.setOnClickListener {
             navigateToHome()
@@ -42,10 +43,16 @@ class QRCodeFragment : Fragment() {
     }
 
     private fun downloadQRCode(url: String) {
-        Picasso.with(requireContext())
-            .load(url)
-            .into(binding.qrCodeImg)
 
-    }
+        Picasso.with(requireContext()).load(url)
+            .into(binding.qrCodeImg, object : Callback {
+                override fun onSuccess() {
+                    if (binding.progress != null) {
+                        binding.progress.setVisibility(View.GONE)
+                    }
+                }
+                override fun onError() {}
+            })
+   }
 
 }
