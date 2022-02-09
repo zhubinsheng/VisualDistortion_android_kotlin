@@ -21,8 +21,10 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -73,6 +75,13 @@ class AddServiceFragment : Fragment() {
         super.onCreate(savedInstanceState)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity().application)
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            @SuppressLint("ResourceType")
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     private fun requestAllPermissions() {
@@ -124,7 +133,6 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun setUpUI() {
-        getLatestLocation()
         viewModel.getServicesData()
         if (getArguments() != null) {
             serviceName = getArguments()?.get("serviceName").toString()
@@ -141,6 +149,10 @@ class AddServiceFragment : Fragment() {
             }
             binding.serviceTypeNameTxt.text = serviceName
             serviceTypeId = getArguments()?.get("serviceID").toString()
+        }
+        binding.notesEditTxt.addTextChangedListener {
+            val notesLength =  binding.notesEditTxt.text.toString().length
+            binding.notesLength.text = notesLength.toString()+" حرف "
         }
         binding.submitButton.setOnClickListener {
 
@@ -159,18 +171,19 @@ class AddServiceFragment : Fragment() {
         viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
         viewModel.getDailyPreparation.observe(viewLifecycleOwner) {
             if (it != null) {
+                getLatestLocation()
                 formData = getFormDataFromUi(serviceName)
                 formData.WorkersTypesList = it.workerTypesList
                 formData.equipmentList = it.workerTypesList
                 if (validateData(formData) && lat != "" && lng != "") {
                     viewModel.setFormData(formData)
                 }
-//                else{
-//                    getLatestLocation()
-//                    if (validateData(formData) && lat != "" && lng != "") {
-//                        viewModel.setFormData(formData)
-//                    }
-//                }
+                else{
+                    getLatestLocation()
+                    if (validateData(formData) && lat != "" && lng != "") {
+                        viewModel.setFormData(formData)
+                    }
+               }
             }
         }
     }
@@ -597,7 +610,7 @@ class AddServiceFragment : Fragment() {
                 enableLocationPermission()
             }
         } else {
-            requestPermission()
+          //  requestPermission()
             navigateToAppSetting()
         }
     }

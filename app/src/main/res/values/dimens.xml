@@ -8,4 +8,5 @@
     <dimen name="paddingLayout">15dp</dimen>
     <dimen name="paddingText">8dp</dimen>
     <dimen name="marginTextField">8dp</dimen>
+    <dimen name="welcomeMarginTop">40dp</dimen>
 </resources>

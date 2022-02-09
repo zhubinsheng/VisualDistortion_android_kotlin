@@ -5,9 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import com.rino.visualdestortion.R
+import com.rino.visualdestortion.databinding.FragmentLoginBinding
+import com.rino.visualdestortion.databinding.FragmentSplashBinding
 import com.rino.visualdestortion.ui.home.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,12 +19,16 @@ import kotlinx.coroutines.launch
 
 class SplashFragment : Fragment() {
 
+    private val SPLASH_TIME_OUT = 3000L
+    lateinit var binding: FragmentSplashBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
     }
+
+
+
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true
@@ -31,17 +38,39 @@ class SplashFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
+        binding = FragmentSplashBinding.inflate(inflater, container, false)
         splashSetup()
-        return inflater.inflate(R.layout.fragment_splash, container, false)
+        setAnimation()
+        return binding.root
     }
     private fun splashSetup(){
         CoroutineScope(Dispatchers.Default).launch{
-            delay(3000)
+            delay(SPLASH_TIME_OUT)
             CoroutineScope(Dispatchers.Main).launch{
                 findNavController().popBackStack()
                 findNavController().navigate(R.id.welcomeFragment)
             }
         }
+    }
+
+    private fun setAnimation() {
+        binding.part2Txt.animation = AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.down_to_up
+        )
+        binding.logoImg.animation = AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.up_to_down
+        )
+        binding.part1Txt.animation = AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.left_to_right
+        )
+        binding.part3Txt.animation = AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.right_to_left
+        )
     }
 
 }

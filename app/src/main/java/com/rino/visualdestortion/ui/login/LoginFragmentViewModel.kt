@@ -32,6 +32,7 @@ class LoginFragmentViewModel(application: Application) : AndroidViewModel(applic
 
 
     fun login(loginRequest: LoginRequest?) {
+        _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = loginRequest?.let { modelRepository.login(it) }) {
                 is Result.Success -> {

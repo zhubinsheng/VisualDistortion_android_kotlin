@@ -308,6 +308,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     404 -> {
                         Log.e("Error 404", "Not Found")
+                        result = Result.Error(Exception("Not Found"))
                     }
                     500 -> {
                         Log.e("Error 500", "Server Error")
@@ -315,6 +316,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth")
+                        result = Result.Error(Exception("Not Auth please, logout and login again"))
                         if(isLogin())
                             Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
                         //refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))

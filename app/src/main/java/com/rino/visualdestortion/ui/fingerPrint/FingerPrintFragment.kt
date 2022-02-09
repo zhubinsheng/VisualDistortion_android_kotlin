@@ -33,6 +33,7 @@ class FingerPrintFragment : Fragment() {
                     super.onAuthenticationError(errorCode, errString)
                     notifyUser("Authentication error: $errString")
                     enablePermission()
+                    navgateToLogin()
                 }
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
                     super.onAuthenticationSucceeded(result)

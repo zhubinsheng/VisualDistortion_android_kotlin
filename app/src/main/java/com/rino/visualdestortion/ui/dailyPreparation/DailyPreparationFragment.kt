@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -44,6 +46,14 @@ class DailyPreparationFragment : Fragment()  {
             serviceName = getArguments()?.get("serviceName").toString()
             serviceTypeId = getArguments()?.get("serviceID").toString()
         }
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            @SuppressLint("ResourceType")
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
     }
     override fun onResume() {
         super.onResume()
@@ -66,7 +76,7 @@ class DailyPreparationFragment : Fragment()  {
     }
 
     private fun setUpUI() {
-        binding.serviceTypeNameTxt.text = R.string.DailyPreparation.toString()+"ل"+serviceName
+       // binding.serviceTypeNameTxt.text = "${serviceName}التحضير اليومى ل"
         equipmentsAdapter = EquipmentsAdapter(arrayListOf(), viewModel, requireContext())
         workerTypesAdapter = WorkerTypesAdapter(arrayListOf(), viewModel, requireContext())
         binding.equipmentsRecycle.apply {

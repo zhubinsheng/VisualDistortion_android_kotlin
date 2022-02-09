@@ -1,17 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.splash.SplashFragment"
     android:background="@color/teal"
-    >
+    tools:context=".ui.splash.SplashFragment">
 
    <ImageView
+       android:id="@+id/logo_img"
        android:layout_width="100dp"
        android:layout_height="100dp"
        android:layout_gravity="center"
        android:background="@color/teal"
-       android:src="@drawable/splash_icon"/>
+       android:src="@drawable/splash_icon"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+   <TextView
+       android:id="@+id/part1_txt"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:fontFamily="cursive"
+       android:text="@string/maintenance"
+       android:textColor="@color/white"
+       android:layout_marginTop="@dimen/welcomeMarginTop"
+       android:textSize="25dp"
+       android:textStyle="bold"
+       app:layout_constraintEnd_toStartOf="@+id/part2_txt"
+       app:layout_constraintTop_toBottomOf="@+id/logo_img" />
+
+   <TextView
+       android:id="@+id/part3_txt"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:fontFamily="cursive"
+       android:text="@string/company"
+       android:textColor="@color/white"
+       android:layout_marginTop="@dimen/welcomeMarginTop"
+       android:textSize="25dp"
+       android:textStyle="bold"
+       app:layout_constraintStart_toEndOf="@+id/part2_txt"
+       app:layout_constraintTop_toBottomOf="@+id/logo_img" />
+
+   <TextView
+       android:id="@+id/part2_txt"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:fontFamily="cursive"
+       android:text="@string/rhino"
+       android:textColor="@color/white"
+       android:layout_marginTop="@dimen/welcomeMarginTop"
+       android:textSize="25dp"
+       android:textStyle="bold"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/logo_img" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

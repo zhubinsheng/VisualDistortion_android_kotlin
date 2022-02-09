@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.services.ServicesFragment">
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_gravity="center_horizontal"
         android:text="@string/services"
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="@color/teal"
         android:layout_marginBottom="25dp"
-        android:layout_marginTop="25dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="25dp" />
     />
 
     <LinearLayout
@@ -29,7 +26,6 @@
         android:layout_height="match_parent"
         android:background="@drawable/card"
         android:paddingTop="30dp"
-        android:layout_marginTop="50dp"
         android:padding="15dp"
         android:backgroundTint="@color/gray"
         android:orientation="vertical"
@@ -48,7 +44,7 @@
         tools:listitem="@layout/service_item"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
     </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <ProgressBar
         android:id="@+id/progress"
@@ -57,4 +53,4 @@
         android:layout_gravity="center"
         />
 
-</FrameLayout>
+</LinearLayout>

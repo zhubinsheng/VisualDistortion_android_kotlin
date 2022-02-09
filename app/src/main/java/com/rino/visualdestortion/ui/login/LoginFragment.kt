@@ -40,7 +40,7 @@ class LoginFragment : Fragment() {
 
     private fun loginButtonOnClick() {
         binding.loginButton.setOnClickListener {
-            binding.progress.visibility = View.VISIBLE
+         //   binding.progress.visibility = View.VISIBLE
             email = binding.editTextEmail.text.toString()
             pass = binding.editTextPassword.text.toString()
             validateData()
@@ -68,7 +68,7 @@ class LoginFragment : Fragment() {
     private fun observeSuccessLogin() {
         viewModel.isLogin.observe(viewLifecycleOwner) {
             if (it) {
-                binding.progress.visibility = View.GONE
+             //   binding.progress.visibility = View.GONE
                 Toast.makeText(
                     requireActivity(),
                     " Login Successfully",

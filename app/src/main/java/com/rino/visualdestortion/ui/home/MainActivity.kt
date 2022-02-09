@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         handler.removeCallbacks(runnable)
     }
     private fun startHandler() {
-        handler.postDelayed(runnable, 240000.toLong())
+        handler.postDelayed(runnable, 60000.toLong())
     }
     private fun navigationSetup(navController: NavController, bottomNavigation: MeowBottomNavigation){
         bottomNavigation.add(MeowBottomNavigation.Model(1, R.drawable.ic_baseline_home_24))

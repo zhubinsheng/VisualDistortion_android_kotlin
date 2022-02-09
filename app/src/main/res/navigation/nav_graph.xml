@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/servicesFragment">
+    app:startDestination="@id/splashFragment">
 
 
     <fragment
@@ -13,7 +13,9 @@
         tools:layout="@layout/fragment_welcome">
     <action
         android:id="@+id/action_welcome_to_login"
-        app:destination="@id/loginFragment2" />
+        app:destination="@id/loginFragment2"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -28,10 +30,17 @@
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_login_to_ServiceFragment"
-            app:destination="@id/servicesFragment" />
+            app:destination="@id/servicesFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@anim/right_to_left"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_login_to_resetPass"
-            app:destination="@id/resetPasswordFragment" />
+            app:destination="@id/resetPasswordFragment"
+
+            />
     </fragment>
 
     <fragment
@@ -46,10 +55,18 @@
         tools:layout="@layout/fragment_services">
     <action
         android:id="@+id/action_service_to_addService"
-        app:destination="@id/addServiceFragment" />
+        app:destination="@id/addServiceFragment"
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out"
+        app:popEnterAnim="@anim/right_to_left"
+        />
         <action
             android:id="@+id/action_service_to_Dailyprepration"
-            app:destination="@id/dailyPreparationFragment" />
+            app:destination="@id/dailyPreparationFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@anim/right_to_left"
+           />
 
     </fragment>
     <fragment
@@ -64,7 +81,11 @@
         tools:layout="@layout/fragment_setting" >
         <action
             android:id="@+id/action_setting_to_login"
-            app:destination="@id/loginFragment2" />
+            app:destination="@id/loginFragment2"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@anim/right_to_left"
+            />
     </fragment>
     <fragment
         android:id="@+id/addServiceFragment"
@@ -73,7 +94,11 @@
         tools:layout="@layout/fragment_add_service" >
         <action
             android:id="@+id/action_addService_to_QRCode"
-            app:destination="@id/QRCodeFragment" />
+            app:destination="@id/QRCodeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@anim/right_to_left"
+            app:popUpTo="@id/servicesFragment"/>
         <argument
             android:name="serviceName"
             app:argType="string"
@@ -94,7 +119,11 @@
             android:defaultValue="http://sohamerp.com/avo/avo_privacy_policy.html"/>
         <action
             android:id="@+id/action_QRCode_to_Services"
-            app:destination="@id/servicesFragment" />
+            app:destination="@id/servicesFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@anim/right_to_left"
+          />
     </fragment>
     <fragment
         android:id="@+id/resetPasswordFragment"
@@ -103,7 +132,10 @@
         tools:layout="@layout/fragment_reset_password" >
         <action
             android:id="@+id/action_resetPass_to_Services"
-            app:destination="@id/servicesFragment" />
+            app:destination="@id/servicesFragment"
+
+            app:popEnterAnim="@anim/right_to_left"
+          />
     </fragment>
     <fragment
         android:id="@+id/fingerPrintFragment"
@@ -112,7 +144,11 @@
         tools:layout="@layout/fragment_finger_print" >
         <action
             android:id="@+id/action_fingerPrint_to_login"
-            app:destination="@id/loginFragment2" />
+            app:destination="@id/loginFragment2"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@anim/right_to_left"
+            />
     </fragment>
     <fragment
         android:id="@+id/dailyPreparationFragment"
@@ -121,7 +157,12 @@
         tools:layout="@layout/fragment_daily_preparation" >
         <action
             android:id="@+id/action_dailyPreparation_to_addService"
-            app:destination="@id/addServiceFragment" />
+            app:destination="@id/addServiceFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@anim/right_to_left"
+            app:popUpTo="@id/servicesFragment"
+            />
         <argument
             android:name="serviceName"
             app:argType="string"

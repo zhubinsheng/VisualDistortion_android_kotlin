@@ -456,6 +456,13 @@
                             android:textSize="@dimen/newsMoreTextSize" />
 
                     </com.google.android.material.textfield.TextInputLayout>
+                    <TextView
+                        android:id="@+id/notes_length"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 حرف "
+                        android:textColor="@color/dark_gray"
+                        android:layout_gravity="right"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

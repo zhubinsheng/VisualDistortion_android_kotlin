@@ -52,6 +52,10 @@
         android:layout_margin="40dp"
         android:text="@string/login"
         android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="@dimen/newsMoreTextSize"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
