@@ -13,6 +13,7 @@ import com.rino.visualdestortion.model.localDataSource.room.DailyPreparationData
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
+import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -25,6 +26,7 @@ import com.rino.visualdestortion.model.remoteDataSource.ApiInterface
 import com.rino.visualdestortion.model.remoteDataSource.Result
 import com.rino.visualdestortion.utils.PREF_FILE_NAME
 import kotlinx.coroutines.flow.Flow
+import retrofit2.Response
 import java.io.IOException
 
 class ModelRepo (application: Application):RemoteRepo,LocalRepo{
@@ -338,7 +340,55 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         return result
     }
 
-    override fun getAllData(): Flow<List<DailyPreparation>> {
+    override suspend fun getHistoryData(): Result<AllHistoryResponse?> {
+        var result: Result<AllHistoryResponse?> = Result.Loading
+        try {
+            Log.i("ModelRepository:@@", "Token ${getToken()}")
+
+            val response = apiDataSource.getHistoryData("Bearer "+getToken())
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Resulttt $result")
+            } else {
+                Log.i("ModelRepository", "Error${response.errorBody()?.string()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        result = Result.Error(Exception("Bad Request getData"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                        result = Result.Error(Exception("Not Found"))
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth please, logout and login again")
+                        result = Result.Error(Exception("Not Auth please, logout and login again"))
+                        if(isLogin())
+                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
+                        //refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
+                        refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
+                        //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                    }
+                }
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+
+    override fun getAllDailyPreparation(): Flow<List<DailyPreparation>> {
       return localDataSource.getAllData()
     }
 
@@ -350,7 +400,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
       localDataSource.insertDailyPreparation(dailyPreparation)
     }
 
-    override  fun deleteAll() {
+    override  fun deleteAllDailyPreparation() {
      localDataSource.deleteAll()
     }
 

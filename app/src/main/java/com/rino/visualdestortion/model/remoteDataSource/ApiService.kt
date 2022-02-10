@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
+import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -51,12 +52,12 @@ interface ApiService {
                                ,@Part("Percentage"      ) percentage: RequestBody ?
     ): Response<QRCode>
 
-
-
     @GET("api/form/createFrom")
     suspend fun getServiceForm( @Header("Authorization") auth: String): Response<AddServiceResponse>
 
     @GET("api/home/HomeApi")
     suspend fun getHomeData( @Header("Authorization") auth: String): Response<HomeServicesResponse>
 
+    @GET("api/History/GetServiceTypeHistory")
+    suspend fun getHistoryData( @Header("Authorization") auth: String): Response<AllHistoryResponse>
 }

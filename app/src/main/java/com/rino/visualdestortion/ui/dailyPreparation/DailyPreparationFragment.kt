@@ -92,7 +92,8 @@ class DailyPreparationFragment : Fragment()  {
 
             serviceName = getArguments()?.get("serviceName").toString()
             serviceTypeId = getArguments()?.get("serviceID").toString()
-            binding.serviceTypeNameTxt.text = serviceName
+      //      binding.serviceTypeNameTxt.text = serviceName
+
         }
         binding.nextButton.setOnClickListener {
             if(validateData()) {

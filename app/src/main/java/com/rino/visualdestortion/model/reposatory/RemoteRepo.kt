@@ -3,6 +3,7 @@ package com.rino.visualdestortion.model.reposatory
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
+import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -28,5 +29,7 @@ interface RemoteRepo {
       suspend fun getServiceForm(): Result<AddServiceResponse?>
 
       suspend fun getHomeData(): Result<HomeServicesResponse?>
+
+      suspend fun getHistoryData(): Result<AllHistoryResponse?>
 
 }

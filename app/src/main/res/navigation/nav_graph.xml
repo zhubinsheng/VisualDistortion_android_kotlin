@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/historyFragment">
 
 
     <fragment
@@ -31,9 +31,6 @@
         <action
             android:id="@+id/action_login_to_ServiceFragment"
             app:destination="@id/servicesFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@anim/right_to_left"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
         <action
