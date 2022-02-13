@@ -38,6 +38,8 @@ android {
 }
 
 dependencies {
+    //shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
     //fingerPrint
     def biometricLibraryVersion = "1.0.1"
     implementation "androidx.biometric:biometric:$biometricLibraryVersion"

@@ -38,7 +38,8 @@ class FingerPrintFragment : Fragment() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
                     super.onAuthenticationSucceeded(result)
                     notifyUser("Authentication Success!")
-                    navgateToLogin()
+//                    if(findNavController().currentDestination?.id == R.id.loginFragment2)
+                        navgateToLogin()
                 }
             }
     override fun onCreate(savedInstanceState: Bundle?) {

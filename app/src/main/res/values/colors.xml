@@ -11,6 +11,6 @@
     <color name="dark_teal">#559EA3</color>
     <color name="gray">#ECEAEA</color>
     <color name="dark_gray">#FCA1A19D</color>
-
+    <color name="shimmer_placeholder">#dddddd</color>
 
 </resources>

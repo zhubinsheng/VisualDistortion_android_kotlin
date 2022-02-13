@@ -34,6 +34,8 @@ class HistoryFragment : Fragment() {
     }
 
     private fun init() {
+        binding.shimmer.startShimmer()
+        binding.historyRecycle.visibility = View.GONE
         viewModel = HistoryViewModel(requireActivity().application)
         historyAdapter = HistoryAdapter(arrayListOf(), viewModel)
         setUpUI()
@@ -53,7 +55,8 @@ class HistoryFragment : Fragment() {
             it?.let {
                 it.data?.let { it1 -> historyAdapter.updateItems(it1)
                     historyList = it1 }
-
+                binding.shimmer.stopShimmer()
+                binding.shimmer.visibility = View.GONE
                 binding.historyRecycle.visibility = View.VISIBLE
 
             }

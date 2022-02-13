@@ -178,12 +178,12 @@ class AddServiceFragment : Fragment() {
                 if (validateData(formData) && lat != "" && lng != "") {
                     viewModel.setFormData(formData)
                 }
-                else{
-                    getLatestLocation()
-                    if (validateData(formData) && lat != "" && lng != "") {
-                        viewModel.setFormData(formData)
-                    }
-               }
+//                else{
+//                    getLatestLocation()
+//                    if (validateData(formData) && lat != "" && lng != "") {
+//                        viewModel.setFormData(formData)
+//                    }
+//               }
             }
         }
     }

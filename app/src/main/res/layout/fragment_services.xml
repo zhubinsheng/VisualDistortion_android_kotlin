@@ -32,7 +32,34 @@
         app:layout_constraintTop_toBottomOf="@id/textView2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+<!--        <com.facebook.shimmer.ShimmerFrameLayout-->
+<!--            android:id="@+id/shimmer"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:gravity="center">-->
 
+<!--            <GridLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:columnCount="2"-->
+<!--                android:padding="@dimen/paddingLayout">-->
+
+<!--                <include layout="@layout/shimmer_sevice_item" />-->
+
+<!--                <include layout="@layout/shimmer_sevice_item" />-->
+
+<!--                <include layout="@layout/shimmer_sevice_item" />-->
+
+<!--                <include layout="@layout/shimmer_sevice_item" />-->
+
+<!--                <include layout="@layout/shimmer_sevice_item" />-->
+
+<!--                <include layout="@layout/shimmer_sevice_item" />-->
+
+
+<!--            </GridLayout>-->
+<!--        </com.facebook.shimmer.ShimmerFrameLayout>-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/serviceRecycle"

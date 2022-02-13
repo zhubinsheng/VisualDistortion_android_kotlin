@@ -103,9 +103,11 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
    }
 
     fun getDailyPreparationByServiceID(serviceTypeID: String,date :String) {
+    //    _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
             val dailyPreparation = modelRepository.getDailyPreparation_By_ServiceTypeID(serviceTypeID,date)
             _getDailyPreparation.postValue(dailyPreparation)
+     //       _loading.postValue(View.GONE)
         }
     }
 
