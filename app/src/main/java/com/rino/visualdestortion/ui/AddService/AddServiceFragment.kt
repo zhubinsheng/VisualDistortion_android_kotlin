@@ -30,6 +30,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.timepicker.TimeFormat
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentAddServiceBinding
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
@@ -42,6 +43,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -75,6 +77,11 @@ class AddServiceFragment : Fragment() {
         super.onCreate(savedInstanceState)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity().application)
+        viewModel = AddServiceViewModel(requireActivity().application)
+        if (viewModel.isFirstTimeLaunch()) {
+            viewModel.setFirstTimeLaunch(false)
+            requestAllPermissions()
+        }
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             @SuppressLint("ResourceType")
             override fun handleOnBackPressed() {
@@ -101,12 +108,7 @@ class AddServiceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = AddServiceViewModel(requireActivity().application)
         binding = FragmentAddServiceBinding.inflate(inflater, container, false)
-        if (viewModel.isFirstTimeLaunch()) {
-            viewModel.setFirstTimeLaunch(false)
-            requestAllPermissions()
-        }
         init()
         return binding.root
     }
@@ -126,6 +128,7 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun init() {
+        getLatestLocation()
         setUpUI()
         initLists()
         observeData()
@@ -155,8 +158,7 @@ class AddServiceFragment : Fragment() {
             binding.notesLength.text = notesLength.toString()+" حرف "
         }
         binding.submitButton.setOnClickListener {
-
-            observeDailyPreparation()
+            submit()
 
         }
         binding.beforPic.setOnClickListener {
@@ -166,18 +168,22 @@ class AddServiceFragment : Fragment() {
             afterPicOnClick()
         }
     }
+
+    private fun submit() {
+        formData = getFormDataFromUi(serviceName)
+        if (validateData(formData) && lat != "" && lng != "") {
+            val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
+            viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
+        }
+    }
+
     private fun observeDailyPreparation() {
-        val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
-        viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
         viewModel.getDailyPreparation.observe(viewLifecycleOwner) {
             if (it != null) {
-                getLatestLocation()
-                formData = getFormDataFromUi(serviceName)
                 formData.WorkersTypesList = it.workerTypesList
                 formData.equipmentList = it.workerTypesList
-                if (validateData(formData) && lat != "" && lng != "") {
                     viewModel.setFormData(formData)
-                }
+
 //                else{
 //                    getLatestLocation()
 //                    if (validateData(formData) && lat != "" && lng != "") {
@@ -240,6 +246,7 @@ class AddServiceFragment : Fragment() {
 
     private fun observeData() {
         observeGetServicesData()
+        observeDailyPreparation()
         observeSetFormData()
         observeLoading()
         observeShowError()
@@ -534,7 +541,7 @@ class AddServiceFragment : Fragment() {
             var bitmap = data.extras?.get("data") as Bitmap
             try {
                 val file = File(getRealPathFromURI(getImageUri(requireContext(), bitmap)!!))
-                println("filePath" + data?.data?.path)
+                println("afterfilePath" + file.path)
                 if (file != null) {
                     val requestFile: RequestBody =
                         RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
@@ -556,7 +563,7 @@ class AddServiceFragment : Fragment() {
                 val file = File(
                     getRealPathFromURI(data?.data!!)
                 )
-                println("filePath" + data?.data?.path)
+                println("beforefilePath" + file.path)
                 if (file != null) {
                     val requestFile: RequestBody =
                         RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
@@ -575,12 +582,20 @@ class AddServiceFragment : Fragment() {
     fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
         val bytes = ByteArrayOutputStream()
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+        val currentDate = sdf.format(Date())
         val path = MediaStore.Images.Media.insertImage(
             inContext.contentResolver,
             inImage,
-            "IMG_" + Calendar.getInstance().getTime(),
+            "AFTER_IMG_" + currentDate.toString().replace(" ",""),
             null
         )
+//        val path = MediaStore.Images.Media.insertImage(
+//            inContext.contentResolver,
+//            inImage,
+//            "After_IMG_",
+//            null
+//        )
         return Uri.parse(path)
     }
 

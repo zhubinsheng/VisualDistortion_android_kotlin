@@ -46,13 +46,7 @@ class DailyPreparationFragment : Fragment()  {
             serviceName = getArguments()?.get("serviceName").toString()
             serviceTypeId = getArguments()?.get("serviceID").toString()
         }
-        val onBackPressedCallback = object : OnBackPressedCallback(true) {
-            @SuppressLint("ResourceType")
-            override fun handleOnBackPressed() {
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
 
     }
     override fun onResume() {
@@ -241,17 +235,27 @@ class DailyPreparationFragment : Fragment()  {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun validateData(): Boolean {
-        var flag = true
-        if (equipmentList.isEmpty()) {
+        var flagEquipment = true
+        var flagworkerType = true
+        if (equipmentsCountList.isEmpty()) {
             binding.equipmentsTextInputLayout.error = "برجاء ادخال هذا العنصر"
-            flag = false
+            flagEquipment = false
         }
-        if (workersTypeList.isEmpty()) {
+        else{
+            binding.equipmentsTextInputLayout.error = null
+            binding.equipmentsTextInputLayout.isErrorEnabled = false
+            flagEquipment = true
+        }
+        if (workerTypesCountList.isEmpty()) {
             binding.workersTypeTextInputLayout.error = "برجاء ادخال هذا العنصر"
-            flag = false
+            flagworkerType = false
         }
-
-        return flag
+        else{
+            binding.workersTypeTextInputLayout.error = null
+            binding.workersTypeTextInputLayout.isErrorEnabled = false
+            flagEquipment = true
+        }
+        return (flagEquipment && flagworkerType)
     }
 
     private fun navigateToAddService(serviceTypeName: String,serviceTypeID: String) {

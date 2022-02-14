@@ -36,7 +36,6 @@
         <action
             android:id="@+id/action_login_to_resetPass"
             app:destination="@id/resetPasswordFragment"
-
             />
     </fragment>
 
@@ -53,16 +52,10 @@
     <action
         android:id="@+id/action_service_to_addService"
         app:destination="@id/addServiceFragment"
-        app:enterAnim="@android:anim/fade_in"
-        app:exitAnim="@android:anim/fade_out"
-        app:popEnterAnim="@anim/right_to_left"
         />
         <action
             android:id="@+id/action_service_to_Dailyprepration"
             app:destination="@id/dailyPreparationFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@anim/right_to_left"
            />
 
     </fragment>
@@ -79,10 +72,9 @@
         <action
             android:id="@+id/action_setting_to_login"
             app:destination="@id/loginFragment2"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@anim/right_to_left"
             />
+<!--        app:enterAnim="@android:anim/fade_in"-->
+<!--        app:exitAnim="@android:anim/fade_out"-->
     </fragment>
     <fragment
         android:id="@+id/addServiceFragment"
@@ -92,8 +84,6 @@
         <action
             android:id="@+id/action_addService_to_QRCode"
             app:destination="@id/QRCodeFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@anim/right_to_left"
             app:popUpTo="@id/servicesFragment"/>
         <argument
@@ -117,8 +107,7 @@
         <action
             android:id="@+id/action_QRCode_to_Services"
             app:destination="@id/servicesFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
+            app:popUpTo="@id/servicesFragment"
             app:popEnterAnim="@anim/right_to_left"
           />
     </fragment>
@@ -130,8 +119,6 @@
         <action
             android:id="@+id/action_resetPass_to_Services"
             app:destination="@id/servicesFragment"
-
-            app:popEnterAnim="@anim/right_to_left"
           />
     </fragment>
     <fragment
@@ -142,9 +129,6 @@
         <action
             android:id="@+id/action_fingerPrint_to_login"
             app:destination="@id/loginFragment2"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@anim/right_to_left"
             />
     </fragment>
     <fragment
@@ -155,8 +139,6 @@
         <action
             android:id="@+id/action_dailyPreparation_to_addService"
             app:destination="@id/addServiceFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@anim/right_to_left"
             app:popUpTo="@id/servicesFragment"
             />

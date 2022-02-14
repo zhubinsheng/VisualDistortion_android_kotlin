@@ -1,11 +1,13 @@
 package com.rino.visualdestortion.ui.services
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -25,7 +27,13 @@ class ServicesFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            @SuppressLint("ResourceType")
+            override fun handleOnBackPressed() {
+                 requireActivity().finish()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
 

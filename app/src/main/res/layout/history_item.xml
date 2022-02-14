@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/rectangle"
             android:orientation="horizontal"
-            android:padding="@dimen/paddingLayout"
+            android:padding="@dimen/paddingText"
             android:weightSum="10">
 
 
