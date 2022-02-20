@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.graphics.Bitmap
+import android.graphics.*
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
@@ -20,22 +20,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.timepicker.TimeFormat
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentAddServiceBinding
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.ui.home.MainActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -45,8 +45,7 @@ import java.io.IOException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import kotlin.math.roundToInt
 
 
 class AddServiceFragment : Fragment() {
@@ -539,44 +538,112 @@ class AddServiceFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST_CODE && data != null) {
             binding.afterPic.setImageBitmap(data.extras?.get("data") as Bitmap)
             var bitmap = data.extras?.get("data") as Bitmap
-            try {
-                val file = File(getRealPathFromURI(getImageUri(requireContext(), bitmap)!!))
-                println("afterfilePath" + file.path)
-                if (file != null) {
-                    val requestFile: RequestBody =
-                        RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
-                    afterImgBody = MultipartBody.Part.createFormData(
-                        "afterImg",
-                        file?.name.trim(),
-                        requestFile
+            val afterBitmap =bitmap.copy(Bitmap. Config.ARGB_8888,true)
+            CoroutineScope(Dispatchers.Default).launch {
+                binding.afterPic.setImageBitmap(
+                    drawTextToBitmap(
+                        afterBitmap,
+                        3,
+                        Calendar.getInstance().time.toString()
                     )
+                )
+                CoroutineScope(Dispatchers.Main).launch{
+                    try {
+                        val file = File(getRealPathFromURI(getImageUri(requireContext(), afterBitmap)!!))
+                        println("afterfilePath" + file.path)
+                        if (file != null) {
+                            val requestFile: RequestBody =
+                                RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
+                            afterImgBody = MultipartBody.Part.createFormData(
+                                "afterImg",
+                                file?.name.trim(),
+                                requestFile
+                            )
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
             }
-
         }
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             binding.beforPic.setImageURI(data?.data) // handle chosen image
-            try {
-
-                val file = File(
-                    getRealPathFromURI(data?.data!!)
-                )
-                println("beforefilePath" + file.path)
-                if (file != null) {
-                    val requestFile: RequestBody =
-                        RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
-                    beforeImgBody = MultipartBody.Part.createFormData(
-                        "beforeImg",
-                        file?.name.trim(),
-                        requestFile
+            //    var bitmap = data?.data as Bitmap
+            val bitmap = MediaStore.Images.Media.getBitmap(
+                requireActivity().getContentResolver(),
+                data?.data
+            )
+            val beforeBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+            CoroutineScope(Dispatchers.Default).launch {
+                binding.beforPic.setImageBitmap(
+                    drawTextToBitmap(
+                        beforeBitmap,
+                        3,
+                        Calendar.getInstance().time.toString()
                     )
+                )
+                CoroutineScope(Dispatchers.Main).launch {
+                    try {
+
+//                val file = File(
+//                    getRealPathFromURI(data?.data!!)
+//                )
+                        val file =
+                            File(getRealPathFromURI(getImageUri(requireContext(), beforeBitmap)!!))
+                        println("beforefilePath" + file.path)
+                        if (file != null) {
+                            val requestFile: RequestBody =
+                                RequestBody.create(
+                                    "multipart/form-data".toMediaTypeOrNull(),
+                                    file!!
+                                )
+                            beforeImgBody = MultipartBody.Part.createFormData(
+                                "beforeImg",
+                                file?.name.trim(),
+                                requestFile
+                            )
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
             }
         }
+    }
+    private fun drawTextToBitmap(bitmap: Bitmap, textSize: Int = 2, text: String): Bitmap {
+
+        val canvas = Canvas(bitmap)
+        // new antialised Paint - empty constructor does also work
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint.color = Color.RED
+        val width: Int = bitmap.width
+        val height: Int = bitmap.height
+        val radius = if (width > height) height / 2 else width / 2
+        val center_x = width / 2
+        val center_y = height / 2
+        // text size in pixels
+        val scale = resources.displayMetrics.density
+        paint.textSize = (textSize * scale).roundToInt().toFloat()
+
+        //custom fonts or a default font
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+
+        // draw text to the Canvas center
+        val bounds = Rect()
+        //draw the text
+        paint.getTextBounds(text, 0, text.length, bounds)
+        val rectF = RectF(
+            200f,
+            180f,
+            canvas.width - 80F,
+            canvas.height - 120F
+        )
+        canvas.drawRect(rectF,Paint().apply { color = Color.RED })
+
+        //x and y defines the position of the text, starting in the top left corner
+        paint.color = Color.WHITE
+        canvas.drawText(text, 10f, 20f, paint)
+        return bitmap
     }
 
     fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
