@@ -627,22 +627,32 @@ class AddServiceFragment : Fragment() {
 
         //custom fonts or a default font
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-
+        val fm: Paint.FontMetrics = Paint.FontMetrics()
+        paint.color = Color.BLACK
+        paint.getFontMetrics(fm)
+        val margin = 5
+        canvas.drawRect(
+            (20 - margin).toFloat(), 20 + fm.top - margin,
+            20 + paint.measureText(text) + margin, 20 + fm.bottom
+                    + margin, paint
+        )
         // draw text to the Canvas center
         val bounds = Rect()
         //draw the text
         paint.getTextBounds(text, 0, text.length, bounds)
-        val rectF = RectF(
-            200f,
-            180f,
-            canvas.width - 80F,
-            canvas.height - 120F
-        )
-        canvas.drawRect(rectF,Paint().apply { color = Color.RED })
-
-        //x and y defines the position of the text, starting in the top left corner
         paint.color = Color.WHITE
-        canvas.drawText(text, 10f, 20f, paint)
+        canvas.drawText(text, 20f, 20f, paint)
+
+//        val rectF = RectF(
+//            10f,
+//            20f,
+//           100f,
+//
+//        )
+//
+//        canvas.drawRect(rectF,Paint().apply { color = Color.BLACK })
+        //x and y defines the position of the text, starting in the top left corner
+
         return bitmap
     }
 
