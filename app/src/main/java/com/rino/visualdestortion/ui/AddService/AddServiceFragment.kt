@@ -632,8 +632,8 @@ class AddServiceFragment : Fragment() {
         paint.getFontMetrics(fm)
         val margin = 5
         canvas.drawRect(
-            (20 - margin).toFloat(), 20 + fm.top - margin,
-            20 + paint.measureText(text) + margin, 20 + fm.bottom
+            (10 - margin).toFloat(), 10 + fm.top - margin,
+            10 + paint.measureText(text) + margin, 10 + fm.bottom
                     + margin, paint
         )
         // draw text to the Canvas center
@@ -641,7 +641,7 @@ class AddServiceFragment : Fragment() {
         //draw the text
         paint.getTextBounds(text, 0, text.length, bounds)
         paint.color = Color.WHITE
-        canvas.drawText(text, 20f, 20f, paint)
+        canvas.drawText(text, 10f, 10f, paint)
 
 //        val rectF = RectF(
 //            10f,
