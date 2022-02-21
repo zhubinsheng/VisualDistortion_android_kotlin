@@ -12,6 +12,8 @@ import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentLoginBinding
 import com.rino.visualdestortion.databinding.FragmentSplashBinding
 import com.rino.visualdestortion.ui.home.MainActivity
+import com.rino.visualdestortion.ui.setting.SettingViewModel
+import com.rino.visualdestortion.ui.setting.settingFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -20,8 +22,8 @@ import kotlinx.coroutines.launch
 class SplashFragment : Fragment() {
 
     private val SPLASH_TIME_OUT = 3000L
-    lateinit var binding: FragmentSplashBinding
-
+    private lateinit var binding: FragmentSplashBinding
+    private lateinit var viewModel: SplashViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,12 +40,23 @@ class SplashFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
+        viewModel = SplashViewModel(requireActivity().application)
         binding = FragmentSplashBinding.inflate(inflater, container, false)
-        splashSetup()
-        setAnimation()
+        if(viewModel.isLogin()){
+            navToHome()
+        }
+        else {
+            splashSetup()
+            setAnimation()
+        }
         return binding.root
     }
+
+    private fun navToHome() {
+        val action = SplashFragmentDirections.actionSplashToServiceFragment()
+        findNavController().navigate(action)
+    }
+
     private fun splashSetup(){
         CoroutineScope(Dispatchers.Default).launch{
             delay(SPLASH_TIME_OUT)

@@ -22,6 +22,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
+import androidx.core.view.get
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -115,6 +116,7 @@ class AddServiceFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true
+       // (activity as MainActivity).bottomNavigation.
     }
 
     override fun onStop() {
@@ -170,10 +172,11 @@ class AddServiceFragment : Fragment() {
 
     private fun submit() {
         formData = getFormDataFromUi(serviceName)
-        if (validateData(formData) && lat != "" && lng != "") {
-            val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
-            viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
-        }
+           if (validateData(formData) && lat != "" && lng != "") {
+               val date =
+                   DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
+               viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
+           }
     }
 
     private fun observeDailyPreparation() {
@@ -264,8 +267,6 @@ class AddServiceFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-
-
     private fun observeGetServicesData() {
         viewModel.getServicesData.observe(viewLifecycleOwner) {
             it.let {
@@ -341,6 +342,31 @@ class AddServiceFragment : Fragment() {
                 setStreetsMenuItems(posSector, posMunicipalite, position)
                 // Display the clicked item using toast
                 //   Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
+    private fun setStreetsMenuItems(posSector: Int, posMunicipalite: Int, posDistricts: Int) {
+        streetList.clear()
+        binding.streetTextView.clearListSelection()
+
+        for (street in addServiceResponse.sectors?.get(posSector)?.municipalites?.get(
+            posMunicipalite
+        )?.districts?.get(posDistricts)?.streets!!) {
+            streetList.add(street.name.toString())
+        }
+        val streetsAdapter = ArrayAdapter(
+            requireContext(), R.layout.dropdown_item,
+            streetList
+        )
+        binding.streetTextView.setAdapter(streetsAdapter)
+        binding.streetTextView.onItemClickListener =
+            AdapterView.OnItemClickListener { parent, view, position, id ->
+                val selectedItem = parent.getItemAtPosition(position).toString()
+                isStreetSelected = true
+                //  setStreetsMenuItems(posSector,posMunicipalite,position)
+                // Display the clicked item using toast
+                // Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -482,33 +508,6 @@ class AddServiceFragment : Fragment() {
         return flag
     }
 
-    private fun setStreetsMenuItems(posSector: Int, posMunicipalite: Int, posDistricts: Int) {
-        streetList.clear()
-        binding.streetTextView.clearListSelection()
-
-        for (street in addServiceResponse.sectors?.get(posSector)?.municipalites?.get(
-            posMunicipalite
-        )?.districts?.get(posDistricts)?.streets!!) {
-            streetList.add(street.name.toString())
-        }
-        val streetsAdapter = ArrayAdapter(
-            requireContext(), R.layout.dropdown_item,
-            streetList
-        )
-        binding.streetTextView.setAdapter(streetsAdapter)
-        binding.streetTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                isStreetSelected = true
-                //  setStreetsMenuItems(posSector,posMunicipalite,position)
-                // Display the clicked item using toast
-                // Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
-            }
-    }
-
-
-
-
     private fun observeLoading() {
         viewModel.loading.observe(viewLifecycleOwner) {
             it?.let {
@@ -610,6 +609,8 @@ class AddServiceFragment : Fragment() {
             }
         }
     }
+
+    @SuppressLint("ResourceAsColor")
     private fun drawTextToBitmap(bitmap: Bitmap, textSize: Int = 2, text: String): Bitmap {
 
         val canvas = Canvas(bitmap)
@@ -618,9 +619,7 @@ class AddServiceFragment : Fragment() {
         paint.color = Color.RED
         val width: Int = bitmap.width
         val height: Int = bitmap.height
-        val radius = if (width > height) height / 2 else width / 2
-        val center_x = width / 2
-        val center_y = height / 2
+
         // text size in pixels
         val scale = resources.displayMetrics.density
         paint.textSize = (textSize * scale).roundToInt().toFloat()
@@ -628,7 +627,7 @@ class AddServiceFragment : Fragment() {
         //custom fonts or a default font
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         val fm: Paint.FontMetrics = Paint.FontMetrics()
-        paint.color = Color.BLACK
+        paint.color = R.color.transparent_white
         paint.getFontMetrics(fm)
         val margin = 5
         canvas.drawRect(
@@ -642,16 +641,6 @@ class AddServiceFragment : Fragment() {
         paint.getTextBounds(text, 0, text.length, bounds)
         paint.color = Color.WHITE
         canvas.drawText(text, 10f, 10f, paint)
-
-//        val rectF = RectF(
-//            10f,
-//            20f,
-//           100f,
-//
-//        )
-//
-//        canvas.drawRect(rectF,Paint().apply { color = Color.BLACK })
-        //x and y defines the position of the text, starting in the top left corner
 
         return bitmap
     }
@@ -702,8 +691,9 @@ class AddServiceFragment : Fragment() {
                 enableLocationPermission()
             }
         } else {
-          //  requestPermission()
-            navigateToAppSetting()
+          //    navigateToAppSetting()
+            requestPermission()
+
         }
     }
 
@@ -721,11 +711,7 @@ class AddServiceFragment : Fragment() {
     private fun checkLocation(): Boolean {
         val locationManager =
             requireActivity().application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            return true
-        } else {
-            return false;
-        }
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     private val locationCallback = object : LocationCallback() {
