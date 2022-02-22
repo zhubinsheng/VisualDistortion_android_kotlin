@@ -1,6 +1,7 @@
 package com.rino.visualdestortion.ui.AddService
 
 import android.Manifest
+import android.R.attr
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -20,9 +21,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
-import androidx.core.view.get
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -226,7 +227,8 @@ class AddServiceFragment : Fragment() {
         if(afterImgBody != null) {
             formData.afterImg = afterImgBody as MultipartBody.Part
         }
-        formData.percentage = binding.precentageEditTxt.text.toString()
+//        formData.percentage = binding.precentageEditTxt.text.toString()
+          formData.percentage = "100"
         return formData
     }
 
@@ -441,21 +443,21 @@ class AddServiceFragment : Fragment() {
             binding.textInputAfterImg.isErrorEnabled = false
              flagAfterImg = true
         }
-        if (formData.percentage == null || formData.percentage =="") {
-            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
-            flagPrecentage = false
-        }
-        else {
-            if (formData.percentage.toInt() > 100) {
-                binding.textInputPercentage.error = "هذا العنصر يجب ان يكون بين 0:100 "
-                flagPrecentage = false
-            }
-            else{
-            binding.textInputPercentage.error = null
-            binding.textInputPercentage.isErrorEnabled = false
-                flagPrecentage = true
-            }
-        }
+//        if (formData.percentage == null || formData.percentage =="") {
+//            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
+//            flagPrecentage = false
+//        }
+//        else {
+//            if (formData.percentage.toInt() > 100) {
+//                binding.textInputPercentage.error = "هذا العنصر يجب ان يكون بين 0:100 "
+//                flagPrecentage = false
+//            }
+//            else{
+//            binding.textInputPercentage.error = null
+//            binding.textInputPercentage.isErrorEnabled = false
+//                flagPrecentage = true
+//            }
+//        }
 
         if (formData.notes != null){
             if (formData.notes!!.length>500) {
@@ -537,16 +539,14 @@ class AddServiceFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST_CODE && data != null) {
             binding.afterPic.setImageBitmap(data.extras?.get("data") as Bitmap)
             var bitmap = data.extras?.get("data") as Bitmap
-            val afterBitmap =bitmap.copy(Bitmap. Config.ARGB_8888,true)
+            var afterBitmap =bitmap.copy(Bitmap. Config.ARGB_8888,true)
             CoroutineScope(Dispatchers.Default).launch {
-                binding.afterPic.setImageBitmap(
+               afterBitmap =
                     drawTextToBitmap(
                         afterBitmap,
                         3,
                         Calendar.getInstance().time.toString()
                     )
-                )
-                CoroutineScope(Dispatchers.Main).launch{
                     try {
                         val file = File(getRealPathFromURI(getImageUri(requireContext(), afterBitmap)!!))
                         println("afterfilePath" + file.path)
@@ -562,26 +562,28 @@ class AddServiceFragment : Fragment() {
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
-                }
             }
+            binding.afterPic.setImageBitmap(afterBitmap)
         }
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             binding.beforPic.setImageURI(data?.data) // handle chosen image
             //    var bitmap = data?.data as Bitmap
             val bitmap = MediaStore.Images.Media.getBitmap(
-                requireActivity().getContentResolver(),
+                requireContext().getContentResolver(),
                 data?.data
             )
-            val beforeBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+            if(bitmap == null)
+            {
+                Toast.makeText(context, "null", Toast.LENGTH_SHORT).show()
+            }
+            var beforeBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
             CoroutineScope(Dispatchers.Default).launch {
-                binding.beforPic.setImageBitmap(
+              beforeBitmap =
                     drawTextToBitmap(
                         beforeBitmap,
                         3,
                         Calendar.getInstance().time.toString()
                     )
-                )
-                CoroutineScope(Dispatchers.Main).launch {
                     try {
 
 //                val file = File(
@@ -606,9 +608,9 @@ class AddServiceFragment : Fragment() {
                         e.printStackTrace()
                     }
                 }
+            binding.beforPic.setImageBitmap(beforeBitmap)
             }
         }
-    }
 
     @SuppressLint("ResourceAsColor")
     private fun drawTextToBitmap(bitmap: Bitmap, textSize: Int = 2, text: String): Bitmap {
@@ -629,12 +631,15 @@ class AddServiceFragment : Fragment() {
         val fm: Paint.FontMetrics = Paint.FontMetrics()
         paint.color = R.color.transparent_white
         paint.getFontMetrics(fm)
-        val margin = 5
+        val margin = 5f
         canvas.drawRect(
             (10 - margin).toFloat(), 10 + fm.top - margin,
             10 + paint.measureText(text) + margin, 10 + fm.bottom
                     + margin, paint
         )
+       //  canvas.drawBitmap(R.drawable.splash_icon,rect,paint)
+        val rectangle = RectF(10 + paint.measureText(text) + margin, fm.top - margin, margin, 10 + fm.bottom + margin)
+        canvas.drawBitmap(bitmap,null,rectangle,paint)
         // draw text to the Canvas center
         val bounds = Rect()
         //draw the text
