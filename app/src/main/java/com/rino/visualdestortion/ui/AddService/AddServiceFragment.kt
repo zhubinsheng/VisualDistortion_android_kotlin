@@ -64,8 +64,8 @@ class AddServiceFragment : Fragment() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val CAMERA_REQUEST_CODE = 200
     private val REQUEST_CODE = 100
-    private var serviceTypeId = ""
-    private var serviceName = ""
+    private var serviceTypeId = "1"
+    private var serviceName = "الكتابات المشوهة"
     private var lat = ""
     private var lng = ""
     private var isSectorSelected = false
@@ -176,16 +176,17 @@ class AddServiceFragment : Fragment() {
            if (validateData(formData) && lat != "" && lng != "") {
                val date =
                    DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
-               viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
+                 viewModel.setFormData(formData)
+       //        viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
            }
     }
 
-    private fun observeDailyPreparation() {
-        viewModel.getDailyPreparation.observe(viewLifecycleOwner) {
-            if (it != null) {
-                formData.WorkersTypesList = it.workerTypesList
-                formData.equipmentList = it.workerTypesList
-                    viewModel.setFormData(formData)
+//    private fun observeDailyPreparation() {
+//        viewModel.getDailyPreparation.observe(viewLifecycleOwner) {
+//            if (it != null) {
+//                formData.WorkersTypesList = it.workerTypesList
+//                formData.equipmentList = it.workerTypesList
+//                    viewModel.setFormData(formData)
 
 //                else{
 //                    getLatestLocation()
@@ -193,9 +194,9 @@ class AddServiceFragment : Fragment() {
 //                        viewModel.setFormData(formData)
 //                    }
 //               }
-            }
-        }
-    }
+//            }
+//        }
+//    }
 
     private fun getFormDataFromUi(serviceName: String): FormData {
    //     Toast.makeText(requireContext(),"Before : ${beforeImgBody.toString()}  ,Aftar : ${afterImgBody.toString()}",Toast.LENGTH_SHORT).show()
@@ -222,13 +223,14 @@ class AddServiceFragment : Fragment() {
         if(beforeImgBody != null) {
 
             formData.beforeImg = beforeImgBody as MultipartBody.Part
+
         }
         Log.e("Image","Before : ${beforeImgBody.toString()}  ,Aftar : ${afterImgBody.toString()}")
         if(afterImgBody != null) {
             formData.afterImg = afterImgBody as MultipartBody.Part
         }
 //        formData.percentage = binding.precentageEditTxt.text.toString()
-          formData.percentage = "100"
+//          formData.percentage = "100"
         return formData
     }
 
@@ -250,7 +252,7 @@ class AddServiceFragment : Fragment() {
 
     private fun observeData() {
         observeGetServicesData()
-        observeDailyPreparation()
+   //     observeDailyPreparation()
         observeSetFormData()
         observeLoading()
         observeShowError()

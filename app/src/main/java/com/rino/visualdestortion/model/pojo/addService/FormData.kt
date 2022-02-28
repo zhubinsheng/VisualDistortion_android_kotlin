@@ -13,13 +13,14 @@ import retrofit2.http.Field
    lateinit var lat: String
    lateinit var lng: String
    lateinit var beforeImg: MultipartBody.Part
+   var duringImg: MultipartBody.Part? = null
    lateinit var afterImg: MultipartBody.Part
-   lateinit var WorkersTypesList: Map<Long,Int>
-   lateinit var equipmentList: Map<Long,Int>
+ //  lateinit var WorkersTypesList: Map<Long,Int>
+ //  lateinit var equipmentList: Map<Long,Int>
      var mSquare: Int? = null
      var mCube: Int? = null
      var numberR: Int? = null
      var notes: String? = null
-   lateinit var percentage: String
+ //  lateinit var percentage: String
 
  }

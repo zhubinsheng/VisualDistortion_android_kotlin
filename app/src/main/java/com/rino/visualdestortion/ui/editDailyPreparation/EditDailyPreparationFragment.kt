@@ -1,32 +1,32 @@
-package com.rino.visualdestortion.ui.dailyPreparation
+package com.rino.visualdestortion.ui.editDailyPreparation
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.view.isGone
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentDailyPreparationBinding
-import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
-import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
+import com.rino.visualdestortion.ui.dailyPreparation.*
 import com.rino.visualdestortion.ui.home.MainActivity
 import java.text.DateFormat
 import java.util.*
 
 
-class DailyPreparationFragment : Fragment()  {
-    private lateinit var viewModel: DailyPreparationViewModel
+class EditDailyPreparationFragment : Fragment() {
+
+    private lateinit var viewModel: EditDailyPViewModel
     private lateinit var binding: FragmentDailyPreparationBinding
-//    private lateinit var dailyPreparation: TodayDailyPrapration
-    private lateinit var addServiceResponse: AddServiceResponse
+    private lateinit var dailyPreparation: TodayDailyPrapration
+    //   private lateinit var addServiceResponse: AddServiceResponse
     private lateinit var equipmentList: ArrayList<String>
     private lateinit var workersTypeList: ArrayList<String>
     private lateinit var equipmentsAdapter: EquipmentsAdapter
@@ -57,7 +57,7 @@ class DailyPreparationFragment : Fragment()  {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = DailyPreparationViewModel(requireActivity().application)
+        viewModel = EditDailyPViewModel(requireActivity().application)
         binding = FragmentDailyPreparationBinding.inflate(inflater, container, false)
         init()
         return binding.root
@@ -70,7 +70,7 @@ class DailyPreparationFragment : Fragment()  {
     }
 
     private fun setUpUI() {
-       // binding.serviceTypeNameTxt.text = "${serviceName}التحضير اليومى ل"
+        // binding.serviceTypeNameTxt.text = "${serviceName}التحضير اليومى ل"
         equipmentsAdapter = EquipmentsAdapter(arrayListOf(), viewModel, requireContext())
         workerTypesAdapter = WorkerTypesAdapter(arrayListOf(), viewModel, requireContext())
         binding.equipmentsRecycle.apply {
@@ -81,21 +81,20 @@ class DailyPreparationFragment : Fragment()  {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = workerTypesAdapter
         }
-        viewModel.getServicesData()
+        viewModel.getTodayPreparation()
         if (getArguments() != null) {
 
             serviceName = getArguments()?.get("serviceName").toString()
             serviceTypeId = getArguments()?.get("serviceID").toString()
-      //      binding.serviceTypeNameTxt.text = serviceName
+            //      binding.serviceTypeNameTxt.text = serviceName
 
         }
         binding.nextButton.setOnClickListener {
             if(validateData()) {
                 val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
-                viewModel.addDailyPreparation(DailyPreparation(serviceTypeId, date ,equipmentsAdapter.getEquipmentMap(),workerTypesAdapter.getWorkerTypesMap()))
-                viewModel.setDailyPreparation(workerTypesAdapter.getWorkerTypesMap(),equipmentsAdapter.getEquipmentMap())
-             //   Toast.makeText(requireContext(),"item : ${viewModel.getDailyPreparationByServiceID(serviceTypeId).toString()}",Toast.LENGTH_SHORT).show()
-
+//                viewModel.addDailyPreparation(DailyPreparation(serviceTypeId, date ,equipmentsAdapter.getEquipmentMap(),workerTypesAdapter.getWorkerTypesMap()))
+                //   Toast.makeText(requireContext(),"item : ${viewModel.getDailyPreparationByServiceID(serviceTypeId).toString()}",Toast.LENGTH_SHORT).show()
+                navigateToServices()
             }
         }
     }
@@ -112,27 +111,12 @@ class DailyPreparationFragment : Fragment()  {
     }
 
     private fun observeData() {
-        observeSetDailyPreparation()
-        observeDeletedEquipmentItem()
-     //   observeGetDailyPreparation()
-        observeGetServicesData()
+        // observeGetServicesData()
+        observeGetDailyPreparation()
         observeLoading()
         observeShowError()
         observeDeletedEquipmentItem()
         observeDeletedWorkerTypeItem()
-    }
-
-    private fun observeSetDailyPreparation() {
-        viewModel.setDailyPreparation.observe(viewLifecycleOwner) {
-            it?.let {
-                Log.e("ddddd",it.toString())
-              if(it == 200)
-              {
-                  Log.e("ddddd",it.toString())
-                  navigateToHome()
-              }
-            }
-        }
     }
 
 
@@ -178,37 +162,37 @@ class DailyPreparationFragment : Fragment()  {
         }
     }
 
-    private fun observeGetServicesData() {
-        viewModel.getServicesData.observe(viewLifecycleOwner) {
-            it.let {
-                addServiceResponse = it
-                prepareMenues()
-
-            }
-        }
-    }
-
-//    private fun observeGetDailyPreparation() {
-//        viewModel.getDailyPreparation.observe(viewLifecycleOwner) {
+//    private fun observeGetServicesData() {
+//        viewModel.getServicesData.observe(viewLifecycleOwner) {
 //            it.let {
-//                if (it != null) {
-//                    dailyPreparation = it
-//                }
+//                addServiceResponse = it
 //                prepareMenues()
 //
 //            }
 //        }
 //    }
-        private fun prepareMenues() {
-            setEquipmentsMenuItems()
-            setWorkersTypeMenuItems()
+
+    private fun observeGetDailyPreparation() {
+        viewModel.getDailyPreparation.observe(viewLifecycleOwner) {
+            it.let {
+                if (it != null) {
+                    dailyPreparation = it
+                }
+                prepareMenues()
+
+            }
+        }
+    }
+    private fun prepareMenues() {
+        setEquipmentsMenuItems()
+        setWorkersTypeMenuItems()
     }
     private fun setEquipmentsMenuItems() {
         equipmentList.clear()
         var index = 0
         binding.equipmentsTextView.setText(R.string.select)
-       for (equipment in addServiceResponse.equipment!!) {
- //       for (equipment in dailyPreparation.equipmentTypes) {
+//        for (equipment in addServiceResponse.equipment!!) {
+        for (equipment in dailyPreparation.equipmentTypes) {
             equipmentList.add(equipment.name.toString())
             equipmentsMap[index] = equipment.id
             index++
@@ -237,8 +221,8 @@ class DailyPreparationFragment : Fragment()  {
         workersTypeList.clear()
         var index = 0
         binding.workersTypeTextView.setText(R.string.select)
-        for (workerType in addServiceResponse.workerTypes!!) {
-//        for (workerType in dailyPreparation.workerTypes) {
+//        for (workerType in addServiceResponse.workerTypes!!) {
+        for (workerType in dailyPreparation.workerTypes) {
             workersTypeList.add(workerType.name.toString())
             workersTypeMap[index] = workerType.id
             index++
@@ -288,7 +272,7 @@ class DailyPreparationFragment : Fragment()  {
         return (flagEquipment && flagworkerType)
     }
 
-    private fun navigateToHome() {
+    private fun navigateToServices() {
         val action = DailyPreparationFragmentDirections.actionDailyPreparationToServices()
         findNavController().navigate(action)
 

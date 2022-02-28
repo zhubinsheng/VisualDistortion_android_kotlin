@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.remoteDataSource.Result
 import com.rino.visualdestortion.model.reposatory.ModelRepo
@@ -20,9 +21,13 @@ class LoginFragmentViewModel(application: Application) : AndroidViewModel(applic
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
     private val _isLogin = MutableLiveData<Boolean>()
+    private val _isPrepared = MutableLiveData<Boolean>()
 
     val isLogin: LiveData<Boolean>
         get() = _isLogin
+
+    val isPrepared: LiveData<Boolean>
+        get() = _isPrepared
 
     val loading: LiveData<Int>
         get() = _loading
@@ -37,6 +42,7 @@ class LoginFragmentViewModel(application: Application) : AndroidViewModel(applic
             when (val result = loginRequest?.let { modelRepository.login(it) }) {
                 is Result.Success -> {
                     _loading.postValue(View.GONE)
+                   // isTodayPrepared()
                     Log.i("login:", "${result.data}")
                     if (result.data?.status == "Authenticated") {
                         withContext(Dispatchers.Main) {
@@ -65,6 +71,38 @@ class LoginFragmentViewModel(application: Application) : AndroidViewModel(applic
             }
         }
 
+    }
+
+    fun isTodayPrepared(){
+        _loading.postValue(View.VISIBLE)
+        viewModelScope.launch(Dispatchers.IO) {
+            when (val result = modelRepository.isDailyPrepared()) {
+                is Result.Success -> {
+                    _loading.postValue(View.GONE)
+                    Log.i("login:", "${result.data}")
+                    if (result.data?.isPrepared == true) {
+                        withContext(Dispatchers.Main) {
+                            _isPrepared.postValue(true)
+                            Log.i("isPrepared:", (result.data?.isPrepared ?: true).toString())
+                        }
+                    }
+                    else{
+                        _isPrepared.postValue(false)
+                    }
+                }
+                is Result.Error -> {
+                    Log.e("login:", "${result.exception.message}")
+                    _loading.postValue(View.GONE)
+                    _setError.postValue(result.exception.message)
+
+
+                }
+                is Result.Loading -> {
+                    Log.i("login", "Loading")
+                    _loading.postValue(View.VISIBLE)
+                }
+            }
+        }
     }
 
 }

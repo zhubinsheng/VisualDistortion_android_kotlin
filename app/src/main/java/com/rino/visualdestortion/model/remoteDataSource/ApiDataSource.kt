@@ -8,6 +8,8 @@ import android.util.Log
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
+import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
+import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
@@ -45,7 +47,7 @@ class ApiDataSource:ApiInterface {
     }
 
 
-    override suspend fun setServiceForm(auth:String, serviceForm: FormData): Response<QRCode> {
+    override suspend fun setServiceForm(auth:String, serviceForm: FormData): Response<QRCode?>? {
         Log.e("ApiDataSource",serviceForm.beforeImg.toString())
         Log.e("ApiDataSource",serviceForm.afterImg.toString())
         val serviceTypeIdBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.serviceTypeId)
@@ -55,31 +57,34 @@ class ApiDataSource:ApiInterface {
         val streetNameBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.streetName)
         val latBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.lat)
         val lngBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.lng)
-        val notesBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(),
-            serviceForm.notes!!
-        )
-        val percentageBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.percentage)
-
-        val workerTypesList: HashMap<String, RequestBody> = HashMap()
-        for (item in serviceForm.WorkersTypesList)
-        {
-            workerTypesList["WorkersTypesList[${item.key}]"] = item.value.toString().toRequestBody()
+        val notesBody: RequestBody? = serviceForm.notes?.let {
+            RequestBody.create("text/plain".toMediaTypeOrNull(),
+                it
+            )
         }
+    //    val percentageBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.percentage)
 
-        val equipmentList: HashMap<String, RequestBody> = HashMap()
-        for (item in serviceForm.equipmentList)
-        {
+//        val workerTypesList: HashMap<String, RequestBody> = HashMap()
+//        for (item in serviceForm.WorkersTypesList)
+//        {
+//            workerTypesList["WorkersTypesList[${item.key}]"] = item.value.toString().toRequestBody()
+//        }
+//
+//        val equipmentList: HashMap<String, RequestBody> = HashMap()
+//        for (item in serviceForm.equipmentList)
+//        {
+//
+//            workerTypesList["EquipmentList[${item.key}]"] = item.value.toString().toRequestBody()
+//        }
 
-            workerTypesList["EquipmentList[${item.key}]"] = item.value.toString().toRequestBody()
+        return serviceForm.duringImg?.let {
+            retrofit.setServiceForm(auth,serviceTypeIdBody,sectorNameBody,
+                municipalityNameBody,districtNameBody,
+                streetNameBody,latBody,lngBody,
+                serviceForm.beforeImg, it,serviceForm.afterImg,
+                serviceForm.mSquare,serviceForm.mCube,serviceForm.numberR,
+                notesBody)
         }
-
-        return retrofit.setServiceForm(auth,serviceTypeIdBody,sectorNameBody,
-                                       municipalityNameBody,districtNameBody,
-                                       streetNameBody,latBody,lngBody,
-            serviceForm.beforeImg!!, serviceForm.afterImg!!,
-                                         equipmentList,workerTypesList,
-                                        serviceForm.mSquare,serviceForm.mCube,serviceForm.numberR,
-                                        notesBody,percentageBody)
 
 
 
@@ -97,6 +102,34 @@ class ApiDataSource:ApiInterface {
 
     override suspend fun getHistoryData(auth: String): Response<AllHistoryResponse> {
         return retrofit.getHistoryData(auth)
+    }
+
+    override suspend fun isDailyPrepared(auth: String): Response<CheckDailyPreparationResponse> {
+       return  retrofit.isDailyPrepared(auth)
+    }
+
+    override suspend fun setDailyPreparation(
+        auth: String,
+        WorkersTypesMap: Map<Long,Int>,
+        equipmentMap:    Map<Long, Int>
+    ): Response<Int> {
+        val workerTypesList: HashMap<String, RequestBody> = HashMap()
+        for (item in WorkersTypesMap)
+        {
+            workerTypesList["WorkersTypesList[${item.key}]"] = item.value.toString().toRequestBody()
+        }
+
+        val equipmentList: HashMap<String, RequestBody> = HashMap()
+        for (item in equipmentMap)
+        {
+
+            workerTypesList["EquipmentList[${item.key}]"] = item.value.toString().toRequestBody()
+        }
+        return  retrofit.setDailyPreparation(auth,workerTypesList,equipmentList)
+    }
+
+    override suspend fun getDailyPreparation(auth: String): Response<TodayDailyPrapration> {
+        return  retrofit.getDailyPreparation(auth)
     }
 
 }

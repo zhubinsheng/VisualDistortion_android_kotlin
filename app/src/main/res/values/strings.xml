@@ -50,6 +50,7 @@
     <string name="rhino">"رينو لعمليات "</string>
     <string name="company">"شركة "</string>
     <string name="history">سجل الخدمات</string>
+    <string name="duringImage">الصورة اثناء المهمة</string>
 
 
 </resources>

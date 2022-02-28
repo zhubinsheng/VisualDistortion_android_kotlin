@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/addServiceFragment">
 
 
     <fragment
@@ -37,6 +37,11 @@
         <action
             android:id="@+id/action_login_to_ServiceFragment"
             app:destination="@id/servicesFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_login_to_DailyPreparation"
+            app:destination="@id/dailyPreparationFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
         <action
@@ -145,8 +150,8 @@
         android:label="fragment_daily_preparation"
         tools:layout="@layout/fragment_daily_preparation" >
         <action
-            android:id="@+id/action_dailyPreparation_to_addService"
-            app:destination="@id/addServiceFragment"
+            android:id="@+id/action_dailyPreparation_to_services"
+            app:destination="@id/servicesFragment"
             app:popEnterAnim="@anim/right_to_left"
             app:popUpTo="@id/servicesFragment"
             />

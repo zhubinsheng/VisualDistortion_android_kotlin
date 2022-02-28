@@ -1,9 +1,10 @@
 package com.rino.visualdestortion.model.remoteDataSource
 
-import android.graphics.Bitmap
+
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
-import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
+import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
+import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
@@ -42,15 +43,17 @@ interface ApiService {
                                ,@Part("lat"             ) lat: RequestBody
                                ,@Part("lng"             ) lng: RequestBody
                                ,@Part beforeImg: MultipartBody.Part
+                               ,@Part duringImg: MultipartBody.Part
                                ,@Part afterImg: MultipartBody.Part
-                               ,@PartMap WorkersTypesList : HashMap<String, RequestBody>
-                               ,@PartMap equipmentList : HashMap<String, RequestBody>
+
+//                               ,@PartMap WorkersTypesList : HashMap<String, RequestBody>
+//                               ,@PartMap equipmentList : HashMap<String, RequestBody>
                                ,@Part("mSquare"         ) mSquare: Int?
                                ,@Part("mCube"           ) mCube: Int?
                                ,@Part("numberR"         ) numberR: Int?
                                ,@Part("notes"           ) notes: RequestBody ?
-                               ,@Part("Percentage"      ) percentage: RequestBody ?
-    ): Response<QRCode>
+//                               ,@Part("Percentage"      ) percentage: RequestBody ?
+    ): Response<QRCode?>
 
     @GET("api/form/createFrom")
     suspend fun getServiceForm( @Header("Authorization") auth: String): Response<AddServiceResponse>
@@ -60,4 +63,16 @@ interface ApiService {
 
     @GET("api/History/GetServiceTypeHistory")
     suspend fun getHistoryData( @Header("Authorization") auth: String): Response<AllHistoryResponse>
+
+    @GET("api/DailyPreparations/isPrepared")
+    suspend fun isDailyPrepared( @Header("Authorization") auth: String): Response<CheckDailyPreparationResponse>
+
+    @Multipart
+    @POST("api/DailyPreparations/")
+    suspend fun setDailyPreparation(@Header("Authorization"   ) auth: String
+                               ,@PartMap WorkersTypesList : HashMap<String, RequestBody>
+                               ,@PartMap equipmentList : HashMap<String, RequestBody>):Response<Int>
+
+    @GET("api/DailyPreparations")
+    suspend fun getDailyPreparation( @Header("Authorization") auth: String): Response<TodayDailyPrapration>
 }

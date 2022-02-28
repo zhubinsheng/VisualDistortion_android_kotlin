@@ -60,6 +60,7 @@ class LoginFragment : Fragment() {
 
     private fun observeData() {
         observeSuccessLogin()
+        observeIsPrepared()
         observeLoading()
         observeShowError()
 
@@ -74,7 +75,8 @@ class LoginFragment : Fragment() {
                     " Login Successfully",
                     Toast.LENGTH_SHORT
                 ).show()
-                navigateToHome()
+                viewModel.isTodayPrepared()
+             //   navigateToHome()
 
             } else {
                 Toast.makeText(
@@ -85,9 +87,25 @@ class LoginFragment : Fragment() {
             }
         }
     }
+    private fun observeIsPrepared() {
+        viewModel.isPrepared.observe(viewLifecycleOwner) {
+            if (it) {
+                   navigateToHome()
+            //   navigateToDailyPreparation()
+            } else {
+                  navigateToDailyPreparation()
+              //   navigateToHome()
+            }
+        }
+    }
 
     private fun navigateToHome() {
         val action = LoginFragmentDirections.actionLoginToServiceFragment()
+        findNavController().navigate(action)
+    }
+
+    private fun navigateToDailyPreparation() {
+        val action = LoginFragmentDirections.actionLoginToDailyPreparation()
         findNavController().navigate(action)
     }
 

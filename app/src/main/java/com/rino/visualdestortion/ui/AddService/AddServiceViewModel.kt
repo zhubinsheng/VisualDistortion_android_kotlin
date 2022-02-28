@@ -26,7 +26,7 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     private var _navigateToQRCode = MutableLiveData<String>()
     private var _getDailyPreparation = MutableLiveData<DailyPreparation?>()
     private var _getServicesData = MutableLiveData<AddServiceResponse>()
-    private var _setServiceForm = MutableLiveData<QRCode>()
+    private var _setServiceForm = MutableLiveData<QRCode?>()
 
 
     val loading: LiveData<Int>
@@ -38,7 +38,7 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
     val getServicesData: LiveData<AddServiceResponse>
         get() = _getServicesData
 
-    val setServiceForm: LiveData<QRCode>
+    val setServiceForm: MutableLiveData<QRCode?>
         get() = _setServiceForm
 
     val getDailyPreparation: LiveData<DailyPreparation?>
@@ -78,7 +78,7 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
                 is Result.Success -> {
                     _loading.postValue(View.GONE)
                     Log.i("setServiceForm:", "${result.data}")
-                    _setServiceForm.postValue(result.data!!)
+                    _setServiceForm.postValue(result.data)
                     _loading.postValue(View.GONE)
 
                 }
