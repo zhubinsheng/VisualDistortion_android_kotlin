@@ -38,8 +38,11 @@ interface RemoteRepo {
       suspend fun isDailyPrepared(): Result<CheckDailyPreparationResponse?>
 
       suspend fun setDailyPreparation(WorkersTypesList : Map<Long, Int>
-                                      , equipmentList : Map<Long, Int>):Result<Int?>
+                                      , equipmentList : Map<Long, Int>):Result<Void?>
 
       suspend fun getDailyPreparation(): Result<TodayDailyPrapration?>
+
+      suspend fun editDailyPreparation(WorkersTypesList : Map<Long, Int>
+                                      , equipmentList : Map<Long, Int>):Result<Void?>
 
 }

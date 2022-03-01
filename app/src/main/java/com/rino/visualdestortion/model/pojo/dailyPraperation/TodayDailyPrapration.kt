@@ -10,19 +10,19 @@ data class TodayDailyPrapration(
                                 @SerializedName("workerTypes"    ) var workerTypes    : ArrayList<WorkerTypes>    = arrayListOf())
 
 data class PrepEquipments (
-                                @SerializedName("id"    ) var id    : Int?    = null,
-                                @SerializedName("name"  ) var name  : String? = null,
-                                @SerializedName("count" ) var count : Int?    = null)
+                                @SerializedName("id"    ) var id    : Int,
+                                @SerializedName("name"  ) var name  : String,
+                                @SerializedName("count" ) var count : Int)
 
 data class PrepWorkers (
-                                @SerializedName("id"    ) var id    : Int?    = null,
-                                @SerializedName("name"  ) var name  : String? = null,
-                                @SerializedName("count" ) var count : Int?    = null)
+                                @SerializedName("id"    ) var id    : Int,
+                                @SerializedName("name"  ) var name  : String,
+                                @SerializedName("count" ) var count : Int)
 
 data class EquipmentTypes (
-                                @SerializedName("name" ) var name : String? = null,
-                                @SerializedName("id"   ) var id   : Int?    = null)
+                                @SerializedName("name" ) var name : String,
+                                @SerializedName("id"   ) var id   : Int)
 
 data class WorkerTypes (
-                                @SerializedName("name" ) var name : String? = null,
-                                @SerializedName("id"   ) var id   : Int?    = null)
+                                @SerializedName("name" ) var name : String,
+                                @SerializedName("id"   ) var id   : Int)

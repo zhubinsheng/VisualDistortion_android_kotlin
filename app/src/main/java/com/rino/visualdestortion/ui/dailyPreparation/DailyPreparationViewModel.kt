@@ -23,7 +23,7 @@ class DailyPreparationViewModel (application: Application) : AndroidViewModel(ap
     private var _loading = MutableLiveData<Int>(View.GONE)
     private var _getServicesData = MutableLiveData<AddServiceResponse>()
 //    private var _getDailyPreparation = MutableLiveData<TodayDailyPrapration?>()
-    private var _setDailyPreparation = MutableLiveData<Int?>()
+    private var _setDailyPreparation = MutableLiveData<Boolean>()
     private var _equipmentsDeleteItem = MutableLiveData<EquipmentItem>()
     private var _workerTypeDeleteItem = MutableLiveData<EquipmentItem>()
 
@@ -39,7 +39,7 @@ class DailyPreparationViewModel (application: Application) : AndroidViewModel(ap
 //        val getDailyPreparation: MutableLiveData<TodayDailyPrapration?>
 //        get() = _getDailyPreparation
 
-    val setDailyPreparation: MutableLiveData<Int?>
+    val setDailyPreparation: MutableLiveData<Boolean>
           get() = _setDailyPreparation
     val equipmentsDeleteItem: LiveData<EquipmentItem>
         get() = _equipmentsDeleteItem
@@ -80,13 +80,13 @@ class DailyPreparationViewModel (application: Application) : AndroidViewModel(ap
                 is Result.Success -> {
                     _loading.postValue(View.GONE)
                     Log.i("setDailyPreparation:", "${result.data}")
-                    _setDailyPreparation.postValue(result.data)
+                    _setDailyPreparation.postValue(true)
                     _loading.postValue(View.GONE)
 
                 }
                 is Result.Error -> {
                     Log.e("setDailyPreparation:", "${result.exception.message}")
-                    _setDailyPreparation.postValue(400)
+                    _setDailyPreparation.postValue(false)
                     _setError.postValue(result.exception.message)
                     _loading.postValue(View.GONE)
 

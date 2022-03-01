@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.EquipmentItemBinding
-import com.rino.visualdestortion.ui.dailyPreparation.EquipmentItem
+import com.rino.visualdestortion.model.pojo.dailyPraperation.PrepWorkers
 
 
-class WorkerTypesAdapter(private var itemsList: ArrayList<EquipmentItem>, private var viewModel: EditDailyPViewModel, private  var context: Context) :
+class WorkerTypesAdapter(private var itemsList: ArrayList<PrepWorkers>, private var viewModel: EditDailyPViewModel, private  var context: Context) :
     RecyclerView.Adapter<WorkerTypesAdapter.ItemViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -53,7 +53,7 @@ class WorkerTypesAdapter(private var itemsList: ArrayList<EquipmentItem>, privat
         }
     }
 
-    fun customTwoButtonsDialog(equipmentItem: EquipmentItem, position: Int) {
+    fun customTwoButtonsDialog(equipmentItem: PrepWorkers, position: Int) {
         val builder = AlertDialog.Builder(context!!)
         builder.setTitle(R.string.app_name)
 
@@ -77,7 +77,7 @@ class WorkerTypesAdapter(private var itemsList: ArrayList<EquipmentItem>, privat
         alertDialog.show()
     }
 
-    fun updateItems(newFavoriteList: List<EquipmentItem>) {
+    fun updateItems(newFavoriteList: List<PrepWorkers>) {
         itemsList.clear()
         itemsList.addAll(newFavoriteList)
         notifyDataSetChanged()
@@ -87,7 +87,7 @@ class WorkerTypesAdapter(private var itemsList: ArrayList<EquipmentItem>, privat
         var hashmap = HashMap<Long,Int>()
         for (item in itemsList)
         {
-            hashmap[item.id] = item.count
+            hashmap[item.id.toLong()] = item.count
         }
         return hashmap
     }

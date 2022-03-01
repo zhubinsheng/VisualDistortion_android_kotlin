@@ -112,7 +112,7 @@ class ApiDataSource:ApiInterface {
         auth: String,
         WorkersTypesMap: Map<Long,Int>,
         equipmentMap:    Map<Long, Int>
-    ): Response<Int> {
+    ): Response<Void> {
         val workerTypesList: HashMap<String, RequestBody> = HashMap()
         for (item in WorkersTypesMap)
         {
@@ -131,5 +131,23 @@ class ApiDataSource:ApiInterface {
     override suspend fun getDailyPreparation(auth: String): Response<TodayDailyPrapration> {
         return  retrofit.getDailyPreparation(auth)
     }
+    override suspend fun editDailyPreparation(
+        auth: String,
+        WorkersTypesMap: Map<Long,Int>,
+        equipmentMap:    Map<Long, Int>
+    ): Response<Void> {
+        val workerTypesList: HashMap<String, RequestBody> = HashMap()
+        for (item in WorkersTypesMap)
+        {
+            workerTypesList["WorkersTypesList[${item.key}]"] = item.value.toString().toRequestBody()
+        }
 
+        val equipmentList: HashMap<String, RequestBody> = HashMap()
+        for (item in equipmentMap)
+        {
+
+            workerTypesList["EquipmentList[${item.key}]"] = item.value.toString().toRequestBody()
+        }
+        return  retrofit.editDailyPreparation(auth,workerTypesList,equipmentList)
+    }
 }

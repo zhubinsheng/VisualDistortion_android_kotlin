@@ -39,8 +39,13 @@ interface ApiInterface{
 
     suspend fun setDailyPreparation(auth: String
                                     , WorkersTypesList : Map<Long, Int>
-                                    , equipmentList    : Map<Long, Int>):Response<Int>
+                                    , equipmentList    : Map<Long, Int>):Response<Void>
 
     suspend fun getDailyPreparation(auth: String): Response<TodayDailyPrapration>
+
+
+    suspend fun editDailyPreparation(auth: String
+                                    , WorkersTypesList : Map<Long, Int>
+                                    , equipmentList    : Map<Long, Int>):Response<Void>
 
 }

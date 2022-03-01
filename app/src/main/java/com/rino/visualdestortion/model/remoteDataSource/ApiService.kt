@@ -71,8 +71,15 @@ interface ApiService {
     @POST("api/DailyPreparations/")
     suspend fun setDailyPreparation(@Header("Authorization"   ) auth: String
                                ,@PartMap WorkersTypesList : HashMap<String, RequestBody>
-                               ,@PartMap equipmentList : HashMap<String, RequestBody>):Response<Int>
+                               ,@PartMap equipmentList : HashMap<String, RequestBody>):Response<Void>
 
     @GET("api/DailyPreparations")
     suspend fun getDailyPreparation( @Header("Authorization") auth: String): Response<TodayDailyPrapration>
+
+
+    @Multipart
+    @PUT("api/DailyPreparations/")
+    suspend fun editDailyPreparation(@Header("Authorization"   ) auth: String
+                                    ,@PartMap WorkersTypesList : HashMap<String, RequestBody>
+                                    ,@PartMap equipmentList : HashMap<String, RequestBody>):Response<Void>
 }

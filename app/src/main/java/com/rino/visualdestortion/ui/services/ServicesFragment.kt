@@ -16,6 +16,7 @@ import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentServicesBinding
 import com.rino.visualdestortion.model.pojo.home.ServiceTypes
 import com.rino.visualdestortion.ui.home.MainActivity
+import com.rino.visualdestortion.ui.splash.SplashFragmentDirections
 
 
 class ServicesFragment : Fragment() {
@@ -81,7 +82,15 @@ class ServicesFragment : Fragment() {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = serviceAdapter
         }
+        binding.editDailyPrepImg.setOnClickListener {
+            navigateToEditDailyPreparation()
+        }
 
+    }
+
+    private fun navigateToEditDailyPreparation() {
+        val action = ServicesFragmentDirections.actionServiceToEditDailyprepration()
+        findNavController().navigate(action)
     }
 
     override fun onResume() {

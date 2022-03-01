@@ -126,9 +126,9 @@ class DailyPreparationFragment : Fragment()  {
         viewModel.setDailyPreparation.observe(viewLifecycleOwner) {
             it?.let {
                 Log.e("ddddd",it.toString())
-              if(it == 200)
+              if(it)
               {
-                  Log.e("ddddd",it.toString())
+                //  Log.e("ddddd",it.toString())
                   navigateToHome()
               }
             }

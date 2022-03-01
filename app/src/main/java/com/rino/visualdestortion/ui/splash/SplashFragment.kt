@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentLoginBinding
 import com.rino.visualdestortion.databinding.FragmentSplashBinding
@@ -29,11 +30,15 @@ class SplashFragment : Fragment() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
 
+    }
 
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true
+
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,14 +47,41 @@ class SplashFragment : Fragment() {
         // Inflate the layout for this fragment
         viewModel = SplashViewModel(requireActivity().application)
         binding = FragmentSplashBinding.inflate(inflater, container, false)
-        if(viewModel.isLogin()){
-            navToHome()
-        }
-        else {
-            splashSetup()
-            setAnimation()
-        }
+
+        observeData()
+        splashSetup()
+        setAnimation()
+
         return binding.root
+    }
+
+    private fun observeData() {
+        observeIsPrepared()
+        observeShowError()
+    }
+
+    private fun observeIsPrepared() {
+        viewModel.isPrepared.observe(viewLifecycleOwner) {
+            if (it) {
+               navToHome()
+               //   navigateToDailyPreparation()
+            } else {
+               navigateToDailyPreparation()
+               //    navToHome()
+            }
+        }
+    }
+    private fun observeShowError() {
+        viewModel.setError.observe(viewLifecycleOwner) {
+            it?.let {
+                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
+                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+                    .setBackgroundTint(getResources().getColor(R.color.teal))
+                    .setActionTextColor(getResources().getColor(R.color.white)).setAction("Ok")
+                    {
+                    }.show()
+            }
+        }
     }
 
     private fun navToHome() {
@@ -57,12 +89,28 @@ class SplashFragment : Fragment() {
         findNavController().navigate(action)
     }
 
+    private fun navigateToDailyPreparation() {
+        val action = SplashFragmentDirections.actionSplashToDailyPreparation()
+        findNavController().navigate(action)
+    }
+
+    private fun navToWelcome() {
+        val action = SplashFragmentDirections.actionSplashToWelcome()
+        findNavController().navigate(action)
+    }
+
     private fun splashSetup(){
         CoroutineScope(Dispatchers.Default).launch{
             delay(SPLASH_TIME_OUT)
             CoroutineScope(Dispatchers.Main).launch{
-                findNavController().popBackStack()
-                findNavController().navigate(R.id.welcomeFragment)
+                if (viewModel.isLogin()) {
+                    viewModel.isTodayPrepared()
+                }
+                else{
+                    navToWelcome()
+                }
+//                findNavController().popBackStack()
+//                findNavController().navigate(R.id.welcomeFragment)
             }
         }
     }

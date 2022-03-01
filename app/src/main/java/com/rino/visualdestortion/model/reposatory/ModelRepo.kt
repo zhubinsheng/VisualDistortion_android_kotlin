@@ -438,8 +438,8 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
     override suspend fun setDailyPreparation(
         WorkersTypesList: Map<Long, Int>,
         equipmentList: Map<Long, Int>
-    ): Result<Int?> {
-        var result: Result<Int?> = Result.Loading
+    ): Result<Void?> {
+        var result: Result<Void?> = Result.Loading
         try {
 
             val response = apiDataSource.setDailyPreparation("Bearer ${getToken()}",WorkersTypesList,equipmentList)
@@ -452,7 +452,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     400 -> {
                         Log.e("Error 400", "Bad Request")
                         Log.e("Error 400", "setDailyPreparation: "+response.errorBody()?.string())
-                        result = Result.Error(Exception("Bad Request getData"))
+                        result = Result.Error(Exception("Bad Request setDailyPreparation"))
                     }
                     404 -> {
                         Log.e("Error 404", "Not Found")
@@ -518,6 +518,53 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                         Log.e("Error", "Generic Error")
                     }
                 }
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+    override suspend fun editDailyPreparation(
+        WorkersTypesList: Map<Long, Int>,
+        equipmentList: Map<Long, Int>
+    ): Result<Void?> {
+        var result: Result<Void?> = Result.Loading
+        try {
+
+            val response = apiDataSource.editDailyPreparation("Bearer ${getToken()}",WorkersTypesList,equipmentList)
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepositoryForm", "Result $result")
+            } else {
+                Log.i("ModelRepositoryForm", "Error${response.errorBody()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        Log.e("Error 400", "editDailyPreparation: "+response.errorBody()?.string())
+                        result = Result.Error(Exception("Bad Request editDailyPreparation"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth")
+                        if(isLogin())
+                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
+                        refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                    }
+                }
+
             }
 
         }catch (e: IOException){

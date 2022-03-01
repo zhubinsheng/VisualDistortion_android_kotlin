@@ -10,21 +10,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:layout_marginBottom="20dp"
+   >
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical"
         android:gravity="center"
-        android:layout_gravity="center_horizontal"
         android:text="@string/services"
+        android:textColor="@color/teal"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="@color/teal"
-        android:layout_marginBottom="25dp"
-        android:layout_marginTop="25dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
     />
 
+    <ImageView
+        android:id="@+id/editDailyPrep_img"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="@dimen/paddingText"
+        android:layout_gravity="center_vertical|right"
+        android:src="@drawable/ic_baseline_edit_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

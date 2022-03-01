@@ -51,6 +51,8 @@
     <string name="company">"شركة "</string>
     <string name="history">سجل الخدمات</string>
     <string name="duringImage">الصورة اثناء المهمة</string>
+    <string name="EditDailyPreparation">تعديل التحضير اليومى</string>
+    <string name="save">حفظ</string>
 
 
 </resources>

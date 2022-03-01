@@ -49,17 +49,18 @@ class ServiceAdapter(
 
 
     private fun observeDailyPreparation(position: Int) {
-        val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
-        serviceViewModel.getDailyPreparationByServiceID(servicesList[position].id.toString(), date)
-        serviceViewModel.getDailyPreparation.observe(viewlifecyclerOwner) {
-            if (it != null) {
-                servicesList[position].let { it1 -> serviceViewModel.navToAddService(it1) }
-            } else {
-                servicesList[position].let { it1 ->
-                    serviceViewModel.navToDailyPreparation(it1)
-                }
-            }
-        }
+//        val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
+//        serviceViewModel.getDailyPreparationByServiceID(servicesList[position].id.toString(), date)
+//        serviceViewModel.getDailyPreparation.observe(viewlifecyclerOwner) {
+//            if (it != null) {
+//                servicesList[position].let { it1 -> serviceViewModel.navToAddService(it1) }
+//            } else {
+//                servicesList[position].let { it1 ->
+//                    serviceViewModel.navToDailyPreparation(it1)
+//                }
+//            }
+//        }
+        servicesList[position].let { it1 -> serviceViewModel.navToAddService(it1) }
     }
     fun updateServices(newFavoriteList: List<ServiceTypes>) {
         servicesList.clear()

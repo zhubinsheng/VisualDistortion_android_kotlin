@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/addServiceFragment">
+    app:startDestination="@id/servicesFragment">
 
 
     <fragment
@@ -26,6 +26,16 @@
         <action
             android:id="@+id/action_splash_to_ServiceFragment"
             app:destination="@id/servicesFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splash_to_dailyPreparation"
+            app:destination="@id/dailyPreparationFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splash_to_welcome"
+            app:destination="@id/welcomeFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
     </fragment>
@@ -68,7 +78,10 @@
             android:id="@+id/action_service_to_Dailyprepration"
             app:destination="@id/dailyPreparationFragment"
            />
-
+        <action
+            android:id="@+id/action_service_to_EditDailyprepration"
+            app:destination="@id/editDailyPreparationFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/historyFragment"
@@ -163,5 +176,17 @@
             android:name="serviceID"
             app:argType="string"
             android:defaultValue=""/>
+    </fragment>
+    <fragment
+        android:id="@+id/editDailyPreparationFragment"
+        android:name="com.rino.visualdestortion.ui.editDailyPreparation.EditDailyPreparationFragment"
+        android:label="fragment_edit_daily_preparation"
+        tools:layout="@layout/fragment_edit_daily_preparation" >
+        <action
+            android:id="@+id/action_editDailyPreparation_to_services"
+            app:destination="@id/servicesFragment"
+            app:popEnterAnim="@anim/right_to_left"
+            app:popUpTo="@id/servicesFragment"
+            />
     </fragment>
 </navigation>
