@@ -77,16 +77,12 @@ class ApiDataSource:ApiInterface {
 //            workerTypesList["EquipmentList[${item.key}]"] = item.value.toString().toRequestBody()
 //        }
 
-        return serviceForm.duringImg?.let {
-            retrofit.setServiceForm(auth,serviceTypeIdBody,sectorNameBody,
+        return retrofit.setServiceForm(auth,serviceTypeIdBody,sectorNameBody,
                 municipalityNameBody,districtNameBody,
                 streetNameBody,latBody,lngBody,
-                serviceForm.beforeImg, it,serviceForm.afterImg,
+                serviceForm.beforeImg, serviceForm.duringImg,serviceForm.afterImg,
                 serviceForm.mSquare,serviceForm.mCube,serviceForm.numberR,
                 notesBody)
-        }
-
-
 
    //     return retrofit.uploadData()
     }

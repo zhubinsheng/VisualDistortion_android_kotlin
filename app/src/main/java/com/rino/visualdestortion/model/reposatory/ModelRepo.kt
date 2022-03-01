@@ -204,13 +204,14 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
     override suspend fun setServiceForm(serviceForm: FormData):Result<QRCode?> {
         var result: Result<QRCode?> = Result.Loading
         try {
-
             val response = apiDataSource.setServiceForm("Bearer ${getToken()}",serviceForm)
+            Log.i("ModelRepositoryForm", "response :  $response")
             if (response?.isSuccessful == true) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepositoryForm", "Result $result")
             } else {
                 Log.i("ModelRepositoryForm", "Error${response?.errorBody()}")
+                Log.i("ModelRepositoryForm", "code${response?.code()}")
                 when (response?.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")

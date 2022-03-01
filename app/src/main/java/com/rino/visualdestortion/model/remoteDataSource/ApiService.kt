@@ -43,18 +43,18 @@ interface ApiService {
                                ,@Part("lat"             ) lat: RequestBody
                                ,@Part("lng"             ) lng: RequestBody
                                ,@Part beforeImg: MultipartBody.Part
-                               ,@Part duringImg: MultipartBody.Part
+                               ,@Part duringImg: MultipartBody.Part?
                                ,@Part afterImg: MultipartBody.Part
-
-//                               ,@PartMap WorkersTypesList : HashMap<String, RequestBody>
-//                               ,@PartMap equipmentList : HashMap<String, RequestBody>
                                ,@Part("mSquare"         ) mSquare: Int?
                                ,@Part("mCube"           ) mCube: Int?
                                ,@Part("numberR"         ) numberR: Int?
                                ,@Part("notes"           ) notes: RequestBody ?
-//                               ,@Part("Percentage"      ) percentage: RequestBody ?
+
     ): Response<QRCode?>
 
+//                               ,@PartMap WorkersTypesList : HashMap<String, RequestBody>
+//                               ,@PartMap equipmentList : HashMap<String, RequestBody>
+//                               ,@Part("Percentage"      ) percentage: RequestBody ?
     @GET("api/form/createFrom")
     suspend fun getServiceForm( @Header("Authorization") auth: String): Response<AddServiceResponse>
 

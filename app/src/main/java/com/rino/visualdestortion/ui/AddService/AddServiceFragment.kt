@@ -173,11 +173,20 @@ class AddServiceFragment : Fragment() {
 
     private fun submit() {
         formData = getFormDataFromUi(serviceName)
+        Log.e("serviceTypeId     : ",formData.serviceTypeId)
+        Log.e("sectorName        : ",formData.sectorName)
+        Log.e("districtName      : ",formData.districtName)
+        Log.e("municipalityName  : ",formData.municipalityName)
+        Log.e("streetName        : ",formData.streetName)
+        Log.e("beforeImg         : ",formData.beforeImg.toString())
+        Log.e("afterImg          : ",formData.afterImg.toString())
+        Log.e("duringImg         : ",formData.duringImg.toString())
+        Log.e("notes             : ",formData.notes?:"")
            if (validateData(formData) && lat != "" && lng != "") {
                val date =
                    DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
                  viewModel.setFormData(formData)
-       //        viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
+                 viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
            }
     }
 
