@@ -113,7 +113,6 @@ class DailyPreparationFragment : Fragment()  {
 
     private fun observeData() {
         observeSetDailyPreparation()
-        observeDeletedEquipmentItem()
      //   observeGetDailyPreparation()
         observeGetServicesData()
         observeLoading()

@@ -1,7 +1,6 @@
 package com.rino.visualdestortion.ui.AddService
 
 import android.Manifest
-import android.R.attr
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -24,6 +23,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -59,12 +59,13 @@ class AddServiceFragment : Fragment() {
     private lateinit var districtsList: ArrayList<String>
     private lateinit var streetList: ArrayList<String>
     private  var beforeImgBody: MultipartBody.Part? = null
+    private  var duringImgBody: MultipartBody.Part? = null
     private  var afterImgBody: MultipartBody.Part? = null
     private lateinit  var formData: FormData
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val CAMERA_REQUEST_CODE = 200
     private val REQUEST_CODE = 100
-    private var serviceTypeId = "1"
+    private var serviceTypeId = 1
     private var serviceName = "الكتابات المشوهة"
     private var lat = ""
     private var lng = ""
@@ -140,20 +141,29 @@ class AddServiceFragment : Fragment() {
     private fun setUpUI() {
         viewModel.getServicesData()
         if (getArguments() != null) {
-            serviceName = getArguments()?.get("serviceName").toString()
-            if (serviceName.equals("مخلفات الهدم")) {
+            serviceName   = getArguments()?.get("serviceName").toString()
+            serviceTypeId = getArguments()?.get("serviceID").toString().toInt()
+            if (serviceTypeId == 6) {
                 binding.textInputMSquare.isGone = true
             }
-            else if (serviceName.equals("الكتابات المشوهة")) {
+            else if (serviceTypeId == 5) {
                 binding.textInputMCube.isGone = true
                 binding.textInputNumberR.isGone = true
+            }
+            else if(serviceTypeId == 3)
+            {
+                binding.spicialItemsCard.isGone = true
+                binding.spicialItemsTxt.isGone = true
             }
             else {
                 binding.spicialItemsCard.isGone = true
                 binding.spicialItemsTxt.isGone = true
+                binding.duringPic.isGone = true
+                binding.duringPicText.isGone = true
+                binding.textInputDuringImg.isGone = true
             }
             binding.serviceTypeNameTxt.text = serviceName
-            serviceTypeId = getArguments()?.get("serviceID").toString()
+
         }
         binding.notesEditTxt.addTextChangedListener {
             val notesLength =  binding.notesEditTxt.text.toString().length
@@ -169,24 +179,44 @@ class AddServiceFragment : Fragment() {
         binding.afterPic.setOnClickListener {
             afterPicOnClick()
         }
+        binding.duringPic.setOnClickListener {
+            duringPicOnClick()
+        }
+    }
+
+    private fun duringPicOnClick() {
+        checkCameraOrStoragePermission()
+    }
+
+    private fun checkCameraOrStoragePermission() {
+        if (isCameraPermissionGranted()&&isExternalStoragePermissionGranted()) {
+            enableCameraOrGallery()
+        } else {
+            navigateToAppSetting()
+        }
+    }
+
+    private fun enableCameraOrGallery() {
+        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        startActivityForResult(gallery, 0)
     }
 
     private fun submit() {
         formData = getFormDataFromUi(serviceName)
-        Log.e("serviceTypeId     : ",formData.serviceTypeId)
-        Log.e("sectorName        : ",formData.sectorName)
-        Log.e("districtName      : ",formData.districtName)
-        Log.e("municipalityName  : ",formData.municipalityName)
-        Log.e("streetName        : ",formData.streetName)
-        Log.e("beforeImg         : ",formData.beforeImg.toString())
-        Log.e("afterImg          : ",formData.afterImg.toString())
-        Log.e("duringImg         : ",formData.duringImg.toString())
-        Log.e("notes             : ",formData.notes?:"")
+//        Log.e("serviceTypeId     : ",formData.serviceTypeId)
+//        Log.e("sectorName        : ",formData.sectorName)
+//        Log.e("districtName      : ",formData.districtName)
+//        Log.e("municipalityName  : ",formData.municipalityName)
+//        Log.e("streetName        : ",formData.streetName)
+//        Log.e("beforeImg         : ",formData.beforeImg.toString())
+//        Log.e("afterImg          : ",formData.afterImg.toString())
+//        Log.e("duringImg         : ",formData.duringImg.toString())
+//        Log.e("notes             : ",formData.notes?:"")
            if (validateData(formData) && lat != "" && lng != "") {
                val date =
                    DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
                  viewModel.setFormData(formData)
-                 viewModel.getDailyPreparationByServiceID(serviceTypeId, date)
+                 viewModel.getDailyPreparationByServiceID(serviceTypeId.toString(), date)
            }
     }
 
@@ -219,7 +249,7 @@ class AddServiceFragment : Fragment() {
             if(binding.editTextMSquare.text.toString()!="")
             formData.mSquare = binding.editTextMSquare.text.toString().toInt()
 
-        formData.serviceTypeId = serviceTypeId
+        formData.serviceTypeId = serviceTypeId.toString()
         formData.sectorName = binding.sectorTextView.text.toString()
         formData.municipalityName = binding.municipalitesTextView.text.toString()
         formData.districtName = binding.districtsTextView.text.toString()
@@ -237,6 +267,9 @@ class AddServiceFragment : Fragment() {
         Log.e("Image","Before : ${beforeImgBody.toString()}  ,Aftar : ${afterImgBody.toString()}")
         if(afterImgBody != null) {
             formData.afterImg = afterImgBody as MultipartBody.Part
+        }
+        if(duringImgBody != null) {
+            formData.duringImg = duringImgBody as MultipartBody.Part
         }
 //        formData.percentage = binding.precentageEditTxt.text.toString()
 //          formData.percentage = "100"
@@ -390,6 +423,7 @@ class AddServiceFragment : Fragment() {
         var flagMunicipality = true
         var flagStreet = true
         var flagBeforeImg = true
+        var flagDuringImg = true
         var flagAfterImg = true
         var flagPrecentage = true
         var flagNumberR = true
@@ -437,7 +471,7 @@ class AddServiceFragment : Fragment() {
         //binding.beforPic.drawable == resources.getDrawable(R.drawable.picture)
        // Toast.makeText(requireContext(),"Before : ${beforeImgBody == null}  ,Aftar : ${afterImgBody == null}",Toast.LENGTH_SHORT).show()
         if (beforeImgBody == null) {
-            binding.textInputbeforeImg.error = "      مطلوب"
+            binding.textInputbeforeImg.error = "   مطلوب"
             flagBeforeImg = false
         }
         else {
@@ -446,7 +480,7 @@ class AddServiceFragment : Fragment() {
              flagBeforeImg = true
         }
         if (afterImgBody == null) {
-            binding.textInputAfterImg.error = "      مطلوب"
+            binding.textInputAfterImg.error = "   مطلوب"
             flagAfterImg = false
         }
         else {
@@ -481,7 +515,7 @@ class AddServiceFragment : Fragment() {
                  flagNotes = true
             }
         }
-        if (serviceName.equals("مخلفات الهدم")) {
+        if (serviceTypeId == 6) {
             if (formData.mCube == null) {
                 binding.textInputMCube.error = "برجاء ادخال هذا العنصر"
                 flagMCube = false
@@ -500,8 +534,17 @@ class AddServiceFragment : Fragment() {
                 binding.textInputNumberR.isErrorEnabled = false
                 flagNumberR = true
             }
-
-        } else if (serviceName.equals("الكتابات المشوهة")) {
+            if (duringImgBody == null) {
+                binding.textInputDuringImg.error = "   مطلوب"
+                flagDuringImg = false
+            }
+            else {
+                binding.textInputDuringImg.error = null
+                binding.textInputDuringImg.isErrorEnabled = false
+                flagDuringImg = true
+            }
+        }
+        else if (serviceTypeId == 5) {
             if (formData.mSquare == null) {
                 binding.textInputMSquare.error = "برجاء ادخال هذا العنصر"
                 flagMSquare = false
@@ -511,12 +554,32 @@ class AddServiceFragment : Fragment() {
                 binding.textInputMSquare.isErrorEnabled = false
                 flagMSquare = true
             }
+            if (duringImgBody == null) {
+                binding.textInputDuringImg.error = "   مطلوب"
+                flagDuringImg = false
+            }
+            else {
+                binding.textInputDuringImg.error = null
+                binding.textInputDuringImg.isErrorEnabled = false
+                flagDuringImg = true
+            }
+        }
+        else if (serviceTypeId == 3) {
+            if (duringImgBody == null) {
+                binding.textInputDuringImg.error = "   مطلوب"
+                flagDuringImg = false
+            }
+            else {
+                binding.textInputDuringImg.error = null
+                binding.textInputDuringImg.isErrorEnabled = false
+                flagDuringImg = true
+            }
 
         }
       val flag =(flagSector && flagDistrict && flagMunicipality && flagStreet &&
-              flagAfterImg && flagBeforeImg &&
+              flagAfterImg && flagBeforeImg && flagDuringImg &&
               flagMCube && flagMSquare && flagNumberR &&
-              flagPrecentage && flagNotes
+              flagNotes
                 )
         return flag
     }
@@ -621,6 +684,51 @@ class AddServiceFragment : Fragment() {
                 }
             binding.beforPic.setImageBitmap(beforeBitmap)
             }
+        if (resultCode == Activity.RESULT_OK && requestCode == 0) {
+            binding.duringPic.setImageURI(data?.data) // handle chosen image
+            //    var bitmap = data?.data as Bitmap
+            val bitmap = MediaStore.Images.Media.getBitmap(
+                requireContext().getContentResolver(),
+                data?.data
+            )
+            if(bitmap == null)
+            {
+                Toast.makeText(context, "null", Toast.LENGTH_SHORT).show()
+            }
+            var duringBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+            CoroutineScope(Dispatchers.Default).launch {
+                duringBitmap =
+                    drawTextToBitmap(
+                        duringBitmap,
+                        3,
+                        Calendar.getInstance().time.toString()
+                    )
+                try {
+
+//                val file = File(
+//                    getRealPathFromURI(data?.data!!)
+//                )
+                    val file =
+                        File(getRealPathFromURI(getImageUri(requireContext(), duringBitmap)!!))
+                    println("duringFilePath" + file.path)
+                    if (file != null) {
+                        val requestFile: RequestBody =
+                            RequestBody.create(
+                                "multipart/form-data".toMediaTypeOrNull(),
+                                file!!
+                            )
+                        duringImgBody = MultipartBody.Part.createFormData(
+                            "beforeImg",
+                            file?.name.trim(),
+                            requestFile
+                        )
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+            binding.duringPic.setImageBitmap(duringBitmap)
+        }
         }
 
     @SuppressLint("ResourceAsColor")
@@ -629,9 +737,8 @@ class AddServiceFragment : Fragment() {
         val canvas = Canvas(bitmap)
         // new antialised Paint - empty constructor does also work
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.color = Color.RED
         val width: Int = bitmap.width
-        val height: Int = bitmap.height
+        val  height: Int = bitmap.height
 
         // text size in pixels
         val scale = resources.displayMetrics.density
@@ -640,7 +747,8 @@ class AddServiceFragment : Fragment() {
         //custom fonts or a default font
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         val fm: Paint.FontMetrics = Paint.FontMetrics()
-        paint.color = R.color.transparent_white
+        val color = ContextCompat.getColor(requireContext(), R.color.transparent_black)
+        paint.setColor(Color.BLACK)
         paint.getFontMetrics(fm)
         val margin = 5f
         canvas.drawRect(
@@ -648,9 +756,12 @@ class AddServiceFragment : Fragment() {
             10 + paint.measureText(text) + margin, 10 + fm.bottom
                     + margin, paint
         )
+        val original = BitmapFactory.decodeResource(resources, R.drawable.picture)
+       //  canvas.drawBitmap(original, rect, paint);
        //  canvas.drawBitmap(R.drawable.splash_icon,rect,paint)
-        val rectangle = RectF(10 + paint.measureText(text) + margin, fm.top - margin, margin, 10 + fm.bottom + margin)
-        canvas.drawBitmap(bitmap,null,rectangle,paint)
+  //      val rectangle = RectF(10 + paint.measureText(text) + margin, fm.top - margin, margin, 10 + fm.bottom + margin)
+        val rectangle2 = RectF(width-(20 + paint.measureText(text) + margin),fm.top - margin, 10f, 10 + fm.bottom + margin)
+        canvas.drawBitmap(original,null,RectF(20f,20f,50f,50f),null)
         // draw text to the Canvas center
         val bounds = Rect()
         //draw the text
