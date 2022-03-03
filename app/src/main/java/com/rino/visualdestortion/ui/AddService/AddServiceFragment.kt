@@ -3,15 +3,17 @@ package com.rino.visualdestortion.ui.AddService
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.database.Cursor
 import android.graphics.*
+import android.graphics.Color.argb
 import android.location.LocationManager
 import android.net.Uri
-import android.os.Bundle
-import android.os.Looper
+import android.os.*
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
@@ -171,7 +173,6 @@ class AddServiceFragment : Fragment() {
         }
         binding.submitButton.setOnClickListener {
             submit()
-
         }
         binding.beforPic.setOnClickListener {
             beforePicOnClick()
@@ -198,20 +199,108 @@ class AddServiceFragment : Fragment() {
 
     private fun enableCameraOrGallery() {
         val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        startActivityForResult(gallery, 0)
+       startActivityForResult(gallery, 0)
     }
+//            var photoUri: Uri? = null
+//            val camIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//            photoUri = createPhotoTakenUri(context)
+//            // write the captured image to a file
+//            camIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+//
+//            val gallIntent = Intent(Intent.ACTION_GET_CONTENT)
+//            gallIntent.type = "image/*"
+//
+//            // look for available intents
+//            val info = ArrayList<ResolveInfo>()
+//            val yourIntentsList = ArrayList<Intent>()
+//            val packageManager = context.packageManager
+//
+//            packageManager.queryIntentActivities(camIntent, 0).forEach{
+//                val finalIntent = Intent(camIntent)
+//                finalIntent.component = ComponentName(it.activityInfo.packageName, it.activityInfo.name)
+//                yourIntentsList.add(finalIntent)
+//                info.add(it)
+//            }
+//
+//            packageManager.queryIntentActivities(gallIntent, 0).forEach {
+//                val finalIntent = Intent(gallIntent)
+//                finalIntent.component = ComponentName(it.activityInfo.packageName, it.activityInfo.name)
+//                yourIntentsList.add(finalIntent)
+//                info.add(it)
+//            }
+//
+//            val chooser = Intent.createChooser(gallIntent, "Select source")
+//            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, yourIntentsList.toTypedArray())
+//
+//            return chooser
+//
+//        }
+//
+//        private fun createFile(context: Context): File {
+//            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+//            val imageFileName = "IMG_" + timeStamp + "_"
+//            val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: throw IllegalStateException("Dir not found")
+//            return File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",  /* suffix */
+//                storageDir /* directory */
+//            )
+//        }
+//
+//        private fun createPhotoTakenUri(context: Context): Uri {
+//            val file = createFile(context)
+//            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                FileProvider.getUriForFile(context,
+//                    com.rino.visualdestortion.BuildConfig.APPLICATION_ID +".fileprovider", file)
+//            } else {
+//                Uri.fromFile(file)
+//            }
+//        }
+
+//        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+//        startActivityForResult(gallery, 0)
+//        val file: File? = requireActivity().getExternalFilesDir(Environment.DIRECTORY_DCIM)
+//        val cameraOutputUri = Uri.fromFile(file)
+//        val intent: Intent? = getPickIntent(cameraOutputUri)
+//        startActivityForResult(intent, -1)
+//    }
+//
+//    private fun getPickIntent(cameraOutputUri: Uri?): Intent? {
+//        val intents: MutableList<Intent> = ArrayList()
+//
+//        if (true) {
+//            intents.add(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
+//        }
+//
+//        if (true) {
+//            setCameraIntents(intents, cameraOutputUri)
+//        }
+//
+//        if (intents.isEmpty()) return null
+//        val result = Intent.createChooser(intents.removeAt(0), null)
+//        if (intents.isNotEmpty()) {
+//            result.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toString())
+//        }
+//        return result
+//
+//    }
+//
+//    private fun setCameraIntents(intents: MutableList<Intent>, cameraOutputUri: Uri?) {
+//        val captureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        val packageManager: PackageManager = requireActivity().packageManager
+//        val listCam = packageManager.queryIntentActivities(captureIntent, 0)
+//        for (res in listCam) {
+//            val packageName = res.activityInfo.packageName
+//            val intent = Intent(captureIntent)
+//            intent.component = ComponentName(res.activityInfo.packageName, res.activityInfo.name)
+//            intent.setPackage(packageName)
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraOutputUri)
+//            intents.add(intent)
+//        }
+//    }
 
     private fun submit() {
         formData = getFormDataFromUi(serviceName)
-//        Log.e("serviceTypeId     : ",formData.serviceTypeId)
-//        Log.e("sectorName        : ",formData.sectorName)
-//        Log.e("districtName      : ",formData.districtName)
-//        Log.e("municipalityName  : ",formData.municipalityName)
-//        Log.e("streetName        : ",formData.streetName)
-//        Log.e("beforeImg         : ",formData.beforeImg.toString())
-//        Log.e("afterImg          : ",formData.afterImg.toString())
-//        Log.e("duringImg         : ",formData.duringImg.toString())
-//        Log.e("notes             : ",formData.notes?:"")
            if (validateData(formData) && lat != "" && lng != "") {
                val date =
                    DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
@@ -239,7 +328,7 @@ class AddServiceFragment : Fragment() {
 
     private fun getFormDataFromUi(serviceName: String): FormData {
    //     Toast.makeText(requireContext(),"Before : ${beforeImgBody.toString()}  ,Aftar : ${afterImgBody.toString()}",Toast.LENGTH_SHORT).show()
-        var formData = FormData()
+        val formData = FormData()
         if (serviceName == "مخلفات الهدم") {
             if(binding.editTextMCube.text.toString()!="")
             formData.mCube = binding.editTextMCube.text.toString().toInt()
@@ -748,7 +837,7 @@ class AddServiceFragment : Fragment() {
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         val fm: Paint.FontMetrics = Paint.FontMetrics()
         val color = ContextCompat.getColor(requireContext(), R.color.transparent_black)
-        paint.setColor(Color.BLACK)
+        paint.color = argb(0.4f,255f,255f,255f)
         paint.getFontMetrics(fm)
         val margin = 5f
         canvas.drawRect(
@@ -756,7 +845,7 @@ class AddServiceFragment : Fragment() {
             10 + paint.measureText(text) + margin, 10 + fm.bottom
                     + margin, paint
         )
-        val original = BitmapFactory.decodeResource(resources, R.drawable.picture)
+        val original = BitmapFactory.decodeResource(resources, R.drawable.splash_icon)
        //  canvas.drawBitmap(original, rect, paint);
        //  canvas.drawBitmap(R.drawable.splash_icon,rect,paint)
   //      val rectangle = RectF(10 + paint.measureText(text) + margin, fm.top - margin, margin, 10 + fm.bottom + margin)
