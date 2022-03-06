@@ -8,11 +8,7 @@ class SettingViewModel(application: Application) : AndroidViewModel(application)
     private val modelRepository: ModelRepo = ModelRepo(application)
 
     fun logout() {
-        modelRepository.setLogin(false)
-        modelRepository.setToken("")
-        modelRepository.setRefreshToken("")
-        modelRepository.setPass("")
-        modelRepository.setEmail("")
+     modelRepository.logout()
     }
 
 }

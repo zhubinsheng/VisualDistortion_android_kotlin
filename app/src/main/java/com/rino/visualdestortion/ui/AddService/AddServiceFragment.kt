@@ -830,33 +830,32 @@ class AddServiceFragment : Fragment() {
         val  height: Int = bitmap.height
 
         // text size in pixels
-        val scale = resources.displayMetrics.density
-        paint.textSize = (textSize * scale).roundToInt().toFloat()
+
+        paint.textSize = width * .05f
 
         //custom fonts or a default font
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         val fm: Paint.FontMetrics = Paint.FontMetrics()
         val color = ContextCompat.getColor(requireContext(), R.color.transparent_black)
-        paint.color = argb(0.4f,255f,255f,255f)
+        paint.setARGB(50,51,26,24)
         paint.getFontMetrics(fm)
         val margin = 5f
         canvas.drawRect(
-            (10 - margin).toFloat(), 10 + fm.top - margin,
-            10 + paint.measureText(text) + margin, 10 + fm.bottom
-                    + margin, paint
+            0f, 0f,
+            width.toFloat(), width*.10f,paint
         )
         val original = BitmapFactory.decodeResource(resources, R.drawable.splash_icon)
-       //  canvas.drawBitmap(original, rect, paint);
-       //  canvas.drawBitmap(R.drawable.splash_icon,rect,paint)
-  //      val rectangle = RectF(10 + paint.measureText(text) + margin, fm.top - margin, margin, 10 + fm.bottom + margin)
+        //  canvas.drawBitmap(original, rect, paint);
+        //  canvas.drawBitmap(R.drawable.splash_icon,rect,paint)
+        //      val rectangle = RectF(10 + paint.measureText(text) + margin, fm.top - margin, margin, 10 + fm.bottom + margin)
         val rectangle2 = RectF(width-(20 + paint.measureText(text) + margin),fm.top - margin, 10f, 10 + fm.bottom + margin)
-        canvas.drawBitmap(original,null,RectF(20f,20f,50f,50f),null)
+        canvas.drawBitmap(original,null,RectF(width*.02f,width*.02f,width*.10f,width*.10f),null)
         // draw text to the Canvas center
         val bounds = Rect()
         //draw the text
         paint.getTextBounds(text, 0, text.length, bounds)
         paint.color = Color.WHITE
-        canvas.drawText(text, 10f, 10f, paint)
+        canvas.drawText(text, width*.15f, width*.07f, paint)
 
         return bitmap
     }

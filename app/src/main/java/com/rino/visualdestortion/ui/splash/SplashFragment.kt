@@ -105,6 +105,9 @@ class SplashFragment : Fragment() {
             CoroutineScope(Dispatchers.Main).launch{
                 if (viewModel.isLogin()) {
                     viewModel.isTodayPrepared()
+                    if (!viewModel.isLogin()){
+                        navToWelcome()
+                    }
                 }
                 else{
                     navToWelcome()

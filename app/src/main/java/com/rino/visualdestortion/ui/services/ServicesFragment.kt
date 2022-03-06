@@ -96,6 +96,7 @@ class ServicesFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = false
+        (activity as MainActivity).bottomNavigation.show(1,false)
     }
 
     private fun observeNavToAddService() {
