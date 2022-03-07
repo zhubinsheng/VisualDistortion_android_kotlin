@@ -82,7 +82,7 @@ class ResetPasswordFragment : Fragment() {
                     it?.status,
                     Toast.LENGTH_SHORT
                 ).show()
-                navigateToHome()
+                navigateToLogin()
 
             }
         }
@@ -106,8 +106,8 @@ class ResetPasswordFragment : Fragment() {
         }
     }
 
-    private fun navigateToHome() {
-        val action = ResetPasswordFragmentDirections.actionResetPassToServices()
+    private fun navigateToLogin() {
+        val action = ResetPasswordFragmentDirections.actionResetPassToLogin()
         findNavController().navigate(action)
     }
 

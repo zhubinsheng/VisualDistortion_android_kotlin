@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentHistoryBinding
 import com.rino.visualdestortion.model.pojo.history.Data
+import com.rino.visualdestortion.ui.AddService.AddServiceFragmentDirections
 import com.rino.visualdestortion.ui.home.MainActivity
 
 
@@ -55,6 +56,7 @@ class HistoryFragment : Fragment() {
 
     private fun observeData() {
         observeHistoryData()
+        observeNavToService()
         observeLoading()
         observeShowError()
     }
@@ -79,6 +81,19 @@ class HistoryFragment : Fragment() {
                 binding.progress.visibility = it
             }
         }
+    }
+
+    private fun observeNavToService() {
+        viewModel.navToHistoryOfTask.observe(viewLifecycleOwner) {
+            it?.let {
+               navToHistoryById(it)
+            }
+        }
+    }
+
+    private fun navToHistoryById(id: Int) {
+        val action = HistoryFragmentDirections.actionHistoryToHistoryByID(id.toString())
+        findNavController().navigate(action)
     }
 
     private fun observeShowError() {

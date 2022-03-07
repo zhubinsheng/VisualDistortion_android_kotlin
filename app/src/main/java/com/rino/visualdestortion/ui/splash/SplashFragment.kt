@@ -47,10 +47,10 @@ class SplashFragment : Fragment() {
         // Inflate the layout for this fragment
         viewModel = SplashViewModel(requireActivity().application)
         binding = FragmentSplashBinding.inflate(inflater, container, false)
-
-        observeData()
-        splashSetup()
         setAnimation()
+        splashSetup()
+        observeData()
+
 
         return binding.root
     }

@@ -87,7 +87,12 @@
         android:id="@+id/historyFragment"
         android:name="com.rino.visualdestortion.ui.history.HistoryFragment"
         android:label="fragment_history"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/action_history_to_historyByID"
+            app:destination="@id/historyByServiceTypeFragment"
+            />
+    </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.rino.visualdestortion.ui.setting.settingFragment"
@@ -143,8 +148,8 @@
         android:label="fragment_reset_password"
         tools:layout="@layout/fragment_reset_password" >
         <action
-            android:id="@+id/action_resetPass_to_Services"
-            app:destination="@id/servicesFragment"
+            android:id="@+id/action_resetPass_to_login"
+            app:destination="@id/loginFragment2"
           />
     </fragment>
     <fragment
@@ -188,5 +193,15 @@
             app:popEnterAnim="@anim/right_to_left"
             app:popUpTo="@id/servicesFragment"
             />
+    </fragment>
+    <fragment
+        android:id="@+id/historyByServiceTypeFragment"
+        android:name="com.rino.visualdestortion.ui.historyByServiceType.HistoryByServiceTypeFragment"
+        android:label="fragment_history_by_service_type"
+        tools:layout="@layout/fragment_history_by_service_type" >
+        <argument
+            android:name="serviceID"
+            app:argType="string"
+            android:defaultValue="1"/>
     </fragment>
 </navigation>

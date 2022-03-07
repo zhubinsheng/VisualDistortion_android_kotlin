@@ -5,8 +5,10 @@
     <dimen name="headerTextSize">20sp</dimen>
     <dimen name="titleTextSize">24sp</dimen>
     <dimen name="subHeaderTextSize">18sp</dimen>
+    <dimen name="normalTextSize">12sp</dimen>
     <dimen name="paddingLayout">15dp</dimen>
     <dimen name="paddingText">4dp</dimen>
     <dimen name="marginTextField">8dp</dimen>
     <dimen name="welcomeMarginTop">40dp</dimen>
+    <dimen name="subTextTextSize">10sp</dimen>
 </resources>

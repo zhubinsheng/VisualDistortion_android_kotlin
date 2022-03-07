@@ -35,8 +35,8 @@ class EditDailyPreparationFragment : Fragment() {
     private lateinit var workersTypeList: ArrayList<String>
     private lateinit var equipmentsAdapter: EquipmentsAdapter
     private lateinit var workerTypesAdapter: WorkerTypesAdapter
-    private lateinit var equipmentsMap: HashMap<Int, Int>
-    private lateinit var workersTypeMap: HashMap<Int, Int>
+    private lateinit var equipmentsMap: HashMap<String, Int>
+    private lateinit var workersTypeMap: HashMap<String, Int>
     private lateinit var equipmentsCountList: ArrayList<PrepEquipments>
     private lateinit var workerTypesCountList: ArrayList<PrepWorkers>
     private lateinit var equipmentsCountMap: HashMap<Long?, Int?>
@@ -98,8 +98,8 @@ class EditDailyPreparationFragment : Fragment() {
                 val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
                 viewModel.addDailyPreparation(DailyPreparation(serviceTypeId, date ,equipmentsAdapter.getEquipmentMap(),workerTypesAdapter.getWorkerTypesMap()))
                 //   Toast.makeText(requireContext(),"item : ${viewModel.getDailyPreparationByServiceID(serviceTypeId).toString()}",Toast.LENGTH_SHORT).show()
-                Log.e("WorkerTypes: ",workerTypesAdapter.getWorkerTypesMap().toString())
-                Log.e("Equipment: ",equipmentsAdapter.getEquipmentMap().toString())
+                Log.e("editWorkerTypes: ",workerTypesAdapter.getWorkerTypesMap().toString())
+                Log.e("editEquipment: ",equipmentsAdapter.getEquipmentMap().toString())
 
                 viewModel.editDailyPreparation(workerTypesAdapter.getWorkerTypesMap(),equipmentsAdapter.getEquipmentMap())
             }
@@ -157,6 +157,7 @@ class EditDailyPreparationFragment : Fragment() {
             it?.let {
                 workerTypesCountList.remove(it)
                 workersTypeList.add(it.name)
+                workersTypeMap[it.name] = it.id
             }
         }
     }
@@ -166,6 +167,7 @@ class EditDailyPreparationFragment : Fragment() {
             it?.let {
                 equipmentsCountList.remove(it)
                 equipmentList.add(it.name)
+                equipmentsMap[it.name] = it.id
             }
         }
     }
@@ -225,12 +227,15 @@ class EditDailyPreparationFragment : Fragment() {
         var index = 0
         binding.equipmentsTextView.setText(R.string.select)
 //        for (equipment in addServiceResponse.equipment!!) {
+        Log.e("dailyPreparation,equipmentTypes",dailyPreparation.equipmentTypes.toString())
         for (equipment in dailyPreparation.equipmentTypes) {
             if (!isEquipmentListContainsItem(equipment.id)) {
                 equipmentList.add(equipment.name.toString())
+                equipmentsMap[equipment.name] = equipment.id
+                Log.e("iteemInEquipmentsMap",equipmentsMap[equipment.name].toString())
+                index++
             }
-            equipmentsMap[index] = equipment.id
-            index++
+
         }
         val adapter = ArrayAdapter(
             requireContext(), R.layout.dropdown_item,
@@ -240,9 +245,11 @@ class EditDailyPreparationFragment : Fragment() {
         binding.equipmentsTextView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
+                Log.e("position","${position} , ${selectedItem}")
+                Log.e("iteeeeem",equipmentsMap[selectedItem].toString())
                 var item =
-                    equipmentsMap[position]?.let { PrepEquipments(it, selectedItem, 1) }
-
+                    equipmentsMap[selectedItem]?.let { PrepEquipments(it, selectedItem, 1) }
+                Log.e("iteeeeem",item.toString())
                 if (item != null) {
                     equipmentsCountList.add(item)
                     equipmentList.remove(item.name)
@@ -273,10 +280,10 @@ class EditDailyPreparationFragment : Fragment() {
         for (workerType in dailyPreparation.workerTypes) {
             if(!isWorkerTypeListContainsItem(workerType.id)) {
                 workersTypeList.add(workerType.name.toString())
-
+                workersTypeMap[workerType.name] = workerType.id
+                index++
             }
-            workersTypeMap[index] = workerType.id
-            index++
+
         }
         val adapter = ArrayAdapter(
             requireContext(), R.layout.dropdown_item,
@@ -286,9 +293,9 @@ class EditDailyPreparationFragment : Fragment() {
         binding.workersTypeTextView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
-                Log.e("iteeeeem",workersTypeMap[position].toString())
+                Log.e("iteeeeem",workersTypeMap[selectedItem].toString())
                 var item =
-                    workersTypeMap[position]?.let { PrepWorkers(it,selectedItem,  1) }
+                    workersTypeMap[selectedItem]?.let { PrepWorkers(it,selectedItem,  1) }
                 Log.e("iteeeeem",item.toString())
                 if (item != null) {
                     workerTypesCountList.add(item)

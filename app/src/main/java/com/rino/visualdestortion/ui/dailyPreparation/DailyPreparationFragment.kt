@@ -31,8 +31,8 @@ class DailyPreparationFragment : Fragment()  {
     private lateinit var workersTypeList: ArrayList<String>
     private lateinit var equipmentsAdapter: EquipmentsAdapter
     private lateinit var workerTypesAdapter: WorkerTypesAdapter
-    private lateinit var equipmentsMap: HashMap<Int?, Int?>
-    private lateinit var workersTypeMap: HashMap<Int?, Int?>
+    private lateinit var equipmentsMap: HashMap<String?, Int?>
+    private lateinit var workersTypeMap: HashMap<String?, Int?>
     private lateinit var equipmentsCountList: ArrayList<EquipmentItem>
     private lateinit var workerTypesCountList: ArrayList<EquipmentItem>
     private lateinit var equipmentsCountMap: HashMap<Long?, Int?>
@@ -91,6 +91,9 @@ class DailyPreparationFragment : Fragment()  {
         }
         binding.nextButton.setOnClickListener {
             if(validateData()) {
+                Log.e("WorkerTypes: ",workerTypesAdapter.getWorkerTypesMap().toString())
+                Log.e("Equipment: ",equipmentsAdapter.getEquipmentMap().toString())
+
                 val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
                 viewModel.addDailyPreparation(DailyPreparation(serviceTypeId, date ,equipmentsAdapter.getEquipmentMap(),workerTypesAdapter.getWorkerTypesMap()))
                 viewModel.setDailyPreparation(workerTypesAdapter.getWorkerTypesMap(),equipmentsAdapter.getEquipmentMap())
@@ -209,7 +212,7 @@ class DailyPreparationFragment : Fragment()  {
        for (equipment in addServiceResponse.equipment!!) {
  //       for (equipment in dailyPreparation.equipmentTypes) {
             equipmentList.add(equipment.name.toString())
-            equipmentsMap[index] = equipment.id
+            equipmentsMap[equipment.name] = equipment.id
             index++
         }
         val adapter = ArrayAdapter(
@@ -221,7 +224,7 @@ class DailyPreparationFragment : Fragment()  {
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
                 var item =
-                    equipmentsMap[position]?.toLong()?.let { EquipmentItem(selectedItem, it, 1) }
+                    equipmentsMap[selectedItem]?.toLong()?.let { EquipmentItem(selectedItem, it, 1) }
                 if (item != null) {
                     equipmentsCountList.add(item)
                     equipmentList.remove(item.name)
@@ -239,7 +242,7 @@ class DailyPreparationFragment : Fragment()  {
         for (workerType in addServiceResponse.workerTypes!!) {
 //        for (workerType in dailyPreparation.workerTypes) {
             workersTypeList.add(workerType.name.toString())
-            workersTypeMap[index] = workerType.id
+            workersTypeMap[workerType.name] = workerType.id
             index++
         }
         val adapter = ArrayAdapter(
@@ -251,7 +254,7 @@ class DailyPreparationFragment : Fragment()  {
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
                 var item =
-                    workersTypeMap[position]?.toLong()?.let { EquipmentItem(selectedItem, it, 1) }
+                    workersTypeMap[selectedItem]?.toLong()?.let { EquipmentItem(selectedItem, it, 1) }
                 if (item != null) {
                     workerTypesCountList.add(item)
                     workersTypeList.remove(item.name)

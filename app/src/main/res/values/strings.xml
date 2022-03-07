@@ -53,6 +53,8 @@
     <string name="duringImage">الصورة اثناء المهمة</string>
     <string name="EditDailyPreparation">تعديل التحضير اليومى</string>
     <string name="save">حفظ</string>
+    <string name="service_num">رقم الخدمة</string>
+    <string name="address_txt">العنوان</string>
 
 
 </resources>

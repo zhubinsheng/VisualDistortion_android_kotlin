@@ -11,6 +11,7 @@ import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
+import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -98,6 +99,14 @@ class ApiDataSource:ApiInterface {
 
     override suspend fun getHistoryData(auth: String): Response<AllHistoryResponse> {
         return retrofit.getHistoryData(auth)
+    }
+
+    override suspend fun getHistoryDataByService(
+        auth: String,
+        serviceTypeId: Int,
+        pageNumber: Int
+    ): Response<HistoryByServiceIdResponse> {
+        return retrofit.getHistoryDataByService(auth,serviceTypeId,pageNumber)
     }
 
     override suspend fun isDailyPrepared(auth: String): Response<CheckDailyPreparationResponse> {

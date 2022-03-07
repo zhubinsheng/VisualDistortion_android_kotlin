@@ -36,8 +36,7 @@ class HistoryAdapter (private var historyList: ArrayList<Data>,
         holder.binding.dateToTxt.text   = historyList[position].dateTo
         holder.binding.daysCountTxt.text = "${historyList[position].numberOfDays.toString()} يوم "
         holder.binding.card.setOnClickListener {
-
-
+            historyList[position].serviceId?.let { it1 -> historyViewModel.navToHistoryById(it1) }
         }
 
     }

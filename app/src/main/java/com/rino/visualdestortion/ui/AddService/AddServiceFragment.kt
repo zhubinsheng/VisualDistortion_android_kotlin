@@ -327,7 +327,8 @@ class AddServiceFragment : Fragment() {
 //    }
 
     private fun getFormDataFromUi(serviceName: String): FormData {
-   //     Toast.makeText(requireContext(),"Before : ${beforeImgBody.toString()}  ,Aftar : ${afterImgBody.toString()}",Toast.LENGTH_SHORT).show()
+        Log.e("Images","Before : ${beforeImgBody.toString()} ,During : ${duringImgBody.toString()} ,Aftar : ${afterImgBody.toString()}")
+    //    Toast.makeText(requireContext(),"Before : ${beforeImgBody.toString()} ,During : ${duringImgBody.toString()} ,Aftar : ${afterImgBody.toString()}",Toast.LENGTH_SHORT).show()
         val formData = FormData()
         if (serviceName == "مخلفات الهدم") {
             if(binding.editTextMCube.text.toString()!="")
@@ -807,7 +808,7 @@ class AddServiceFragment : Fragment() {
                                 file!!
                             )
                         duringImgBody = MultipartBody.Part.createFormData(
-                            "beforeImg",
+                            "duringImg",
                             file?.name.trim(),
                             requestFile
                         )

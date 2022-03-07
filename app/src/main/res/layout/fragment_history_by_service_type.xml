@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:id="@+id/idNestedSV"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.historyByServiceType.HistoryByServiceTypeFragment">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
     <TextView
-        android:id="@+id/serviceName_txt"
+        android:id="@+id/textView2"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -46,22 +49,26 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <include layout="@layout/shimmer_item" />
+                <include layout="@layout/shimmer_sevice_item" />
 
-                <include layout="@layout/shimmer_item" />
+                <include layout="@layout/shimmer_sevice_item" />
 
-                <include layout="@layout/shimmer_item" />
+                <include layout="@layout/shimmer_sevice_item" />
 
-                <include layout="@layout/shimmer_item" />
+                <include layout="@layout/shimmer_sevice_item" />
 
-                <include layout="@layout/shimmer_item" />
+                <include layout="@layout/shimmer_sevice_item" />
 
-                <include layout="@layout/shimmer_item" />
+                <include layout="@layout/shimmer_sevice_item" />
 
 
 
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
+<!--        <androidx.core.widget.NestedScrollView-->
+<!--                    android:id="@+id/idNestedSV"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent">-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/historyRecycle"
             android:layout_marginTop="20dp"
@@ -71,6 +78,17 @@
             android:orientation="vertical"
             tools:listitem="@layout/service_item"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+<!--        </androidx.core.widget.NestedScrollView>-->
     </LinearLayout>
 
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        />
 </LinearLayout>
+</androidx.core.widget.NestedScrollView>
+
+
