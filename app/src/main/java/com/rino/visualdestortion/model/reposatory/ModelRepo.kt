@@ -92,9 +92,9 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
-                        Log.i("ModelRepository refresh token:", "Result $result")
                         result = Result.Error(Exception("Login Required"))
-
+                        logout()
+                        Log.i("ModelRepository refresh token:", "Result $result")
 
                     }
                     404 -> {
@@ -103,11 +103,6 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     500 -> {
                         Log.e("Error 500", "Server Error")
                         result = Result.Error(Exception("server is down"))
-                    }
-                    401 -> {
-                        Log.e("Error 401", "Not Auth")
-                        logout()
-                      //  result = Result.Error(Exception("Not Auth"))
                     }
                     else -> {
                         Log.e("Error", "Generic Error")
@@ -182,6 +177,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                         Log.e("Error 404", "Not Found")
                         result = Result.Error(Exception(eventResponse.status))
                     }
+
                     500 -> {
                         Log.e("Error 500", "Server Error")
                         result = Result.Error(Exception("Server is down"))
@@ -229,12 +225,12 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth")
-                        if(isLogin())
+                        if(isLogin()){
                             Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
                           refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
                          // refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
                           // refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
-                    }
+                    }}
                     else -> {
                         Log.e("Error", "Generic Error ${response?.code()}")
                     }
@@ -277,11 +273,12 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     401 -> {
                         Log.e("Error 401", "Not Auth")
                         if(isLogin())
+                        {
                             Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
                       //  refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
                           refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
                          //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
-                    }
+                    }}
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
@@ -323,12 +320,12 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     401 -> {
                         Log.e("Error 401", "Not Auth")
                         //result = Result.Error(Exception("Not Auth please, logout and login again"))
-                        if(isLogin())
+                        if(isLogin()){
                             Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
                         //refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
                          refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
                         //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
-                    }
+                    }}
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
@@ -371,11 +368,11 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
                //         result = Result.Error(Exception("Not Auth please, logout and login again"))
-                        if(isLogin())
+                        if(isLogin()){
                             Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
                         refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
                         //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
-                    }
+                    }}
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
@@ -391,12 +388,12 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         return result
     }
 
-    override suspend fun getHistoryDataByService(serviceTypeId: Int,pageNumber: Int): Result<HistoryByServiceIdResponse?> {
+    override suspend fun getHistoryDataByService(serviceTypeId: Int,pageNumber: Int,period:String): Result<HistoryByServiceIdResponse?> {
         var result: Result<HistoryByServiceIdResponse?> = Result.Loading
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
 
-            val response = apiDataSource.getHistoryDataByService("Bearer "+getToken(),serviceTypeId,pageNumber)
+            val response = apiDataSource.getHistoryDataByService("Bearer "+getToken(),serviceTypeId,pageNumber,period)
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Resulttt $result")
@@ -418,11 +415,14 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
                    //     result = Result.Error(Exception("Not Auth please, logout and login again"))
-                        if(isLogin())
-                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
-                        refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
-                        //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
-                    }
+                        if(isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                            //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                        } }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
@@ -465,10 +465,13 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
                        // result = Result.Error(Exception("Not Auth please, logout and login again"))
-                        if(isLogin())
-                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
-                        refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
-                    }
+                        if(isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isDailyPrepared:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                        } }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }

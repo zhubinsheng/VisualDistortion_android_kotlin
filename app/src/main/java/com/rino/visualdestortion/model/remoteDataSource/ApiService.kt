@@ -66,7 +66,7 @@ interface ApiService {
     suspend fun getHistoryData( @Header("Authorization") auth: String): Response<AllHistoryResponse>
 
     @GET("api/History/GetServiceTypeHistory/{serviceTypeId}")
-    suspend fun getHistoryDataByService(@Header("Authorization") auth: String, @Path("serviceTypeId") serviceTypeId: Int, @Query("pageNumber") pageNumber:Int = 1 ): Response<HistoryByServiceIdResponse>
+    suspend fun getHistoryDataByService(@Header("Authorization") auth: String, @Path("serviceTypeId") serviceTypeId: Int, @Query("pageNumber") pageNumber:Int ,@Query("period") period:String ): Response<HistoryByServiceIdResponse>
 
     @GET("api/DailyPreparations/isPrepared")
     suspend fun isDailyPrepared( @Header("Authorization") auth: String): Response<CheckDailyPreparationResponse>

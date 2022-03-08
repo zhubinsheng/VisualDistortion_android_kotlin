@@ -36,7 +36,7 @@ interface ApiInterface{
 
     suspend fun getHistoryData(auth: String): Response<AllHistoryResponse>
 
-    suspend fun getHistoryDataByService(auth: String ,serviceTypeId: Int,pageNumber:Int = 1 ): Response<HistoryByServiceIdResponse>
+    suspend fun getHistoryDataByService(auth: String ,serviceTypeId: Int,pageNumber:Int ,period:String): Response<HistoryByServiceIdResponse>
 
     suspend fun isDailyPrepared(auth: String): Response<CheckDailyPreparationResponse>
 

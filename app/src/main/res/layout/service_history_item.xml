@@ -69,8 +69,11 @@
                 <TextView
                     android:id="@+id/addressValue"
                     android:layout_width="wrap_content"
+                    android:textDirection="rtl"
                     android:layout_height="wrap_content"
                     android:padding="4dp"
+                    android:maxLines="2"
+                    android:maxWidth="250dp"
                     android:layout_marginEnd="27dp"
                     android:layout_marginTop="@dimen/paddingText"
                     android:text="25"
@@ -102,8 +105,7 @@
 <!--                    android:textColor="@color/dark_gray"-->
 <!--                    android:textSize="@dimen/subTextTextSize"-->
 <!--                    android:textStyle="bold"-->
-
-<!--                    app:layout_constraintStart_toEndOf="@+id/date_from_txt"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
 <!--                    app:layout_constraintTop_toTopOf="parent" />-->
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -33,7 +33,7 @@ class HistoryByServiceAdapter (private var historyList: ArrayList<ServiceData>,
         holder.binding.serviceNumValue.text = historyList[position].serviceNumber.toString()
         holder.binding.addressValue.text    = historyList[position].fullLocation
         holder.binding.dateFromTxt.text     = historyList[position].createdDate
-//        holder.binding.timeTxt.text         = historyList[position].createdDate?:"00/00/00 00:00".split(" ")[1]
+  //      holder.binding.timeTxt.text         = historyList[position].createdDate?: "00/00/00 00:00".split(" ").toList()[1]
         holder.binding.card.setOnClickListener {
 
         }
@@ -43,11 +43,14 @@ class HistoryByServiceAdapter (private var historyList: ArrayList<ServiceData>,
 
 
     fun updateItems(newList: List<ServiceData>) {
-    //    historyList.clear()
+   //     historyList.clear()
         historyList.addAll(newList)
         notifyDataSetChanged()
     }
-
+    fun clearList() {
+        historyList.clear()
+        notifyDataSetChanged()
+    }
     inner class HistoryViewHolder(val binding:  ServiceHistoryItemBinding) :
         RecyclerView.ViewHolder(binding.root)
 

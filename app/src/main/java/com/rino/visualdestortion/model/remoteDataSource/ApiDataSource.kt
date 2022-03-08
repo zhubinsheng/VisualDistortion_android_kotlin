@@ -104,9 +104,10 @@ class ApiDataSource:ApiInterface {
     override suspend fun getHistoryDataByService(
         auth: String,
         serviceTypeId: Int,
-        pageNumber: Int
+        pageNumber: Int,
+        period:String
     ): Response<HistoryByServiceIdResponse> {
-        return retrofit.getHistoryDataByService(auth,serviceTypeId,pageNumber)
+        return retrofit.getHistoryDataByService(auth,serviceTypeId,pageNumber,period)
     }
 
     override suspend fun isDailyPrepared(auth: String): Response<CheckDailyPreparationResponse> {

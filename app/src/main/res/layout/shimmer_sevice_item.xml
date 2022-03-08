@@ -31,7 +31,7 @@
                 <TextView
                     android:id="@+id/serviceNumTxt"
                     android:layout_width="70dp"
-                    android:layout_height="20dp"
+                    android:layout_height="15dp"
                     android:layout_margin="@dimen/paddingText"
                     android:background="@color/shimmer_placeholder"
                     android:padding="4dp"
@@ -43,7 +43,7 @@
                 <TextView
                     android:id="@+id/serviceNumValue"
                     android:layout_width="70dp"
-                    android:layout_height="20dp"
+                    android:layout_height="15dp"
                     android:layout_margin="@dimen/paddingText"
                     android:background="@color/shimmer_placeholder"
                     android:padding="4dp"
@@ -56,7 +56,7 @@
                 <TextView
                     android:id="@+id/date_txt"
                     android:layout_width="30dp"
-                    android:layout_height="20dp"
+                    android:layout_height="15dp"
                     android:layout_marginLeft="@dimen/paddingText"
                     android:padding="@dimen/paddingText"
                     android:background="@color/shimmer_placeholder"
@@ -65,10 +65,22 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+<!--                <TextView-->
+<!--                    android:id="@+id/time_txt"-->
+<!--                    android:layout_width="30dp"-->
+<!--                    android:layout_height="15dp"-->
+<!--                    android:layout_margin="4dp"-->
+<!--                    android:padding="@dimen/paddingText"-->
+<!--                    android:background="@color/shimmer_placeholder"-->
+<!--                    android:textColor="@color/dark_gray"-->
+<!--                    android:textSize="13sp"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+<!--             -->
                 <TextView
                     android:id="@+id/address_txt"
                     android:layout_width="70dp"
-                    android:layout_height="20dp"
+                    android:layout_height="15dp"
                     android:layout_margin="@dimen/paddingText"
                     android:background="@color/shimmer_placeholder"
                     android:padding="@dimen/paddingText"
@@ -80,7 +92,7 @@
                 <TextView
                     android:id="@+id/addressValue"
                     android:layout_width="70dp"
-                    android:layout_height="20dp"
+                    android:layout_height="15dp"
                     android:background="@color/shimmer_placeholder"
                     android:padding="@dimen/paddingText"
                     android:layout_margin="@dimen/paddingText"

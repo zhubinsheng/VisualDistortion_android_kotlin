@@ -39,10 +39,10 @@ class HistoryByServiceViewModel(application: Application) : AndroidViewModel(app
         get() = _getHistoryData
 
 
-    fun getHistoryData(serviceID:Int,pageNumber: Int = 1) {
+    fun getHistoryData(serviceID:Int,pageNumber: Int = 1, period :String = "all") {
        // _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
-            when (val result = modelRepository.getHistoryDataByService(serviceID,pageNumber)) {
+            when (val result = modelRepository.getHistoryDataByService(serviceID,pageNumber,period)) {
                 is Result.Success -> {
                    // _loading.postValue(View.GONE)
                     Log.i("getServiceData:", "${result.data}")

@@ -48,6 +48,9 @@ import java.io.File
 import java.io.IOException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -120,6 +123,7 @@ class AddServiceFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true
+        getLatestLocation()
        // (activity as MainActivity).bottomNavigation.
     }
 
@@ -133,7 +137,7 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun init() {
-        getLatestLocation()
+      //  getLatestLocation()
         setUpUI()
         initLists()
         observeData()
@@ -190,7 +194,7 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun checkCameraOrStoragePermission() {
-        if (isCameraPermissionGranted()&&isExternalStoragePermissionGranted()) {
+        if (isExternalStoragePermissionGranted()) {
             enableCameraOrGallery()
         } else {
             navigateToAppSetting()
@@ -198,8 +202,9 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun enableCameraOrGallery() {
-        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-       startActivityForResult(gallery, 0)
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, 0)
     }
 //            var photoUri: Uri? = null
 //            val camIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -705,11 +710,14 @@ class AddServiceFragment : Fragment() {
             var bitmap = data.extras?.get("data") as Bitmap
             var afterBitmap =bitmap.copy(Bitmap. Config.ARGB_8888,true)
             CoroutineScope(Dispatchers.Default).launch {
-               afterBitmap =
+                val current = LocalDateTime.now()
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+                val formatted = current.format(formatter)
+             afterBitmap =
                     drawTextToBitmap(
                         afterBitmap,
                         3,
-                        Calendar.getInstance().time.toString()
+                        formatted.toString()
                     )
                     try {
                         val file = File(getRealPathFromURI(getImageUri(requireContext(), afterBitmap)!!))
@@ -742,11 +750,14 @@ class AddServiceFragment : Fragment() {
             }
             var beforeBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
             CoroutineScope(Dispatchers.Default).launch {
+                val current = LocalDateTime.now()
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+                val formatted = current.format(formatter)
               beforeBitmap =
                     drawTextToBitmap(
                         beforeBitmap,
                         3,
-                        Calendar.getInstance().time.toString()
+                        formatted.toString()
                     )
                     try {
 
@@ -787,11 +798,14 @@ class AddServiceFragment : Fragment() {
             }
             var duringBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
             CoroutineScope(Dispatchers.Default).launch {
+                val current = LocalDateTime.now()
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+                val formatted = current.format(formatter)
                 duringBitmap =
                     drawTextToBitmap(
                         duringBitmap,
                         3,
-                        Calendar.getInstance().time.toString()
+                        formatted.toString()
                     )
                 try {
 

@@ -55,6 +55,7 @@
     <string name="save">حفظ</string>
     <string name="service_num">رقم الخدمة</string>
     <string name="address_txt">العنوان</string>
+    <string name="period_time">المدة الزمنية</string>
 
 
 </resources>

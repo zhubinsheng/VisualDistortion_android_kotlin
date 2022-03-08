@@ -70,6 +70,7 @@ class HistoryFragment : Fragment() {
                 binding.shimmer.stopShimmer()
                 binding.shimmer.visibility = View.GONE
                 binding.historyRecycle.visibility = View.VISIBLE
+                binding.animationView.visibility = View.GONE
 
             }
         }
@@ -99,15 +100,19 @@ class HistoryFragment : Fragment() {
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                        resources.getColor(
-                            R.color.teal
-                        )
-                    )
-                    .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
-                    {
-                    }.show()
+//                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
+//                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+//                        resources.getColor(
+//                            R.color.teal
+//                        )
+//                    )
+//                    .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
+//                    {
+//                    }.show()
+                binding.shimmer.stopShimmer()
+                binding.shimmer.visibility = View.GONE
+                binding.historyRecycle.visibility = View.GONE
+                binding.animationView.visibility = View.VISIBLE
             }
         }
     }

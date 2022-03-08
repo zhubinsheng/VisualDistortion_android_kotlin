@@ -36,7 +36,7 @@ interface RemoteRepo {
 
       suspend fun getHistoryData(): Result<AllHistoryResponse?>
 
-      suspend fun getHistoryDataByService(serviceTypeId: Int,pageNumber:Int = 1 ): Result<HistoryByServiceIdResponse?>
+      suspend fun getHistoryDataByService(serviceTypeId: Int,pageNumber:Int ,period:String ): Result<HistoryByServiceIdResponse?>
 
       suspend fun isDailyPrepared(): Result<CheckDailyPreparationResponse?>
 
