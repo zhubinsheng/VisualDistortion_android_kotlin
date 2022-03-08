@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
+import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.remoteDataSource.Result
 import com.rino.visualdestortion.model.reposatory.ModelRepo
@@ -21,7 +22,7 @@ class DailyPreparationViewModel (application: Application) : AndroidViewModel(ap
 
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
-    private var _getServicesData = MutableLiveData<AddServiceResponse>()
+    private var _getServicesData = MutableLiveData<GetDailyPraprationData>()
 //    private var _getDailyPreparation = MutableLiveData<TodayDailyPrapration?>()
     private var _setDailyPreparation = MutableLiveData<Boolean>()
     private var _equipmentsDeleteItem = MutableLiveData<EquipmentItem>()
@@ -33,7 +34,7 @@ class DailyPreparationViewModel (application: Application) : AndroidViewModel(ap
     val setError: LiveData<String>
         get() = _setError
 
-    val getServicesData: LiveData<AddServiceResponse>
+    val getServicesData: LiveData<GetDailyPraprationData>
         get() = _getServicesData
 
 //        val getDailyPreparation: MutableLiveData<TodayDailyPrapration?>
@@ -51,7 +52,7 @@ class DailyPreparationViewModel (application: Application) : AndroidViewModel(ap
     fun getServicesData() {
         _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
-            when (val result = modelRepository.getServiceForm()) {
+            when (val result = modelRepository.getCreateDailyPreparation()) {
                 is Result.Success -> {
                     _loading.postValue(View.GONE)
                     Log.i("getServiceData:", "${result.data}")

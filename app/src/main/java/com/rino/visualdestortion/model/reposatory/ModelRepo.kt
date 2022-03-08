@@ -13,6 +13,7 @@ import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
+import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
@@ -416,8 +417,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                         Log.e("Error 401", "Not Auth please, logout and login again")
                    //     result = Result.Error(Exception("Not Auth please, logout and login again"))
                         if(isLogin()) {
-                            Log.i(
-                                "Model Repo:",
+                            Log.i("Model Repo:",
                                 "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
                             )
                             refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
@@ -515,15 +515,63 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth")
-                        if(isLogin())
+                        if(isLogin()){
                             Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
                         refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
                     }
+                        }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
                 }
 
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+
+    override suspend fun getCreateDailyPreparation(): Result<GetDailyPraprationData?> {
+        var result: Result<GetDailyPraprationData?> = Result.Loading
+        try {
+            Log.i("ModelRepository:@@", "Token ${getToken()}")
+
+            val response = apiDataSource.getCreateDailyPreparation("Bearer "+getToken())
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Resulttt $result")
+            } else {
+                Log.i("ModelRepository", "Error${response.errorBody()?.string()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request getDailyPreparation")
+                        result = Result.Error(Exception("Bad Request getDailyPreparation"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                        result = Result.Error(Exception("Not Found"))
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth please, logout and login again")
+                        result = Result.Error(Exception("Not Auth please, logout and login again"))
+                        if(isLogin()){
+                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
+                            refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
+                        }
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                    }
+                }
             }
 
         }catch (e: IOException){
@@ -562,9 +610,13 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
                         result = Result.Error(Exception("Not Auth please, logout and login again"))
-                        if(isLogin())
-                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
-                        refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                        }
                     }
                     else -> {
                         Log.e("Error", "Generic Error")
@@ -607,10 +659,15 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                         result = Result.Error(Exception("server is down"))
                     }
                     401 -> {
-                        Log.e("Error 401", "Not Auth")
-                        if(isLogin())
-                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
-                        refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
+                        Log.e("Error 401", "Not Auth please, logout and login again")
+                        result = Result.Error(Exception("Not Auth please, logout and login again"))
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                        }
                     }
                     else -> {
                         Log.e("Error", "Generic Error")

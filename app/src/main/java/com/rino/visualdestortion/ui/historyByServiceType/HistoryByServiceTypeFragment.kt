@@ -74,6 +74,8 @@ class HistoryByServiceTypeFragment : Fragment() {
         viewModel.getHistoryData.observe(viewLifecycleOwner) {
             it?.let {
                 historyByServiceIdResponse = it
+                Log.e("hasNextPage",it.hasNextPage.toString())
+                Log.e("totalPages",it.totalPages.toString())
                 it.data?.let { it1 ->
                     historyAdapter.updateItems(it1)
                     historyList = it1
@@ -136,9 +138,11 @@ class HistoryByServiceTypeFragment : Fragment() {
             if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
                 // in this method we are incrementing page number,
                 // making progress bar visible and calling get data method.
-                if (historyByServiceIdResponse.hasNextPage == true) {
+                Log.e("ConditiontotalPages", historyByServiceIdResponse.totalPages.toString())
+                if (historyByServiceIdResponse.hasNextPage == true && historyByServiceIdResponse.totalPages!! >= page) {
                     page++
                     Log.e("pageNermeen", page.toString())
+                    Log.e("hasNext", historyByServiceIdResponse.hasNextPage.toString())
                     viewModel.viewLoading(View.VISIBLE)
                     viewModel.getHistoryData(serviceId, page ,selectedPeriod)
                 } else {

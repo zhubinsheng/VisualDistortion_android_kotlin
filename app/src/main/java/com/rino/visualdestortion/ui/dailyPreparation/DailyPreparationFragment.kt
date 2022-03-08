@@ -17,6 +17,7 @@ import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentDailyPreparationBinding
 import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.ui.home.MainActivity
 import java.text.DateFormat
 import java.util.*
@@ -26,7 +27,7 @@ class DailyPreparationFragment : Fragment()  {
     private lateinit var viewModel: DailyPreparationViewModel
     private lateinit var binding: FragmentDailyPreparationBinding
 //    private lateinit var dailyPreparation: TodayDailyPrapration
-    private lateinit var addServiceResponse: AddServiceResponse
+    private lateinit var addServiceResponse: GetDailyPraprationData
     private lateinit var equipmentList: ArrayList<String>
     private lateinit var workersTypeList: ArrayList<String>
     private lateinit var equipmentsAdapter: EquipmentsAdapter
@@ -209,7 +210,7 @@ class DailyPreparationFragment : Fragment()  {
         equipmentList.clear()
         var index = 0
         binding.equipmentsTextView.setText(R.string.select)
-       for (equipment in addServiceResponse.equipment!!) {
+       for (equipment in addServiceResponse.equipmentList!!) {
  //       for (equipment in dailyPreparation.equipmentTypes) {
             equipmentList.add(equipment.name.toString())
             equipmentsMap[equipment.name] = equipment.id
@@ -239,7 +240,7 @@ class DailyPreparationFragment : Fragment()  {
         workersTypeList.clear()
         var index = 0
         binding.workersTypeTextView.setText(R.string.select)
-        for (workerType in addServiceResponse.workerTypes!!) {
+        for (workerType in addServiceResponse.workerTypesList!!) {
 //        for (workerType in dailyPreparation.workerTypes) {
             workersTypeList.add(workerType.name.toString())
             workersTypeMap[workerType.name] = workerType.id
