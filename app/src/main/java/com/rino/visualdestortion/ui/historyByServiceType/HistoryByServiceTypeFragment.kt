@@ -138,8 +138,8 @@ class HistoryByServiceTypeFragment : Fragment() {
             if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
                 // in this method we are incrementing page number,
                 // making progress bar visible and calling get data method.
-                Log.e("ConditiontotalPages", historyByServiceIdResponse.totalPages.toString())
-                if (historyByServiceIdResponse.hasNextPage == true && historyByServiceIdResponse.totalPages!! >= page) {
+                Log.e("historyByServiceIdResponse", historyByServiceIdResponse.toString())
+                if (historyByServiceIdResponse.hasNextPage == true) {
                     page++
                     Log.e("pageNermeen", page.toString())
                     Log.e("hasNext", historyByServiceIdResponse.hasNextPage.toString())
@@ -164,10 +164,11 @@ class HistoryByServiceTypeFragment : Fragment() {
         binding.periodTimeTextView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
-                selectedPeriod = selectedItem
                 historyAdapter.clearList()
+                page = 1
                 val index = periodTimeList_ar.indexOf(selectedItem)
-             viewModel.getHistoryData(serviceId,1,periodTimeList_en[index])
+                selectedPeriod = periodTimeList_en[index]
+              viewModel.getHistoryData(serviceId,page,periodTimeList_en[index])
 
             }
 
