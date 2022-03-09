@@ -35,7 +35,7 @@ class HistoryByServiceAdapter (private var historyList: ArrayList<ServiceData>,
         holder.binding.dateFromTxt.text     = historyList[position].createdDate
   //      holder.binding.timeTxt.text         = historyList[position].createdDate?: "00/00/00 00:00".split(" ").toList()[1]
         holder.binding.card.setOnClickListener {
-
+         historyViewModel.navToServiceDetails(historyList[position])
         }
 
     }

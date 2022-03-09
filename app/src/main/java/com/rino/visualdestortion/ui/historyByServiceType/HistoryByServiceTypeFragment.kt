@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import androidx.core.view.isGone
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
@@ -17,6 +18,7 @@ import com.rino.visualdestortion.databinding.FragmentHistoryByServiceTypeBinding
 import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
 import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.ui.dailyPreparation.EquipmentItem
+import com.rino.visualdestortion.ui.history.HistoryFragmentDirections
 import com.rino.visualdestortion.ui.home.MainActivity
 
 
@@ -64,6 +66,7 @@ class HistoryByServiceTypeFragment : Fragment() {
 
     private fun observeData() {
         observeHistoryData()
+        observeNavToService()
         observeLoading()
         observeShowError()
     }
@@ -94,6 +97,18 @@ class HistoryByServiceTypeFragment : Fragment() {
                 binding.progress.visibility = it
             }
         }
+    }
+    private fun observeNavToService() {
+        viewModel.navToTaskDetails.observe(viewLifecycleOwner) {
+            it?.let {
+                navToServiceDetails(it)
+            }
+        }
+    }
+
+    private fun navToServiceDetails(serviceData: ServiceData) {
+        val action = HistoryByServiceTypeFragmentDirections.actionHistoryByIDToServiceDetails(serviceData)
+        findNavController().navigate(action)
     }
 
     private fun observeShowError() {

@@ -203,5 +203,20 @@
             android:name="serviceID"
             app:argType="string"
             android:defaultValue="1"/>
+        <action
+            android:id="@+id/action_historyByID_to_serviceDetails"
+            app:destination="@id/serviceDetailsFragment"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/serviceDetailsFragment"
+        android:name="com.rino.visualdestortion.ui.serviceDetails.ServiceDetailsFragment"
+        android:label="fragment_service_details"
+        tools:layout="@layout/fragment_service_details" >
+
+        <argument
+            android:name="serviceObj"
+            app:argType="com.rino.visualdestortion.model.pojo.history.ServiceData" />
     </fragment>
 </navigation>

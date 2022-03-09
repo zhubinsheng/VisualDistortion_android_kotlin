@@ -12,6 +12,7 @@ import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.history.Data
 import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
+import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.home.ServiceTypes
 import com.rino.visualdestortion.model.remoteDataSource.Result
@@ -24,10 +25,10 @@ class HistoryByServiceViewModel(application: Application) : AndroidViewModel(app
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
     private var _getHistoryData = MutableLiveData<HistoryByServiceIdResponse?>()
-    //   private var _navToHistoryOfTask: MutableLiveData<ServiceTypes> = MutableLiveData()
+    private var _navToTaskDetails: MutableLiveData<ServiceData> = MutableLiveData()
 
-//    val navToHistoryOfTask: LiveData<ServiceTypes>
-//        get() = _navToHistoryOfTask
+    val navToTaskDetails: LiveData<ServiceData>
+        get() = _navToTaskDetails
 
     val loading: LiveData<Int>
         get() = _loading
@@ -38,7 +39,10 @@ class HistoryByServiceViewModel(application: Application) : AndroidViewModel(app
     val getHistoryData: LiveData<HistoryByServiceIdResponse?>
         get() = _getHistoryData
 
-
+    fun navToServiceDetails(serviceData:ServiceData)
+    {
+        _navToTaskDetails.value = serviceData
+    }
     fun getHistoryData(serviceID:Int,pageNumber: Int = 1, period :String = "all") {
        // _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
