@@ -218,5 +218,9 @@
         <argument
             android:name="serviceObj"
             app:argType="com.rino.visualdestortion.model.pojo.history.ServiceData" />
+        <action
+            android:id="@+id/action_serviceDetails_to_QrCode"
+            app:destination="@id/QRCodeFragment"
+            />
     </fragment>
 </navigation>

@@ -31,6 +31,7 @@
                 android:layout_height="200dp"
                 android:layout_margin="16dp"
                 app:cardCornerRadius="6dp"
+                app:cardElevation="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -184,55 +185,56 @@
                 android:id="@+id/equipment_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/paddingLayout"
                 android:text="@string/equipments"
                 android:textColor="@color/black"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/equipmentsRecycle"
+                app:layout_constraintTop_toBottomOf="@id/card_holder"
                 app:layout_constraintEnd_toEndOf="@id/card_holder"
-                app:layout_constraintTop_toTopOf="@+id/equipmentsRecycle" />
+                />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/equipmentsRecycle"
-                android:layout_width="wrap_content"
-                android:layout_height="120dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_marginTop="@dimen/paddingLayout"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toStartOf="@id/equipment_txt"
-                app:layout_constraintTop_toBottomOf="@id/card_holder"
-                tools:listitem="@layout/equipments_item" />
+                app:layout_constraintEnd_toEndOf="@id/equipment_txt"
+                app:layout_constraintTop_toBottomOf="@id/equipment_txt"
+                tools:listitem="@layout/item_details" />
 
             <TextView
                 android:id="@+id/workerType_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/workersType"
+                android:layout_marginTop="@dimen/paddingLayout"
                 android:textColor="@color/black"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/workerTypeRecycle"
+                app:layout_constraintTop_toBottomOf="@id/equipmentsRecycle"
                 app:layout_constraintEnd_toEndOf="@id/card_holder"
-                app:layout_constraintTop_toTopOf="@+id/workerTypeRecycle" />
+                 />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/workerTypeRecycle"
-                android:layout_width="wrap_content"
-                android:layout_height="120dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/paddingLayout"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="@+id/equipmentsRecycle"
-                app:layout_constraintTop_toBottomOf="@id/equipmentsRecycle"
-                tools:listitem="@layout/equipments_item" />
+                app:layout_constraintEnd_toEndOf="@+id/card_holder"
+                app:layout_constraintTop_toBottomOf="@id/workerType_txt"
+                tools:listitem="@layout/item_details" />
 
             <TextView
                 android:id="@+id/notesTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="@dimen/paddingLayout"
                 android:text="@string/notes"
                 android:textColor="@color/black"
                 android:textSize="13sp"
@@ -242,40 +244,51 @@
 
             <TextView
                 android:id="@+id/notes_value"
-                android:layout_width="250dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/paddingLayout"
                 android:maxWidth="400dp"
-                android:padding="4dp"
-                android:text="noooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                android:padding="@dimen/paddingLayout"
+                android:text=""
                 android:textColor="@color/dark_gray"
                 android:textSize="@dimen/normalTextSize"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/notesTxt"
                 app:layout_constraintEnd_toEndOf="@id/workerTypeRecycle"
+                app:layout_constraintTop_toBottomOf="@+id/notesTxt" />
 
-                app:layout_constraintTop_toTopOf="@+id/notesTxt" />
+<!--            <TextView-->
+<!--                android:id="@+id/qrCode_txt"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/QRCode"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="13sp"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/qrCode_img"-->
+<!--                app:layout_constraintEnd_toEndOf="@id/card_holder"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/qrCode_img" />-->
 
-            <TextView
-                android:id="@+id/qrCode_txt"
-                android:layout_width="wrap_content"
+<!--            <ImageView-->
+<!--                android:id="@+id/qrCode_img"-->
+<!--                android:layout_width="70dp"-->
+<!--                android:layout_height="70dp"-->
+<!--                android:layout_marginTop="@dimen/paddingLayout"-->
+<!--                app:layout_constraintEnd_toEndOf="@+id/notes_value"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/notes_value" />-->
+            <Button
                 android:layout_height="wrap_content"
-                android:text="@string/QRCode"
-                android:textColor="@color/black"
-                android:textSize="13sp"
+                android:id="@+id/viewQRCode_btn"
+                android:textColor="@color/white"
+                android:background="@drawable/rectangle_button"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/qrCode_img"
-                app:layout_constraintEnd_toEndOf="@id/card_holder"
-                app:layout_constraintTop_toTopOf="@+id/qrCode_img" />
-
-            <ImageView
-                android:id="@+id/qrCode_img"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginTop="@dimen/paddingLayout"
-                app:layout_constraintEnd_toEndOf="@+id/notes_value"
-                app:layout_constraintTop_toBottomOf="@id/notes_value" />
-
+                android:textSize="@dimen/newsMoreTextSize"
+                android:layout_width="230dp"
+                android:layout_margin="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/notes_value"
+                android:text="@string/ViewQRCode" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
