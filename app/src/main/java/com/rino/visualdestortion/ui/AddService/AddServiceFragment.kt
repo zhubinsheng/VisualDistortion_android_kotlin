@@ -12,6 +12,9 @@ import android.database.Cursor
 import android.graphics.*
 import android.graphics.Color.argb
 import android.location.LocationManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
@@ -37,6 +40,7 @@ import com.rino.visualdestortion.databinding.FragmentAddServiceBinding
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.ui.home.MainActivity
+import com.rino.visualdestortion.utils.NetworkConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

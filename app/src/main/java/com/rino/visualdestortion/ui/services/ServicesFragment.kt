@@ -1,12 +1,17 @@
 package com.rino.visualdestortion.ui.services
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
@@ -17,6 +22,7 @@ import com.rino.visualdestortion.databinding.FragmentServicesBinding
 import com.rino.visualdestortion.model.pojo.home.ServiceTypes
 import com.rino.visualdestortion.ui.home.MainActivity
 import com.rino.visualdestortion.ui.splash.SplashFragmentDirections
+import com.rino.visualdestortion.utils.NetworkConnection
 
 
 class ServicesFragment : Fragment() {
@@ -51,6 +57,8 @@ class ServicesFragment : Fragment() {
         viewModel = ServiceViewModel(requireActivity().application)
         serviceAdapter = ServiceAdapter(arrayListOf(), viewModel,requireActivity())
         setUpUI()
+        checkNetwork()
+        registerConnectivityNetworkMonitor()
         observeData()
         serviceAdapter.updateServices(emptyList())
 
@@ -65,7 +73,7 @@ class ServicesFragment : Fragment() {
     }
 
     private fun observeService() {
-        viewModel.getServicesData()
+      //  viewModel.getServicesData()
         viewModel.getServicesData.observe(viewLifecycleOwner) {
             it?.let {
                 serviceAdapter.updateServices(it.serviceTypes)
@@ -131,16 +139,67 @@ class ServicesFragment : Fragment() {
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                        resources.getColor(
-                            R.color.teal
-                        )
-                    )
-                    .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
-                    {
-                    }.show()
+             showMessage(it)
             }
+        }
+    }
+
+    private fun showMessage(msg: String) {
+        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
+            {
+            }.show()
+    }
+
+    private fun registerConnectivityNetworkMonitor() {
+        if (requireContext() != null) {
+            val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val builder = NetworkRequest.Builder()
+            connectivityManager.registerNetworkCallback(builder.build(),
+                object : ConnectivityManager.NetworkCallback() {
+                    override fun onAvailable(network: Network) {
+                        super.onAvailable(network)
+                        if (activity != null) {
+                            activity!!.runOnUiThread {
+                                binding.textNoInternet.visibility = View.GONE
+                                binding.noNetworkResult.visibility = View.GONE
+                                binding.linearLayout.visibility = View.VISIBLE
+                                viewModel.getServicesData()
+                            }
+                        }
+                    }
+
+                    override fun onLost(network: Network) {
+                        super.onLost(network)
+                        if (activity != null) {
+                            activity!!.runOnUiThread {
+//                                Toast.makeText(
+//                                    context, "لا يوجد انترنت ",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+                                showMessage("لا يوجد انترنت")
+                            }
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    private fun checkNetwork(){
+        val networkConnection = NetworkConnection()
+        if (networkConnection.checkInternetConnection(requireContext())) {
+            viewModel.getServicesData()
+        } else {
+            binding.textNoInternet.visibility = View.VISIBLE
+            binding.noNetworkResult.visibility = View.VISIBLE
+            binding.linearLayout.visibility = View.GONE
+
         }
     }
 }

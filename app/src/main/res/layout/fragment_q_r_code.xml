@@ -31,6 +31,20 @@
     app:layout_constraintEnd_toEndOf="parent"
    />
 
+        <Button
+            android:layout_height="wrap_content"
+            android:id="@+id/shareInWhatsapp"
+            android:textColor="@color/white"
+            android:background="@drawable/rectangle_button"
+            android:textStyle="bold"
+            android:textSize="@dimen/newsMoreTextSize"
+            android:layout_width="230dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="@string/shareQRCodeInWhatsapp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/qrCode_img"/>
     <Button
         android:layout_height="wrap_content"
         android:id="@+id/navigateToHome"
@@ -42,10 +56,9 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
         android:text="@string/navigateToHome"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/qrCode_img"/>
+        app:layout_constraintTop_toBottomOf="@+id/shareInWhatsapp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ProgressBar

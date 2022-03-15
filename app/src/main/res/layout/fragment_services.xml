@@ -6,16 +6,46 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.services.ServicesFragment">
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/no_network_result"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        app:lottie_rawRes="@raw/no_internet"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:scaleType="fitXY"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/text_no_internet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/no_network_result"
+        app:layout_constraintEnd_toEndOf="@+id/no_network_result"
+        app:layout_constraintStart_toStartOf="@+id/no_network_result"
+        android:textSize="16sp"
+        android:text="@string/no_internet"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"/>
 <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/header"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:layout_marginBottom="20dp"
-   >
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    >
 
     <TextView
         android:id="@+id/textView2"
@@ -39,21 +69,23 @@
         android:layout_marginEnd="@dimen/paddingText"
         android:layout_gravity="center_vertical|right"
         android:src="@drawable/ic_baseline_edit_24"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/linearLayout"
+        android:layout_height="0dp"
         android:background="@drawable/card"
         android:paddingTop="30dp"
         android:padding="15dp"
+        android:gravity="center"
         android:backgroundTint="@color/gray"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/textView2"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        >
 <!--        <com.facebook.shimmer.ShimmerFrameLayout-->
 <!--            android:id="@+id/shimmer"-->
 <!--            android:layout_width="match_parent"-->
@@ -86,6 +118,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/serviceRecycle"
         android:layout_marginTop="20dp"
+        android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -95,7 +128,7 @@
 
 
     </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
     <ProgressBar
         android:id="@+id/progress"
