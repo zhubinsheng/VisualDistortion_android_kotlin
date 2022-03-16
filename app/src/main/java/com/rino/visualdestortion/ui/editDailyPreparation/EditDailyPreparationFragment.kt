@@ -1,6 +1,10 @@
 package com.rino.visualdestortion.ui.editDailyPreparation
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -21,6 +25,7 @@ import com.rino.visualdestortion.model.pojo.dailyPraperation.PrepEquipments
 import com.rino.visualdestortion.model.pojo.dailyPraperation.PrepWorkers
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.ui.home.MainActivity
+import com.rino.visualdestortion.utils.NetworkConnection
 import java.text.DateFormat
 import java.util.*
 
@@ -71,6 +76,7 @@ class EditDailyPreparationFragment : Fragment() {
         setUpUI()
         initLists()
         observeData()
+        registerConnectivityNetworkMonitor()
     }
 
     private fun setUpUI() {
@@ -85,7 +91,13 @@ class EditDailyPreparationFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = workerTypesAdapter
         }
-        viewModel.getTodayPreparation()
+        if(NetworkConnection.checkInternetConnection(requireContext())){
+            viewModel.getTodayPreparation()
+        }
+        else
+        {
+            showMessage(getString(R.string.no_internet))
+        }
         if (getArguments() != null) {
 
             serviceName = getArguments()?.get("serviceName").toString()
@@ -100,8 +112,13 @@ class EditDailyPreparationFragment : Fragment() {
                 //   Toast.makeText(requireContext(),"item : ${viewModel.getDailyPreparationByServiceID(serviceTypeId).toString()}",Toast.LENGTH_SHORT).show()
                 Log.e("editWorkerTypes: ",workerTypesAdapter.getWorkerTypesMap().toString())
                 Log.e("editEquipment: ",equipmentsAdapter.getEquipmentMap().toString())
-
-                viewModel.editDailyPreparation(workerTypesAdapter.getWorkerTypesMap(),equipmentsAdapter.getEquipmentMap())
+                if(NetworkConnection.checkInternetConnection(requireContext())){
+                    viewModel.editDailyPreparation(workerTypesAdapter.getWorkerTypesMap(),equipmentsAdapter.getEquipmentMap())
+                }
+                else
+                {
+                    showMessage(getString(R.string.no_internet))
+                }
             }
         }
     }
@@ -139,15 +156,7 @@ class EditDailyPreparationFragment : Fragment() {
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                        getResources().getColor(
-                            R.color.teal
-                        )
-                    )
-                    .setActionTextColor(getResources().getColor(R.color.white)).setAction("Ok")
-                    {
-                    }.show()
+                showMessage(it)
             }
         }
     }
@@ -323,7 +332,7 @@ class EditDailyPreparationFragment : Fragment() {
         var flagEquipment = true
         var flagworkerType = true
         if (equipmentsCountList.isEmpty()) {
-            binding.equipmentsTextInputLayout.error = "برجاء ادخال هذا العنصر"
+            binding.equipmentsTextInputLayout.error = getString(R.string.required_field)
             flagEquipment = false
         }
         else{
@@ -332,7 +341,7 @@ class EditDailyPreparationFragment : Fragment() {
             flagEquipment = true
         }
         if (workerTypesCountList.isEmpty()) {
-            binding.workersTypeTextInputLayout.error = "برجاء ادخال هذا العنصر"
+            binding.workersTypeTextInputLayout.error = getString(R.string.required_field)
             flagworkerType = false
         }
         else{
@@ -342,7 +351,42 @@ class EditDailyPreparationFragment : Fragment() {
         }
         return (flagEquipment && flagworkerType)
     }
+    private fun showMessage(msg: String) {
+        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
+            {
+            }.show()
+    }
+    private fun registerConnectivityNetworkMonitor() {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val builder = NetworkRequest.Builder()
+        connectivityManager.registerNetworkCallback(builder.build(),
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.internet))
+                        }
+                    }
+                }
 
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.no_internet))
+                        }
+                    }
+                }
+            }
+        )
+    }
 }
 
 

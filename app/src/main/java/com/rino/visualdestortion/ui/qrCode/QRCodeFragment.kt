@@ -1,6 +1,6 @@
 package com.rino.visualdestortion.ui.qrCode
 
-import android.R
+import com.rino.visualdestortion.R
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
@@ -8,6 +8,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,13 +18,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.databinding.FragmentQRCodeBinding
+import com.rino.visualdestortion.utils.NetworkConnection
 import com.squareup.picasso.Callback
+
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -48,12 +53,21 @@ class QRCodeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentQRCodeBinding.inflate(inflater, container, false)
+        init()
+        return binding.root
+    }
+    private fun init(){
+        registerConnectivityNetworkMonitor()
         if (getArguments() != null) {
             // The getPrivacyPolicyLink() method will be created automatically.
-             url = getArguments()?.get("QRCodeURL").toString()
+            url = getArguments()?.get("QRCodeURL").toString()
             Log.e("QRCodeURL", url)
-            downloadQRCode(url)
-
+            if(NetworkConnection.checkInternetConnection(requireContext())){
+                downloadQRCode(url)
+            }
+            else{
+                showMessage(getString(R.string.no_internet))
+            }
         }
         binding.navigateToHome.setOnClickListener {
             navigateToHome()
@@ -61,15 +75,13 @@ class QRCodeFragment : Fragment() {
         binding.shareInWhatsapp.setOnClickListener{
             shareQRCodeInWhatsapp()
         }
-        return binding.root
     }
-
     private fun shareQRCodeInWhatsapp() {
         val bitmap = ( binding.qrCodeImg.drawable.toBitmap())
         val imgUri: Uri = getImageUri(bitmap)
         var whatsappIntent = Intent(Intent.ACTION_SEND)
         whatsappIntent.setPackage("com.whatsapp")
-        whatsappIntent.putExtra(Intent.EXTRA_TEXT, url)
+        whatsappIntent.putExtra(Intent.EXTRA_TEXT, "\n ${getString(R.string.QRCode)} \n"+url)
         whatsappIntent.putExtra(Intent.EXTRA_STREAM, imgUri)
         whatsappIntent.type = "image/*"
         whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -77,18 +89,14 @@ class QRCodeFragment : Fragment() {
         try {
             requireActivity()!!.startActivity(whatsappIntent)
         } catch (ex: ActivityNotFoundException) {
-//            Toast.makeText(
-//                context, " الوتساب غير مثبت  ",
-//                Toast.LENGTH_SHORT
-//            ).show()
-            showWarningDialog(" الوتساب غير مثبت  ")
+            showWarningDialog(getString(R.string.whatsApp_not_installed))
 
         }
     }
     private fun showWarningDialog(message: String) {
         AlertDialog.Builder(requireContext())
             .setMessage(message)
-            .setNegativeButton(" الغاء ",
+            .setNegativeButton(getString(R.string.cancel),
                 DialogInterface.OnClickListener { dialog, which -> dialog.dismiss() })
             .setCancelable(true)
             .create().show()
@@ -130,5 +138,41 @@ class QRCodeFragment : Fragment() {
                 override fun onError() {}
             })
    }
+    private fun showMessage(msg: String) {
+        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(
+               R.string.dismiss))
+            {
+            }.show()
+    }
+    private fun registerConnectivityNetworkMonitor() {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val builder = NetworkRequest.Builder()
+        connectivityManager.registerNetworkCallback(builder.build(),
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.internet))
+                        }
+                    }
+                }
 
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.no_internet))
+                        }
+                    }
+                }
+            }
+        )
+    }
 }

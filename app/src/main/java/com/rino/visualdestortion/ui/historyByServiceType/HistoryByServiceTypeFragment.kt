@@ -1,5 +1,10 @@
 package com.rino.visualdestortion.ui.historyByServiceType
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,9 +22,8 @@ import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentHistoryByServiceTypeBinding
 import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
 import com.rino.visualdestortion.model.pojo.history.ServiceData
-import com.rino.visualdestortion.ui.dailyPreparation.EquipmentItem
-import com.rino.visualdestortion.ui.history.HistoryFragmentDirections
 import com.rino.visualdestortion.ui.home.MainActivity
+import com.rino.visualdestortion.utils.NetworkConnection
 
 
 class HistoryByServiceTypeFragment : Fragment() {
@@ -44,7 +48,7 @@ class HistoryByServiceTypeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentHistoryByServiceTypeBinding.inflate(inflater, container, false)
         init()
         return binding.root
@@ -59,9 +63,11 @@ class HistoryByServiceTypeFragment : Fragment() {
         historyList = arrayListOf()
         historyAdapter = HistoryByServiceAdapter(historyList, viewModel)
         historyAdapter.updateItems(historyList)
+        historyAdapter.updateItems(arrayListOf())
         setUpUI()
         observeData()
-        historyAdapter.updateItems(arrayListOf())
+        checkNetwork(serviceId)
+        registerConnectivityNetworkMonitor()
     }
 
     private fun observeData() {
@@ -73,13 +79,13 @@ class HistoryByServiceTypeFragment : Fragment() {
 
 
     private fun observeHistoryData() {
-        viewModel.getHistoryData(serviceId)
+     //   viewModel.getHistoryData(serviceId)
         viewModel.getHistoryData.observe(viewLifecycleOwner) {
             it?.let {
                 historyByServiceIdResponse = it
                 Log.e("hasNextPage",it.hasNextPage.toString())
                 Log.e("totalPages",it.totalPages.toString())
-                it.data?.let { it1 ->
+                it.data.let { it1 ->
                     historyAdapter.updateItems(it1)
                     historyList = it1
                 }
@@ -159,7 +165,9 @@ class HistoryByServiceTypeFragment : Fragment() {
                     Log.e("pageNermeen", page.toString())
                     Log.e("hasNext", historyByServiceIdResponse.hasNextPage.toString())
                     viewModel.viewLoading(View.VISIBLE)
-                    viewModel.getHistoryData(serviceId, page ,selectedPeriod)
+                    if (NetworkConnection.checkInternetConnection(requireContext())) {
+                        viewModel.getHistoryData(serviceId, page, selectedPeriod)
+                    }
                 } else {
                     viewModel.viewLoading(View.GONE)
                 }
@@ -177,16 +185,75 @@ class HistoryByServiceTypeFragment : Fragment() {
         )
         binding.periodTimeTextView.setAdapter(adapter)
         binding.periodTimeTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
+            AdapterView.OnItemClickListener { parent, _, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
                 historyAdapter.clearList()
                 page = 1
                 val index = periodTimeList_ar.indexOf(selectedItem)
                 selectedPeriod = periodTimeList_en[index]
-              viewModel.getHistoryData(serviceId,page,periodTimeList_en[index])
-
+                if (NetworkConnection.checkInternetConnection(requireContext())) {
+                    viewModel.getHistoryData(serviceId, page, periodTimeList_en[index])
+                }
             }
 
+    }
+
+    private fun showMessage() {
+        Snackbar.make(requireView(), getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
+            {
+            }.show()
+    }
+
+    private fun registerConnectivityNetworkMonitor() {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val builder = NetworkRequest.Builder()
+        connectivityManager.registerNetworkCallback(builder.build(),
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            binding.textNoInternet.visibility = View.GONE
+                            binding.noNetworkResult.visibility = View.GONE
+                            binding.linearLayout.visibility = View.VISIBLE
+                            binding.periodTimeTextInputLayout.visibility = View.VISIBLE
+                            viewModel.getHistoryData(serviceId)
+                        }
+                    }
+                }
+
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+//                                Toast.makeText(
+//                                    context, "لا يوجد انترنت ",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+                            showMessage()
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+    private fun checkNetwork(id: Int ,page : Int =1){
+        if (NetworkConnection.checkInternetConnection(requireContext())) {
+            viewModel.getHistoryData(id,page)
+        } else {
+            binding.textNoInternet.visibility = View.VISIBLE
+            binding.noNetworkResult.visibility = View.VISIBLE
+            binding.linearLayout.visibility = View.GONE
+            binding.periodTimeTextInputLayout.visibility = View.GONE
+
+        }
     }
 
 }

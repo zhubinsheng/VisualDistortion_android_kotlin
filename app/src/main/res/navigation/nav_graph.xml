@@ -161,6 +161,10 @@
             android:id="@+id/action_fingerPrint_to_login"
             app:destination="@id/loginFragment2"
             />
+        <action
+            android:id="@+id/action_fingerPrint_to_services"
+            app:destination="@id/servicesFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/dailyPreparationFragment"

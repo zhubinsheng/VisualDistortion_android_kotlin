@@ -1,5 +1,9 @@
 package com.rino.visualdestortion.ui.resetPassward
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.ui.home.MainActivity
 import com.rino.visualdestortion.databinding.FragmentResetPasswordBinding
+import com.rino.visualdestortion.utils.NetworkConnection
 
 class ResetPasswordFragment : Fragment() {
     private lateinit var viewModel: ResetPasswordViewModel
@@ -39,6 +44,7 @@ class ResetPasswordFragment : Fragment() {
         requestOTPButtonOnClick()
         saveNewPassOnClick()
         observeData()
+        registerConnectivityNetworkMonitor()
     }
 
     private fun requestOTPButtonOnClick() {
@@ -46,7 +52,12 @@ class ResetPasswordFragment : Fragment() {
         binding.reuestOtpButton.setOnClickListener {
             email = binding.editTextEmail.text.toString()
             if (validateEmail()) {
-                viewModel.requestOTP(email)
+                if(NetworkConnection.checkInternetConnection(requireContext())){
+                    viewModel.requestOTP(email)
+                }
+                else{
+                    showMessage(getString(R.string.no_internet))
+                }
             }
         }
 
@@ -141,17 +152,22 @@ class ResetPasswordFragment : Fragment() {
         validatConfirmPassword()
         validateOTP()
         if (validateEmail() && validatPassword() && validateOTP() && validatConfirmPassword()) {
-            viewModel.resetPass(email, otp, newPass)
+            if(NetworkConnection.checkInternetConnection(requireContext())){
+                viewModel.resetPass(email, otp, newPass)            }
+            else{
+                showMessage(getString(R.string.no_internet))
+            }
+
         }
     }
 
     private fun validateOTP(): Boolean {
       return if (otp.isEmpty()) {
-            binding.otpCodeTextInput.error = "برجاء ادخال هذا العنصر"
+            binding.otpCodeTextInput.error = getString(R.string.required_field)
              false
         }
        else if (otp.length != 4) {
-            binding.otpCodeTextInput.error = "الكود التفعيلى يجب ان يحتوى على 4 ارقام"
+            binding.otpCodeTextInput.error = getString(R.string.qrCode_must_4number)
              false
         }
         else {
@@ -164,13 +180,13 @@ class ResetPasswordFragment : Fragment() {
     private fun validateEmail(): Boolean {
         val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
         return if (email.isEmpty()) {
-            binding.textInputEmail.error = " برجاء ادخال العنصر"
+            binding.textInputEmail.error = getString(R.string.required_field)
             false
         } else if (email.length > 50) {
-            binding.textInputEmail.error = "البريد الالكترونى يجب الا يزيد عن 50 حرف "
+            binding.textInputEmail.error = getString(R.string.email_must_less_than50)
             false
         } else if (!email.matches(emailPattern)) {
-            binding.textInputEmail.error = "بريد الكترونى خاطئ "
+            binding.textInputEmail.error = getString(R.string.invalid_email)
             false
         } else {
             binding.textInputEmail.error = null
@@ -189,10 +205,10 @@ class ResetPasswordFragment : Fragment() {
                 ".{8,}"  //at least 8 characters
 //                "$"
         return if (newPass.isEmpty()) {
-            binding.textInputPassword.error = "برجاء ادخال ها العنصر"
+            binding.textInputPassword.error = getString(R.string.required_field)
             false
         } else if (!newPass.matches(passwordVal.toRegex())) {
-            binding.textInputPassword.error = "كلمة المرور ضعيفة"
+            binding.textInputPassword.error = getString(R.string.weak_password)
             false
         } else {
             binding.textInputPassword.error = null
@@ -204,11 +220,11 @@ class ResetPasswordFragment : Fragment() {
 
     private fun validatConfirmPassword(): Boolean {
       return  if (newPassCongirm.isEmpty()) {
-            binding.textInputConfirmPassword.error = "برجاء ادخال ها العنصر"
+            binding.textInputConfirmPassword.error = getString(R.string.required_field)
             false
         } else if (newPass != newPassCongirm) {
           //  Toast.makeText(requireActivity(), "newPass :" + newPass == newPassCongirm, Toast.LENGTH_SHORT).show()
-            binding.textInputConfirmPassword.error = "كلمة المرور غير متطابقة"
+            binding.textInputConfirmPassword.error = getString(R.string.pass_not_matched)
             false
         } else {
             binding.textInputConfirmPassword.error = null
@@ -222,5 +238,43 @@ class ResetPasswordFragment : Fragment() {
         (activity as MainActivity).bottomNavigation.isGone = true
     }
 
+    private fun showMessage(msg: String) {
+        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(
+                R.string.dismiss))
+            {
+            }.show()
+    }
+
+    private fun registerConnectivityNetworkMonitor() {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val builder = NetworkRequest.Builder()
+        connectivityManager.registerNetworkCallback(builder.build(),
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.internet))
+                        }
+                    }
+                }
+
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.no_internet))
+                        }
+                    }
+                }
+            }
+        )
+    }
 
 }

@@ -1,5 +1,9 @@
 package com.rino.visualdestortion.ui.login
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,6 +17,7 @@ import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentLoginBinding
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.ui.home.MainActivity
+import com.rino.visualdestortion.utils.NetworkConnection
 
 
 class LoginFragment : Fragment() {
@@ -36,6 +41,7 @@ class LoginFragment : Fragment() {
         loginButtonOnClick()
         resetPassOnClick()
         observeData()
+        registerConnectivityNetworkMonitor()
     }
 
     private fun loginButtonOnClick() {
@@ -120,12 +126,7 @@ class LoginFragment : Fragment() {
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
-                    .setBackgroundTint(getResources().getColor(R.color.teal))
-                    .setActionTextColor(getResources().getColor(R.color.white)).setAction("Ok")
-                    {
-                    }.show()
+             showMessage(it)
             }
         }
     }
@@ -134,20 +135,25 @@ class LoginFragment : Fragment() {
         validateEmail()
         validatPassword()
         if (validateEmail() && validatPassword()) {
-            viewModel.login(LoginRequest(email, pass))
+             if(NetworkConnection.checkInternetConnection(requireContext())){
+                viewModel.login(LoginRequest(email, pass))
+             }
+             else{
+                 showMessage(getString(R.string.no_internet))
+                }
         }
     }
 
     private fun validateEmail(): Boolean {
         val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
         return if (email.isEmpty()) {
-            binding.textInputEmail.error = " برجاء ادخال العنصر"
+            binding.textInputEmail.error = getString(R.string.required_field)
             false
         } else if (email.length > 50) {
-            binding.textInputEmail.error = "البريد الالكترونى يجيب الا يزيد عن 50 حرف "
+            binding.textInputEmail.error = getString(R.string.email_must_less_than50)
             false
         } else if (!email.matches(emailPattern)) {
-            binding.textInputEmail.error = "بريد الكترونى خاطئ "
+            binding.textInputEmail.error = getString(R.string.invalid_email)
             false
         } else {
             binding.textInputEmail.error = null
@@ -166,12 +172,14 @@ class LoginFragment : Fragment() {
                 ".{8,}"  //at least 8 characters
 //                "$"
         return if (pass.isEmpty()) {
-            binding.textInputPassword.error = "برجاء ادخال ها العنصر"
+            binding.textInputPassword.error = getString(R.string.required_field)
             false
-        } else if (!pass.matches(passwordVal.toRegex())) {
-            binding.textInputPassword.error = "كلمة المرور ضعيفة"
-            false
-        } else {
+        }
+//        else if (!pass.matches(passwordVal.toRegex())) {
+//            binding.textInputPassword.error = "كلمة المرور ضعيفة"
+//            false
+//        }
+        else {
             binding.textInputPassword.error = null
             binding.textInputPassword.isErrorEnabled = false
             true
@@ -181,5 +189,42 @@ class LoginFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true
+    }
+
+    private fun showMessage(msg: String) {
+        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
+            {
+            }.show()
+    }
+    private fun registerConnectivityNetworkMonitor() {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val builder = NetworkRequest.Builder()
+        connectivityManager.registerNetworkCallback(builder.build(),
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.internet))
+                        }
+                    }
+                }
+
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.no_internet))
+                        }
+                    }
+                }
+            }
+        )
     }
 }

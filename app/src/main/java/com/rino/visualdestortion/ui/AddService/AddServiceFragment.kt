@@ -3,14 +3,11 @@ package com.rino.visualdestortion.ui.AddService
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
 import android.database.Cursor
 import android.graphics.*
-import android.graphics.Color.argb
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.Network
@@ -28,7 +25,6 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -44,19 +40,18 @@ import com.rino.visualdestortion.utils.NetworkConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.math.roundToInt
 
 
 class AddServiceFragment : Fragment() {
@@ -118,7 +113,7 @@ class AddServiceFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentAddServiceBinding.inflate(inflater, container, false)
         init()
         return binding.root
@@ -133,11 +128,7 @@ class AddServiceFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-//        beforeImgBody = null
-//        afterImgBody = null
-        if (fusedLocationProviderClient != null) {
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        }
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 
     private fun init() {
@@ -145,7 +136,7 @@ class AddServiceFragment : Fragment() {
         setUpUI()
         initLists()
         observeData()
-
+        registerConnectivityNetworkMonitor()
     }
 
     private fun setUpUI() {
@@ -177,7 +168,7 @@ class AddServiceFragment : Fragment() {
         }
         binding.notesEditTxt.addTextChangedListener {
             val notesLength =  binding.notesEditTxt.text.toString().length
-            binding.notesLength.text = notesLength.toString()+" حرف "
+            binding.notesLength.text = "$notesLength ${getString(R.string.chars)} "
         }
         binding.submitButton.setOnClickListener {
             submit()
@@ -311,10 +302,15 @@ class AddServiceFragment : Fragment() {
     private fun submit() {
         formData = getFormDataFromUi(serviceName)
            if (validateData(formData) && lat != "" && lng != "") {
-               val date =
-                   DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
-                 viewModel.setFormData(formData)
-                 viewModel.getDailyPreparationByServiceID(serviceTypeId.toString(), date)
+//               val date =
+//                   DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
+               if(NetworkConnection.checkInternetConnection(requireContext())){
+                    viewModel.setFormData(formData)
+               }
+               else{
+                    showMessage(getString(R.string.no_internet))
+               }
+          //       viewModel.getDailyPreparationByServiceID(serviceTypeId.toString(), date)
            }
     }
 
@@ -438,8 +434,8 @@ class AddServiceFragment : Fragment() {
         )
         binding.sectorTextView.setAdapter(sectorsAdapter)
         binding.sectorTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
-                val selectedItem = parent.getItemAtPosition(position).toString()
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+         //       val selectedItem = parent.getItemAtPosition(position).toString()
                 isSectorSelected = true
                 setMunicipalitesMenuItems(position)
             }
@@ -459,8 +455,8 @@ class AddServiceFragment : Fragment() {
         )
         binding.municipalitesTextView.setAdapter(municipalitesAdapter)
         binding.municipalitesTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
-                val selectedItem = parent.getItemAtPosition(position).toString()
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+       //         val selectedItem = parent.getItemAtPosition(position).toString()
                 isMunicipalitySelected = true
                 setDistrictsMenuItems(posSector, position)
 
@@ -481,8 +477,8 @@ class AddServiceFragment : Fragment() {
         )
         binding.districtsTextView.setAdapter(districtsAdapter)
         binding.districtsTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
-                val selectedItem = parent.getItemAtPosition(position).toString()
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+           //     val selectedItem = parent.getItemAtPosition(position).toString()
                 isDistrictSelected = true
                 setStreetsMenuItems(posSector, posMunicipalite, position)
                 // Display the clicked item using toast
@@ -506,8 +502,8 @@ class AddServiceFragment : Fragment() {
         )
         binding.streetTextView.setAdapter(streetsAdapter)
         binding.streetTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
-                val selectedItem = parent.getItemAtPosition(position).toString()
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+   //             val selectedItem = parent.getItemAtPosition(position).toString()
                 isStreetSelected = true
                 //  setStreetsMenuItems(posSector,posMunicipalite,position)
                 // Display the clicked item using toast
@@ -524,68 +520,61 @@ class AddServiceFragment : Fragment() {
         var flagBeforeImg = true
         var flagDuringImg = true
         var flagAfterImg = true
-        var flagPrecentage = true
         var flagNumberR = true
         var flagMCube = true
         var flagMSquare = true
         var flagNotes = true
-     //  Toast.makeText(requireContext(),"Selected : ${formData.sectorName == R.string.sector.toString()}",Toast.LENGTH_SHORT).show()
+        //  Toast.makeText(requireContext(),"Selected : ${formData.sectorName == R.string.sector.toString()}",Toast.LENGTH_SHORT).show()
         if (!isSectorSelected) {
-            binding.sectorTextInputLayout.error = "برجاء ادخال هذا العنصر"
+            binding.sectorTextInputLayout.error = getString(R.string.required_field)
             flagSector = false
-        }
-        else {
+        } else {
             binding.sectorTextInputLayout.error = null
             binding.sectorTextInputLayout.isErrorEnabled = false
             flagSector = true
         }
 
         if (!isDistrictSelected) {
-            binding.districtsTextInputLayout.error = "برجاء ادخال هذا العنصر"
+            binding.districtsTextInputLayout.error = getString(R.string.required_field)
             flagDistrict = false
-        }
-        else {
+        } else {
             binding.districtsTextInputLayout.error = null
             binding.districtsTextInputLayout.isErrorEnabled = false
             flagDistrict = true
         }
         if (!isMunicipalitySelected) {
-            binding.municipalitesTextInputLayout.error = "برجاء ادخال هذا العنصر"
+            binding.municipalitesTextInputLayout.error = getString(R.string.required_field)
             flagMunicipality = false
-        }
-        else {
+        } else {
             binding.municipalitesTextInputLayout.error = null
             binding.municipalitesTextInputLayout.isErrorEnabled = false
             flagMunicipality = true
         }
         if (!isStreetSelected) {
-            binding.streetTextInputLayout.error = "برجاء ادخال هذا العنصر"
+            binding.streetTextInputLayout.error = getString(R.string.required_field)
             flagStreet = false
-        }
-        else {
+        } else {
             binding.streetTextInputLayout.error = null
             binding.streetTextInputLayout.isErrorEnabled = false
             flagStreet = true
         }
         //binding.beforPic.drawable == resources.getDrawable(R.drawable.picture)
-       // Toast.makeText(requireContext(),"Before : ${beforeImgBody == null}  ,Aftar : ${afterImgBody == null}",Toast.LENGTH_SHORT).show()
+        // Toast.makeText(requireContext(),"Before : ${beforeImgBody == null}  ,Aftar : ${afterImgBody == null}",Toast.LENGTH_SHORT).show()
         if (beforeImgBody == null) {
-            binding.textInputbeforeImg.error = "   مطلوب"
+            binding.textInputbeforeImg.error = getString(R.string.required)
             flagBeforeImg = false
-        }
-        else {
+        } else {
             binding.textInputbeforeImg.error = null
             binding.textInputbeforeImg.isErrorEnabled = false
-             flagBeforeImg = true
+            flagBeforeImg = true
         }
         if (afterImgBody == null) {
-            binding.textInputAfterImg.error = "   مطلوب"
+            binding.textInputAfterImg.error = getString(R.string.required)
             flagAfterImg = false
-        }
-        else {
+        } else {
             binding.textInputAfterImg.error = null
             binding.textInputAfterImg.isErrorEnabled = false
-             flagAfterImg = true
+            flagAfterImg = true
         }
 //        if (formData.percentage == null || formData.percentage =="") {
 //            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
@@ -603,84 +592,74 @@ class AddServiceFragment : Fragment() {
 //            }
 //        }
 
-        if (formData.notes != null){
-            if (formData.notes!!.length>500) {
-               binding.textInputNotes.error = "هذا العنصر يجب ان يكون أقل من 500 حرف  "
+        if (formData.notes != null) {
+            if (formData.notes!!.length > 500) {
+                binding.textInputNotes.error = "هذا العنصر يجب ان يكون أقل من 500 حرف  "
                 flagNotes = false
-            }
-            else{
+            } else {
                 binding.textInputNotes.error = null
                 binding.textInputNotes.isErrorEnabled = false
-                 flagNotes = true
+                flagNotes = true
             }
         }
         if (serviceTypeId == 6) {
             if (formData.mCube == null) {
-                binding.textInputMCube.error = "برجاء ادخال هذا العنصر"
+                binding.textInputMCube.error = getString(R.string.required_field)
                 flagMCube = false
-            }
-            else{
+            } else {
                 binding.textInputMCube.error = null
                 binding.textInputMCube.isErrorEnabled = false
                 flagMCube = true
             }
             if (formData.numberR == null) {
-                binding.textInputNumberR.error = "برجاء ادخال هذا العنصر"
+                binding.textInputNumberR.error = getString(R.string.required_field)
                 flagNumberR = false
-            }
-            else{
+            } else {
                 binding.textInputNumberR.error = null
                 binding.textInputNumberR.isErrorEnabled = false
                 flagNumberR = true
             }
             if (duringImgBody == null) {
-                binding.textInputDuringImg.error = "   مطلوب"
+                binding.textInputDuringImg.error = getString(R.string.required)
                 flagDuringImg = false
-            }
-            else {
+            } else {
                 binding.textInputDuringImg.error = null
                 binding.textInputDuringImg.isErrorEnabled = false
                 flagDuringImg = true
             }
-        }
-        else if (serviceTypeId == 5) {
+        } else if (serviceTypeId == 5) {
             if (formData.mSquare == null) {
-                binding.textInputMSquare.error = "برجاء ادخال هذا العنصر"
+                binding.textInputMSquare.error = getString(R.string.required_field)
                 flagMSquare = false
-            }
-            else{
+            } else {
                 binding.textInputMSquare.error = null
                 binding.textInputMSquare.isErrorEnabled = false
                 flagMSquare = true
             }
             if (duringImgBody == null) {
-                binding.textInputDuringImg.error = "   مطلوب"
+                binding.textInputDuringImg.error = getString(R.string.required)
                 flagDuringImg = false
-            }
-            else {
+            } else {
                 binding.textInputDuringImg.error = null
                 binding.textInputDuringImg.isErrorEnabled = false
                 flagDuringImg = true
             }
-        }
-        else if (serviceTypeId == 3) {
+        } else if (serviceTypeId == 3) {
             if (duringImgBody == null) {
-                binding.textInputDuringImg.error = "   مطلوب"
+                binding.textInputDuringImg.error = getString(R.string.required)
                 flagDuringImg = false
-            }
-            else {
+            } else {
                 binding.textInputDuringImg.error = null
                 binding.textInputDuringImg.isErrorEnabled = false
                 flagDuringImg = true
             }
 
         }
-      val flag =(flagSector && flagDistrict && flagMunicipality && flagStreet &&
-              flagAfterImg && flagBeforeImg && flagDuringImg &&
-              flagMCube && flagMSquare && flagNumberR &&
-              flagNotes
-                )
-        return flag
+        return (flagSector && flagDistrict && flagMunicipality && flagStreet &&
+                flagAfterImg && flagBeforeImg && flagDuringImg &&
+                flagMCube && flagMSquare && flagNumberR &&
+                flagNotes
+                  )
     }
 
     private fun observeLoading() {
@@ -694,15 +673,7 @@ class AddServiceFragment : Fragment() {
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                        getResources().getColor(
-                            R.color.teal
-                        )
-                    )
-                    .setActionTextColor(getResources().getColor(R.color.white)).setAction("Ok")
-                    {
-                    }.show()
+            showMessage(it)
             }
         }
     }
@@ -710,8 +681,8 @@ class AddServiceFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST_CODE && data != null) {
-            binding.afterPic.setImageBitmap(data.extras?.get("data") as Bitmap)
-            var bitmap = data.extras?.get("data") as Bitmap
+            val bitmap = data.extras?.get("data") as Bitmap
+            binding.afterPic.setImageBitmap(bitmap)
             var afterBitmap =bitmap.copy(Bitmap. Config.ARGB_8888,true)
             CoroutineScope(Dispatchers.Default).launch {
                 val current = LocalDateTime.now()
@@ -720,21 +691,18 @@ class AddServiceFragment : Fragment() {
              afterBitmap =
                     drawTextToBitmap(
                         afterBitmap,
-                        3,
                         formatted.toString()
                     )
                     try {
                         val file = File(getRealPathFromURI(getImageUri(requireContext(), afterBitmap)!!))
                         println("afterfilePath" + file.path)
-                        if (file != null) {
-                            val requestFile: RequestBody =
-                                RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file!!)
-                            afterImgBody = MultipartBody.Part.createFormData(
-                                "afterImg",
-                                file?.name.trim(),
-                                requestFile
-                            )
-                        }
+                        val requestFile: RequestBody =
+                            file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                        afterImgBody = MultipartBody.Part.createFormData(
+                            "afterImg",
+                            file.name.trim(),
+                            requestFile
+                        )
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
@@ -748,10 +716,6 @@ class AddServiceFragment : Fragment() {
                 requireContext().getContentResolver(),
                 data?.data
             )
-            if(bitmap == null)
-            {
-                Toast.makeText(context, "null", Toast.LENGTH_SHORT).show()
-            }
             var beforeBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
             CoroutineScope(Dispatchers.Default).launch {
                 val current = LocalDateTime.now()
@@ -760,7 +724,6 @@ class AddServiceFragment : Fragment() {
               beforeBitmap =
                     drawTextToBitmap(
                         beforeBitmap,
-                        3,
                         formatted.toString()
                     )
                     try {
@@ -771,18 +734,14 @@ class AddServiceFragment : Fragment() {
                         val file =
                             File(getRealPathFromURI(getImageUri(requireContext(), beforeBitmap)!!))
                         println("beforefilePath" + file.path)
-                        if (file != null) {
-                            val requestFile: RequestBody =
-                                RequestBody.create(
-                                    "multipart/form-data".toMediaTypeOrNull(),
-                                    file!!
-                                )
-                            beforeImgBody = MultipartBody.Part.createFormData(
-                                "beforeImg",
-                                file?.name.trim(),
-                                requestFile
-                            )
-                        }
+                        val requestFile: RequestBody =
+                            file
+                                .asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                        beforeImgBody = MultipartBody.Part.createFormData(
+                            "beforeImg",
+                            file.name.trim(),
+                            requestFile
+                        )
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
@@ -808,7 +767,6 @@ class AddServiceFragment : Fragment() {
                 duringBitmap =
                     drawTextToBitmap(
                         duringBitmap,
-                        3,
                         formatted.toString()
                     )
                 try {
@@ -819,18 +777,13 @@ class AddServiceFragment : Fragment() {
                     val file =
                         File(getRealPathFromURI(getImageUri(requireContext(), duringBitmap)!!))
                     println("duringFilePath" + file.path)
-                    if (file != null) {
-                        val requestFile: RequestBody =
-                            RequestBody.create(
-                                "multipart/form-data".toMediaTypeOrNull(),
-                                file!!
-                            )
-                        duringImgBody = MultipartBody.Part.createFormData(
-                            "duringImg",
-                            file?.name.trim(),
-                            requestFile
-                        )
-                    }
+                    val requestFile: RequestBody =
+                        file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                    duringImgBody = MultipartBody.Part.createFormData(
+                        "duringImg",
+                        file.name.trim(),
+                        requestFile
+                    )
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
@@ -840,7 +793,7 @@ class AddServiceFragment : Fragment() {
         }
 
     @SuppressLint("ResourceAsColor")
-    private fun drawTextToBitmap(bitmap: Bitmap, textSize: Int = 2, text: String): Bitmap {
+    private fun drawTextToBitmap(bitmap: Bitmap, text: String): Bitmap {
 
         val canvas = Canvas(bitmap)
         // new antialised Paint - empty constructor does also work
@@ -855,7 +808,7 @@ class AddServiceFragment : Fragment() {
         //custom fonts or a default font
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         val fm: Paint.FontMetrics = Paint.FontMetrics()
-        val color = ContextCompat.getColor(requireContext(), R.color.transparent_black)
+    //    val color = ContextCompat.getColor(requireContext(), R.color.transparent_black)
         paint.setARGB(50,51,26,24)
         paint.getFontMetrics(fm)
         val margin = 5f
@@ -864,10 +817,6 @@ class AddServiceFragment : Fragment() {
             width.toFloat(), width*.10f,paint
         )
         val original = BitmapFactory.decodeResource(resources, R.drawable.splash_icon)
-        //  canvas.drawBitmap(original, rect, paint);
-        //  canvas.drawBitmap(R.drawable.splash_icon,rect,paint)
-        //      val rectangle = RectF(10 + paint.measureText(text) + margin, fm.top - margin, margin, 10 + fm.bottom + margin)
-        val rectangle2 = RectF(width-(20 + paint.measureText(text) + margin),fm.top - margin, 10f, 10 + fm.bottom + margin)
         canvas.drawBitmap(original,null,RectF(width*.02f,width*.02f,width*.10f,width*.10f),null)
         // draw text to the Canvas center
         val bounds = Rect()
@@ -1025,7 +974,44 @@ class AddServiceFragment : Fragment() {
             Manifest.permission.READ_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
     }
+    private fun showMessage(msg: String) {
+        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
+            {
+            }.show()
+    }
+    private fun registerConnectivityNetworkMonitor() {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val builder = NetworkRequest.Builder()
+        connectivityManager.registerNetworkCallback(builder.build(),
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.internet))                        }
+                    }
+                }
 
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+//                                Toast.makeText(
+//                                    context, "لا يوجد انترنت ",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+                            showMessage(getString(R.string.no_internet))                        }
+                    }
+                }
+            }
+        )
+    }
 //    val requestExternalStoragePermissionLauncher =
 //        registerForActivityResult(
 //            ActivityResultContracts.RequestPermission()

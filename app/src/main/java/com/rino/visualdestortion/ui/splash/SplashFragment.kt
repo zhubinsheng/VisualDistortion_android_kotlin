@@ -1,5 +1,6 @@
 package com.rino.visualdestortion.ui.splash
 
+
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,11 +11,9 @@ import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
-import com.rino.visualdestortion.databinding.FragmentLoginBinding
 import com.rino.visualdestortion.databinding.FragmentSplashBinding
 import com.rino.visualdestortion.ui.home.MainActivity
-import com.rino.visualdestortion.ui.setting.SettingViewModel
-import com.rino.visualdestortion.ui.setting.settingFragmentDirections
+import com.rino.visualdestortion.utils.NetworkConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -62,12 +61,17 @@ class SplashFragment : Fragment() {
 
     private fun observeIsPrepared() {
         viewModel.isPrepared.observe(viewLifecycleOwner) {
-            if (it) {
-               navToHome()
-               //   navigateToDailyPreparation()
-            } else {
-               navigateToDailyPreparation()
-               //    navToHome()
+            if (!viewModel.isLogin()){
+                navToWelcome()
+            }
+            else {
+                if (it) {
+                    navToHome()
+                    //   navigateToDailyPreparation()
+                } else {
+                    navigateToDailyPreparation()
+                    //    navToHome()
+                }
             }
         }
     }
@@ -104,9 +108,11 @@ class SplashFragment : Fragment() {
             delay(SPLASH_TIME_OUT)
             CoroutineScope(Dispatchers.Main).launch{
                 if (viewModel.isLogin()) {
-                    viewModel.isTodayPrepared()
-                    if (!viewModel.isLogin()){
-                        navToWelcome()
+                    if(NetworkConnection.checkInternetConnection(requireContext())) {
+                        viewModel.isTodayPrepared()
+                    }
+                    else{
+                        showMessage(getString(R.string.no_internet))
                     }
                 }
                 else{
@@ -136,5 +142,18 @@ class SplashFragment : Fragment() {
             R.anim.right_to_left
         )
     }
+    private fun showMessage(msg: String) {
+        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(
+                R.string.dismiss))
+            {
+            }.show()
+    }
+
 
 }

@@ -151,7 +151,7 @@ class ServicesFragment : Fragment() {
                     R.color.teal
                 )
             )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
+            .setActionTextColor(resources.getColor(R.color.white)).setAction("قفل")
             {
             }.show()
     }
@@ -192,8 +192,7 @@ class ServicesFragment : Fragment() {
     }
 
     private fun checkNetwork(){
-        val networkConnection = NetworkConnection()
-        if (networkConnection.checkInternetConnection(requireContext())) {
+        if (NetworkConnection.checkInternetConnection(requireContext())) {
             viewModel.getServicesData()
         } else {
             binding.textNoInternet.visibility = View.VISIBLE

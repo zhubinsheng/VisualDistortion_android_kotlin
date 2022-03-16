@@ -19,11 +19,12 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 
 
 class FingerPrintFragment : Fragment() {
-
+    private lateinit var viewModel: FingerPrintViewModel
     private var  cancellationSignal: CancellationSignal? = null
     private val  authenticationCallback: BiometricPrompt.AuthenticationCallback
         get() =
@@ -31,15 +32,22 @@ class FingerPrintFragment : Fragment() {
             object: BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {
                     super.onAuthenticationError(errorCode, errString)
-                    notifyUser("Authentication error: $errString")
+                    notifyErrorToUser(getString(R.string.FP_error))
                     enablePermission()
+                    viewModel.logout()
                     navgateToLogin()
                 }
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
                     super.onAuthenticationSucceeded(result)
-                    notifyUser("Authentication Success!")
+                    notifyMsgToUser(getString(R.string.FP_success))
 //                    if(findNavController().currentDestination?.id == R.id.loginFragment2)
+                    if(viewModel.isLogin())
+                    {
+                        navgateToHome()
+                    }
+                    else {
                         navgateToLogin()
+                    }
                 }
             }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +56,10 @@ class FingerPrintFragment : Fragment() {
     }
     private  fun  navgateToLogin(){
         val action = FingerPrintFragmentDirections.actionFingerPrintToLogin()
+        findNavController().navigate(action)
+    }
+    private  fun  navgateToHome(){
+        val action = FingerPrintFragmentDirections.actionFingerPrintToServices()
         findNavController().navigate(action)
     }
     private fun enablePermission() {
@@ -71,14 +83,14 @@ class FingerPrintFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        viewModel = FingerPrintViewModel(requireActivity().application)
         checkBiometricSupport()
-
         val biometricPrompt = BiometricPrompt.Builder(requireActivity())
             .setTitle("Title of Prompt")
             .setSubtitle("Subtitle")
             .setDescription("Uses FP")
             .setNegativeButton("Cancel", requireActivity().mainExecutor, DialogInterface.OnClickListener { dialog, which ->
-                notifyUser("Authentication Cancelled")
+                notifyErrorToUser("Authentication Cancelled")
             }).build()
 
         // start the authenticationCallback in mainExecutor
@@ -87,13 +99,24 @@ class FingerPrintFragment : Fragment() {
 
     }
 
-    private fun notifyUser(message: String) {
-        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show()
+    private fun notifyErrorToUser(message: String) {
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
+            {
+            }.show()
+    }
+    private fun notifyMsgToUser(message: String) {
+        Toast.makeText(requireContext(),message, Toast.LENGTH_SHORT).show()
     }
     private fun getCancellationSignal(): CancellationSignal {
         cancellationSignal = CancellationSignal()
         cancellationSignal?.setOnCancelListener {
-            notifyUser("Authentication was cancelled by the user")
+            notifyMsgToUser("Authentication was cancelled by the user")
         }
         return cancellationSignal as CancellationSignal
     }
@@ -101,12 +124,12 @@ class FingerPrintFragment : Fragment() {
     private fun checkBiometricSupport(): Boolean {
         val keyguardManager = requireActivity().getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         if (!keyguardManager.isDeviceSecure) {
-            notifyUser("Fingerprint authentication has not been enabled in settings")
+            notifyMsgToUser("Fingerprint authentication has not been enabled in settings")
             enablePermission()
             return false
         }
         if (ActivityCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.USE_BIOMETRIC) != PackageManager.PERMISSION_GRANTED) {
-            notifyUser("Fingerprint Authentication Permission is not enabled")
+            notifyMsgToUser("Fingerprint Authentication Permission is not enabled")
             requestPermission()
             return false
         }

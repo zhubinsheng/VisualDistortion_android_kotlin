@@ -19,10 +19,32 @@
         android:textColor="@color/teal"
         android:layout_marginBottom="25dp"
         android:layout_marginTop="25dp" />
-    />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/no_network_result"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center_horizontal|center_vertical"
+        app:lottie_rawRes="@raw/no_internet"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:scaleType="fitXY"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/text_no_internet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/no_internet"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"/>
+
 
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/card"
@@ -45,6 +67,8 @@
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/no_data"
             android:layout_marginBottom="8dp"/>
+
+
 
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/shimmer"

@@ -4,7 +4,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 
 class NetworkConnection {
-
+companion object{
     fun checkInternetConnection(context: Context): Boolean {
         val connectivity = context
             .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -21,5 +21,6 @@ class NetworkConnection {
             }
         }
         return false
+    }
     }
 }
