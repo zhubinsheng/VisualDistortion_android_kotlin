@@ -4,8 +4,10 @@ import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
+import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
+import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -35,7 +37,11 @@ interface ApiInterface{
 
     suspend fun getHistoryData(auth: String): Response<AllHistoryResponse>
 
+    suspend fun getHistoryDataByService(auth: String ,serviceTypeId: Int,pageNumber:Int ,period:String): Response<HistoryByServiceIdResponse>
+
     suspend fun isDailyPrepared(auth: String): Response<CheckDailyPreparationResponse>
+
+    suspend fun getCreateDailyPreparation(auth: String): Response<GetDailyPraprationData>
 
     suspend fun setDailyPreparation(auth: String
                                     , WorkersTypesList : Map<Long, Int>

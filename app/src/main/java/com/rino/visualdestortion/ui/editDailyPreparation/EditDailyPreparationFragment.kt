@@ -1,6 +1,10 @@
 package com.rino.visualdestortion.ui.editDailyPreparation
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -21,6 +25,7 @@ import com.rino.visualdestortion.model.pojo.dailyPraperation.PrepEquipments
 import com.rino.visualdestortion.model.pojo.dailyPraperation.PrepWorkers
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.ui.home.MainActivity
+import com.rino.visualdestortion.utils.NetworkConnection
 import java.text.DateFormat
 import java.util.*
 
@@ -35,8 +40,8 @@ class EditDailyPreparationFragment : Fragment() {
     private lateinit var workersTypeList: ArrayList<String>
     private lateinit var equipmentsAdapter: EquipmentsAdapter
     private lateinit var workerTypesAdapter: WorkerTypesAdapter
-    private lateinit var equipmentsMap: HashMap<Int, Int>
-    private lateinit var workersTypeMap: HashMap<Int, Int>
+    private lateinit var equipmentsMap: HashMap<String, Int>
+    private lateinit var workersTypeMap: HashMap<String, Int>
     private lateinit var equipmentsCountList: ArrayList<PrepEquipments>
     private lateinit var workerTypesCountList: ArrayList<PrepWorkers>
     private lateinit var equipmentsCountMap: HashMap<Long?, Int?>
@@ -71,6 +76,7 @@ class EditDailyPreparationFragment : Fragment() {
         setUpUI()
         initLists()
         observeData()
+        registerConnectivityNetworkMonitor()
     }
 
     private fun setUpUI() {
@@ -85,7 +91,13 @@ class EditDailyPreparationFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = workerTypesAdapter
         }
-        viewModel.getTodayPreparation()
+        if(NetworkConnection.checkInternetConnection(requireContext())){
+            viewModel.getTodayPreparation()
+        }
+        else
+        {
+            showMessage(getString(R.string.no_internet))
+        }
         if (getArguments() != null) {
 
             serviceName = getArguments()?.get("serviceName").toString()
@@ -98,10 +110,15 @@ class EditDailyPreparationFragment : Fragment() {
                 val date = DateFormat.getDateInstance().format(Calendar.getInstance().time).toString()
                 viewModel.addDailyPreparation(DailyPreparation(serviceTypeId, date ,equipmentsAdapter.getEquipmentMap(),workerTypesAdapter.getWorkerTypesMap()))
                 //   Toast.makeText(requireContext(),"item : ${viewModel.getDailyPreparationByServiceID(serviceTypeId).toString()}",Toast.LENGTH_SHORT).show()
-                Log.e("WorkerTypes: ",workerTypesAdapter.getWorkerTypesMap().toString())
-                Log.e("Equipment: ",equipmentsAdapter.getEquipmentMap().toString())
-
-                viewModel.editDailyPreparation(workerTypesAdapter.getWorkerTypesMap(),equipmentsAdapter.getEquipmentMap())
+                Log.e("editWorkerTypes: ",workerTypesAdapter.getWorkerTypesMap().toString())
+                Log.e("editEquipment: ",equipmentsAdapter.getEquipmentMap().toString())
+                if(NetworkConnection.checkInternetConnection(requireContext())){
+                    viewModel.editDailyPreparation(workerTypesAdapter.getWorkerTypesMap(),equipmentsAdapter.getEquipmentMap())
+                }
+                else
+                {
+                    showMessage(getString(R.string.no_internet))
+                }
             }
         }
     }
@@ -139,15 +156,7 @@ class EditDailyPreparationFragment : Fragment() {
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                        getResources().getColor(
-                            R.color.teal
-                        )
-                    )
-                    .setActionTextColor(getResources().getColor(R.color.white)).setAction("Ok")
-                    {
-                    }.show()
+                showMessage(it)
             }
         }
     }
@@ -157,6 +166,7 @@ class EditDailyPreparationFragment : Fragment() {
             it?.let {
                 workerTypesCountList.remove(it)
                 workersTypeList.add(it.name)
+                workersTypeMap[it.name] = it.id
             }
         }
     }
@@ -166,6 +176,7 @@ class EditDailyPreparationFragment : Fragment() {
             it?.let {
                 equipmentsCountList.remove(it)
                 equipmentList.add(it.name)
+                equipmentsMap[it.name] = it.id
             }
         }
     }
@@ -225,12 +236,15 @@ class EditDailyPreparationFragment : Fragment() {
         var index = 0
         binding.equipmentsTextView.setText(R.string.select)
 //        for (equipment in addServiceResponse.equipment!!) {
+        Log.e("dailyPreparation,equipmentTypes",dailyPreparation.equipmentTypes.toString())
         for (equipment in dailyPreparation.equipmentTypes) {
             if (!isEquipmentListContainsItem(equipment.id)) {
                 equipmentList.add(equipment.name.toString())
+                equipmentsMap[equipment.name] = equipment.id
+                Log.e("iteemInEquipmentsMap",equipmentsMap[equipment.name].toString())
+                index++
             }
-            equipmentsMap[index] = equipment.id
-            index++
+
         }
         val adapter = ArrayAdapter(
             requireContext(), R.layout.dropdown_item,
@@ -240,9 +254,11 @@ class EditDailyPreparationFragment : Fragment() {
         binding.equipmentsTextView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
+                Log.e("position","${position} , ${selectedItem}")
+                Log.e("iteeeeem",equipmentsMap[selectedItem].toString())
                 var item =
-                    equipmentsMap[position]?.let { PrepEquipments(it, selectedItem, 1) }
-
+                    equipmentsMap[selectedItem]?.let { PrepEquipments(it, selectedItem, 1) }
+                Log.e("iteeeeem",item.toString())
                 if (item != null) {
                     equipmentsCountList.add(item)
                     equipmentList.remove(item.name)
@@ -273,10 +289,10 @@ class EditDailyPreparationFragment : Fragment() {
         for (workerType in dailyPreparation.workerTypes) {
             if(!isWorkerTypeListContainsItem(workerType.id)) {
                 workersTypeList.add(workerType.name.toString())
-
+                workersTypeMap[workerType.name] = workerType.id
+                index++
             }
-            workersTypeMap[index] = workerType.id
-            index++
+
         }
         val adapter = ArrayAdapter(
             requireContext(), R.layout.dropdown_item,
@@ -286,9 +302,9 @@ class EditDailyPreparationFragment : Fragment() {
         binding.workersTypeTextView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 val selectedItem = parent.getItemAtPosition(position).toString()
-                Log.e("iteeeeem",workersTypeMap[position].toString())
+                Log.e("iteeeeem",workersTypeMap[selectedItem].toString())
                 var item =
-                    workersTypeMap[position]?.let { PrepWorkers(it,selectedItem,  1) }
+                    workersTypeMap[selectedItem]?.let { PrepWorkers(it,selectedItem,  1) }
                 Log.e("iteeeeem",item.toString())
                 if (item != null) {
                     workerTypesCountList.add(item)
@@ -316,7 +332,7 @@ class EditDailyPreparationFragment : Fragment() {
         var flagEquipment = true
         var flagworkerType = true
         if (equipmentsCountList.isEmpty()) {
-            binding.equipmentsTextInputLayout.error = "برجاء ادخال هذا العنصر"
+            binding.equipmentsTextInputLayout.error = getString(R.string.required_field)
             flagEquipment = false
         }
         else{
@@ -325,7 +341,7 @@ class EditDailyPreparationFragment : Fragment() {
             flagEquipment = true
         }
         if (workerTypesCountList.isEmpty()) {
-            binding.workersTypeTextInputLayout.error = "برجاء ادخال هذا العنصر"
+            binding.workersTypeTextInputLayout.error = getString(R.string.required_field)
             flagworkerType = false
         }
         else{
@@ -335,7 +351,42 @@ class EditDailyPreparationFragment : Fragment() {
         }
         return (flagEquipment && flagworkerType)
     }
+    private fun showMessage(msg: String) {
+        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
+            {
+            }.show()
+    }
+    private fun registerConnectivityNetworkMonitor() {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val builder = NetworkRequest.Builder()
+        connectivityManager.registerNetworkCallback(builder.build(),
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+//                    if (activity != null) {
+//                        activity!!.runOnUiThread {
+//                            showMessage(getString(R.string.internet))
+//                        }
+//                    }
+                }
 
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.no_internet))
+                        }
+                    }
+                }
+            }
+        )
+    }
 }
 
 

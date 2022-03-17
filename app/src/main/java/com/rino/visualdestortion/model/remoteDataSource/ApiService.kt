@@ -4,8 +4,10 @@ package com.rino.visualdestortion.model.remoteDataSource
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
+import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
+import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -64,8 +66,12 @@ interface ApiService {
     @GET("api/History/GetServiceTypeHistory")
     suspend fun getHistoryData( @Header("Authorization") auth: String): Response<AllHistoryResponse>
 
+    @GET("api/History/GetServiceTypeHistory/{serviceTypeId}")
+    suspend fun getHistoryDataByService(@Header("Authorization") auth: String, @Path("serviceTypeId") serviceTypeId: Int, @Query("pageNumber") pageNumber:Int ,@Query("period") period:String ): Response<HistoryByServiceIdResponse>
+
     @GET("api/DailyPreparations/isPrepared")
     suspend fun isDailyPrepared( @Header("Authorization") auth: String): Response<CheckDailyPreparationResponse>
+
 
     @Multipart
     @POST("api/DailyPreparations/")
@@ -75,6 +81,9 @@ interface ApiService {
 
     @GET("api/DailyPreparations")
     suspend fun getDailyPreparation( @Header("Authorization") auth: String): Response<TodayDailyPrapration>
+
+    @GET("api/DailyPreparations/DailyPrepData")
+    suspend fun getCreateDailyPreparation( @Header("Authorization") auth: String): Response<GetDailyPraprationData>
 
 
     @Multipart

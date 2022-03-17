@@ -4,26 +4,32 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/drawable/card.xml" value="0.196" />
+        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/card_details.xml" value="0.35280797101449274" />
+        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/equipment_item.xml" value="0.35280797101449274" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/equipments_item.xml" value="0.18125" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_add_service.xml" value="0.17696629213483145" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_daily_preparation.xml" value="0.358695652173913" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_edit_daily_preparation.xml" value="0.358695652173913" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_finger_print.xml" value="0.35260416666666666" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_history.xml" value="0.1" />
-        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_history_by_service_type.xml" value="0.14629629629629629" />
+        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_history_by_service_type.xml" value="0.1419753086419753" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_home.xml" value="0.14722222222222223" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_login.xml" value="0.17395833333333333" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_q_r_code.xml" value="0.35260416666666666" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_reset_password.xml" value="0.1" />
+        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_service_details.xml" value="0.25" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_services.xml" value="0.17395833333333333" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_setting.xml" value="0.1527777777777778" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_splash.xml" value="0.20018115942028986" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/fragment_welcome.xml" value="0.17395833333333333" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/history_item.xml" value="0.25" />
-        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/service_history_item.xml" value="0.35280797101449274" />
+        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/item_details.xml" value="0.35280797101449274" />
+        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/service_history_item.xml" value="0.25" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/service_item.xml" value="0.358695652173913" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/shimmer_item.xml" value="0.358695652173913" />
-        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/shimmer_sevice_item.xml" value="0.358695652173913" />
+        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/shimmer_sevice_item.xml" value="0.15" />
+        <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/slider_view.xml" value="0.35280797101449274" />
+        <entry key="..\:/android projects/amanet_jada/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1205" />
       </map>
     </option>
   </component>

@@ -4,8 +4,10 @@ import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
+import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
+import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -16,6 +18,7 @@ import com.rino.visualdestortion.model.pojo.resetPassword.ResponseOTP
 import com.rino.visualdestortion.model.remoteDataSource.Result
 import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.http.Header
 
 interface RemoteRepo {
 
@@ -35,10 +38,14 @@ interface RemoteRepo {
 
       suspend fun getHistoryData(): Result<AllHistoryResponse?>
 
+      suspend fun getHistoryDataByService(serviceTypeId: Int,pageNumber:Int ,period:String ): Result<HistoryByServiceIdResponse?>
+
       suspend fun isDailyPrepared(): Result<CheckDailyPreparationResponse?>
 
       suspend fun setDailyPreparation(WorkersTypesList : Map<Long, Int>
                                       , equipmentList : Map<Long, Int>):Result<Void?>
+
+      suspend fun getCreateDailyPreparation(): Result<GetDailyPraprationData?>
 
       suspend fun getDailyPreparation(): Result<TodayDailyPrapration?>
 

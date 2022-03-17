@@ -1,6 +1,10 @@
 package com.rino.visualdestortion.ui.history
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +19,7 @@ import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentHistoryBinding
 import com.rino.visualdestortion.model.pojo.history.Data
 import com.rino.visualdestortion.ui.home.MainActivity
+import com.rino.visualdestortion.utils.NetworkConnection
 
 
 class HistoryFragment : Fragment() {
@@ -48,19 +53,22 @@ class HistoryFragment : Fragment() {
         binding.historyRecycle.visibility = View.GONE
         viewModel = HistoryViewModel(requireActivity().application)
         historyAdapter = HistoryAdapter(arrayListOf(), viewModel)
+        historyAdapter.updateItems(emptyList())
         setUpUI()
         observeData()
-        historyAdapter.updateItems(emptyList())
+        checkNetwork()
+        registerConnectivityNetworkMonitor()
     }
 
     private fun observeData() {
         observeHistoryData()
+        observeNavToService()
         observeLoading()
         observeShowError()
     }
 
     private fun observeHistoryData() {
-        viewModel.getHistoryData()
+     //   viewModel.getHistoryData()
         viewModel.getHistoryData.observe(viewLifecycleOwner) {
             it?.let {
                 it.data?.let { it1 -> historyAdapter.updateItems(it1)
@@ -68,6 +76,7 @@ class HistoryFragment : Fragment() {
                 binding.shimmer.stopShimmer()
                 binding.shimmer.visibility = View.GONE
                 binding.historyRecycle.visibility = View.VISIBLE
+                binding.animationView.visibility = View.GONE
 
             }
         }
@@ -81,18 +90,35 @@ class HistoryFragment : Fragment() {
         }
     }
 
+    private fun observeNavToService() {
+        viewModel.navToHistoryOfTask.observe(viewLifecycleOwner) {
+            it?.let {
+               navToHistoryById(it)
+            }
+        }
+    }
+
+    private fun navToHistoryById(id: Int) {
+        val action = HistoryFragmentDirections.actionHistoryToHistoryByID(id.toString())
+        findNavController().navigate(action)
+    }
+
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                        resources.getColor(
-                            R.color.teal
-                        )
-                    )
-                    .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
-                    {
-                    }.show()
+//                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
+//                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+//                        resources.getColor(
+//                            R.color.teal
+//                        )
+//                    )
+//                    .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
+//                    {
+//                    }.show()
+                binding.shimmer.stopShimmer()
+                binding.shimmer.visibility = View.GONE
+                binding.historyRecycle.visibility = View.GONE
+                binding.animationView.visibility = View.VISIBLE
             }
         }
     }
@@ -107,6 +133,64 @@ class HistoryFragment : Fragment() {
         binding.historyRecycle.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = historyAdapter
+        }
+    }
+    private fun showMessage(msg: String) {
+        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                resources.getColor(
+                    R.color.teal
+                )
+            )
+            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
+            {
+            }.show()
+    }
+
+    private fun registerConnectivityNetworkMonitor() {
+        if (requireContext() != null) {
+            val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val builder = NetworkRequest.Builder()
+            connectivityManager.registerNetworkCallback(builder.build(),
+                object : ConnectivityManager.NetworkCallback() {
+                    override fun onAvailable(network: Network) {
+                        super.onAvailable(network)
+                        if (activity != null) {
+                            activity!!.runOnUiThread {
+                                binding.textNoInternet.visibility = View.GONE
+                                binding.noNetworkResult.visibility = View.GONE
+                                binding.linearLayout.visibility = View.VISIBLE
+                                viewModel.getHistoryData()
+                            }
+                        }
+                    }
+
+                    override fun onLost(network: Network) {
+                        super.onLost(network)
+                        if (activity != null) {
+                            activity!!.runOnUiThread {
+//                                Toast.makeText(
+//                                    context, "لا يوجد انترنت ",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+                                showMessage(getString(R.string.no_internet))
+                            }
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    private fun checkNetwork(){
+        if (NetworkConnection.checkInternetConnection(requireContext())) {
+            viewModel.getHistoryData()
+        } else {
+            showMessage(getString(R.string.no_internet))
+            binding.textNoInternet.visibility = View.VISIBLE
+            binding.noNetworkResult.visibility = View.VISIBLE
+            binding.linearLayout.visibility = View.GONE
+
         }
     }
 

@@ -1,16 +1,14 @@
 package com.rino.visualdestortion.model.remoteDataSource
 
-
-
-
-
 import android.util.Log
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
+import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
+import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -100,8 +98,21 @@ class ApiDataSource:ApiInterface {
         return retrofit.getHistoryData(auth)
     }
 
+    override suspend fun getHistoryDataByService(
+        auth: String,
+        serviceTypeId: Int,
+        pageNumber: Int,
+        period:String
+    ): Response<HistoryByServiceIdResponse> {
+        return retrofit.getHistoryDataByService(auth,serviceTypeId,pageNumber,period)
+    }
+
     override suspend fun isDailyPrepared(auth: String): Response<CheckDailyPreparationResponse> {
        return  retrofit.isDailyPrepared(auth)
+    }
+
+    override suspend fun getCreateDailyPreparation(auth: String): Response<GetDailyPraprationData> {
+        return retrofit.getCreateDailyPreparation(auth)
     }
 
     override suspend fun setDailyPreparation(

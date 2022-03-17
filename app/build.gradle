@@ -38,8 +38,16 @@ android {
 }
 
 dependencies {
+    // dependency sor slider view
+    implementation "com.github.smarteist:autoimageslider:1.3.9"
+
+    //lottie
+    def lottieVersion = "3.4.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
+
     //shimmer
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
     //fingerPrint
     def biometricLibraryVersion = "1.0.1"
     implementation "androidx.biometric:biometric:$biometricLibraryVersion"
@@ -52,6 +60,7 @@ dependencies {
 
      //location
     implementation 'com.google.android.gms:play-services-location:19.0.1'
+
     // ViewModel and LiveData
     def viewModelLifeCycleVersion = '2.3.0'
     def androidLifecycleExtensionsVersion = '2.2.0'
@@ -87,12 +96,14 @@ dependencies {
     //Moe
     implementation 'com.etebarian:meow-bottom-navigation:1.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61"
+
     //glide
     implementation 'com.github.bumptech.glide:glide:4.10.0'
+
     //picaso
     implementation 'com.squareup.picasso:picasso:2.4.0'
 
-    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'

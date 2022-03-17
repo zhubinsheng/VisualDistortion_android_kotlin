@@ -87,7 +87,12 @@
         android:id="@+id/historyFragment"
         android:name="com.rino.visualdestortion.ui.history.HistoryFragment"
         android:label="fragment_history"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/action_history_to_historyByID"
+            app:destination="@id/historyByServiceTypeFragment"
+            />
+    </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.rino.visualdestortion.ui.setting.settingFragment"
@@ -143,8 +148,8 @@
         android:label="fragment_reset_password"
         tools:layout="@layout/fragment_reset_password" >
         <action
-            android:id="@+id/action_resetPass_to_Services"
-            app:destination="@id/servicesFragment"
+            android:id="@+id/action_resetPass_to_login"
+            app:destination="@id/loginFragment2"
           />
     </fragment>
     <fragment
@@ -155,6 +160,10 @@
         <action
             android:id="@+id/action_fingerPrint_to_login"
             app:destination="@id/loginFragment2"
+            />
+        <action
+            android:id="@+id/action_fingerPrint_to_services"
+            app:destination="@id/servicesFragment"
             />
     </fragment>
     <fragment
@@ -187,6 +196,35 @@
             app:destination="@id/servicesFragment"
             app:popEnterAnim="@anim/right_to_left"
             app:popUpTo="@id/servicesFragment"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/historyByServiceTypeFragment"
+        android:name="com.rino.visualdestortion.ui.historyByServiceType.HistoryByServiceTypeFragment"
+        android:label="fragment_history_by_service_type"
+        tools:layout="@layout/fragment_history_by_service_type" >
+        <argument
+            android:name="serviceID"
+            app:argType="string"
+            android:defaultValue="1"/>
+        <action
+            android:id="@+id/action_historyByID_to_serviceDetails"
+            app:destination="@id/serviceDetailsFragment"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/serviceDetailsFragment"
+        android:name="com.rino.visualdestortion.ui.serviceDetails.ServiceDetailsFragment"
+        android:label="fragment_service_details"
+        tools:layout="@layout/fragment_service_details" >
+
+        <argument
+            android:name="serviceObj"
+            app:argType="com.rino.visualdestortion.model.pojo.history.ServiceData" />
+        <action
+            android:id="@+id/action_serviceDetails_to_QrCode"
+            app:destination="@id/QRCodeFragment"
             />
     </fragment>
 </navigation>
