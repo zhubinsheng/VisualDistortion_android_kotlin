@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter
 import androidx.core.view.isGone
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -63,13 +64,18 @@ class HistoryByServiceTypeFragment : Fragment() {
         historyList = arrayListOf()
         historyAdapter = HistoryByServiceAdapter(historyList, viewModel)
         historyAdapter.updateItems(historyList)
-        historyAdapter.updateItems(arrayListOf())
         setUpUI()
+//        checkNetwork(serviceId)
+//        registerConnectivityNetworkMonitor()
         observeData()
-        checkNetwork(serviceId)
-        registerConnectivityNetworkMonitor()
-    }
+        historyAdapter.updateItems(emptyList())
 
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+//        checkNetwork(serviceId)
+//        registerConnectivityNetworkMonitor()
+    }
     private fun observeData() {
         observeHistoryData()
         observeNavToService()
@@ -140,6 +146,8 @@ class HistoryByServiceTypeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true
+        checkNetwork(serviceId)
+        registerConnectivityNetworkMonitor()
     }
 
     private fun setUpUI() {
@@ -168,6 +176,10 @@ class HistoryByServiceTypeFragment : Fragment() {
                     if (NetworkConnection.checkInternetConnection(requireContext())) {
                         viewModel.getHistoryData(serviceId, page, selectedPeriod)
                     }
+                    else{
+                        viewModel.viewLoading(View.GONE)
+                        showMessage()
+                    }
                 } else {
                     viewModel.viewLoading(View.GONE)
                 }
@@ -176,7 +188,6 @@ class HistoryByServiceTypeFragment : Fragment() {
     }
 
     private fun setPeriodTimeMenuItems() {
-
         binding.periodTimeTextView.setText(R.string.period_time)
 
         val adapter = ArrayAdapter(
@@ -195,19 +206,25 @@ class HistoryByServiceTypeFragment : Fragment() {
                     viewModel.getHistoryData(serviceId, page, periodTimeList_en[index])
                 }
             }
-
     }
 
     private fun showMessage() {
-        Snackbar.make(requireView(), getString(R.string.no_internet), Snackbar.LENGTH_INDEFINITE)
-            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                resources.getColor(
-                    R.color.teal
-                )
+        lifecycleScope.launchWhenResumed {
+            Snackbar.make(
+                requireView(),
+                getString(R.string.no_internet),
+                Snackbar.LENGTH_INDEFINITE
             )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
-            {
-            }.show()
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                    resources.getColor(
+                        R.color.teal
+                    )
+                )
+                .setActionTextColor(resources.getColor(R.color.white))
+                .setAction(getString(R.string.dismiss))
+                {
+                }.show()
+        }
     }
 
     private fun registerConnectivityNetworkMonitor() {
@@ -223,6 +240,7 @@ class HistoryByServiceTypeFragment : Fragment() {
                             binding.noNetworkResult.visibility = View.GONE
                             binding.linearLayout.visibility = View.VISIBLE
                             binding.periodTimeTextInputLayout.visibility = View.VISIBLE
+                            historyAdapter.clearList()
                             viewModel.getHistoryData(serviceId)
                         }
                     }
@@ -244,15 +262,17 @@ class HistoryByServiceTypeFragment : Fragment() {
         )
     }
 
-    private fun checkNetwork(id: Int ,page : Int =1){
-        if (NetworkConnection.checkInternetConnection(requireContext())) {
-            viewModel.getHistoryData(id,page)
-        } else {
-            binding.textNoInternet.visibility = View.VISIBLE
-            binding.noNetworkResult.visibility = View.VISIBLE
-            binding.linearLayout.visibility = View.GONE
-            binding.periodTimeTextInputLayout.visibility = View.GONE
+    private fun checkNetwork(id: Int ,page : Int =1) {
+        lifecycleScope.launchWhenResumed {
+            if (NetworkConnection.checkInternetConnection(requireContext())) {
+                viewModel.getHistoryData(id, page)
+            } else {
+                binding.textNoInternet.visibility = View.VISIBLE
+                binding.noNetworkResult.visibility = View.VISIBLE
+                binding.linearLayout.visibility = View.GONE
+                binding.periodTimeTextInputLayout.visibility = View.GONE
 
+            }
         }
     }
 

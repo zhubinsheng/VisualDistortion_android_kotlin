@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isGone
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -53,11 +54,15 @@ class HistoryFragment : Fragment() {
         binding.historyRecycle.visibility = View.GONE
         viewModel = HistoryViewModel(requireActivity().application)
         historyAdapter = HistoryAdapter(arrayListOf(), viewModel)
-        historyAdapter.updateItems(emptyList())
         setUpUI()
         observeData()
-        checkNetwork()
-        registerConnectivityNetworkMonitor()
+        historyAdapter.updateItems(emptyList())
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+//        checkNetwork()
+//        registerConnectivityNetworkMonitor()
     }
 
     private fun observeData() {
@@ -126,6 +131,8 @@ class HistoryFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = false
+        checkNetwork()
+        registerConnectivityNetworkMonitor()
     }
 
     private fun setUpUI() {
@@ -136,15 +143,18 @@ class HistoryFragment : Fragment() {
         }
     }
     private fun showMessage(msg: String) {
-        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
-            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                resources.getColor(
-                    R.color.teal
+        lifecycleScope.launchWhenResumed {
+            Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                    resources.getColor(
+                        R.color.teal
+                    )
                 )
-            )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
-            {
-            }.show()
+                .setActionTextColor(resources.getColor(R.color.white))
+                .setAction(getString(R.string.dismiss))
+                {
+                }.show()
+        }
     }
 
     private fun registerConnectivityNetworkMonitor() {

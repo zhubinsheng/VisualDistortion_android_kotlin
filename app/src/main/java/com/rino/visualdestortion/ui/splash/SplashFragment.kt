@@ -1,6 +1,10 @@
 package com.rino.visualdestortion.ui.splash
 
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.core.view.isGone
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
@@ -46,14 +51,15 @@ class SplashFragment : Fragment() {
         // Inflate the layout for this fragment
         viewModel = SplashViewModel(requireActivity().application)
         binding = FragmentSplashBinding.inflate(inflater, container, false)
-        setAnimation()
-        splashSetup()
-        observeData()
-
-
         return binding.root
     }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setAnimation()
+        splashSetup()
+        registerConnectivityNetworkMonitor()
+        observeData()
+    }
     private fun observeData() {
         observeIsPrepared()
         observeShowError()
@@ -100,7 +106,9 @@ class SplashFragment : Fragment() {
 
     private fun navToWelcome() {
         val action = SplashFragmentDirections.actionSplashToWelcome()
-        findNavController().navigate(action)
+        lifecycleScope.launchWhenResumed {
+            findNavController().navigate(action)
+        }
     }
 
     private fun splashSetup(){
@@ -108,13 +116,13 @@ class SplashFragment : Fragment() {
             delay(SPLASH_TIME_OUT)
             CoroutineScope(Dispatchers.Main).launch{
                 if (viewModel.isLogin()) {
-                    if(NetworkConnection.checkInternetConnection(requireContext())) {
-                        viewModel.isTodayPrepared()
-                    }
-                    else{
-                        showMessage(getString(R.string.no_internet))
-                    }
-                }
+                    lifecycleScope.launchWhenResumed {
+                        if (NetworkConnection.checkInternetConnection(requireContext())) {
+                            viewModel.isTodayPrepared()
+                        } else {
+                            showMessage(getString(R.string.no_internet))
+                        }
+                    } }
                 else{
                     navToWelcome()
                 }
@@ -154,6 +162,35 @@ class SplashFragment : Fragment() {
             {
             }.show()
     }
+    private fun registerConnectivityNetworkMonitor() {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val builder = NetworkRequest.Builder()
+        connectivityManager.registerNetworkCallback(builder.build(),
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            if (viewModel.isLogin()) {
+                                    viewModel.isTodayPrepared()
+                            }
+                            else{
+                                navToWelcome()
+                            }
+                        }
+                    }
+                }
 
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    if (activity != null) {
+                        activity!!.runOnUiThread {
+                            showMessage(getString(R.string.no_internet))
+                        }
+                    }
+                }
+            }
+        )
+    }
 
 }

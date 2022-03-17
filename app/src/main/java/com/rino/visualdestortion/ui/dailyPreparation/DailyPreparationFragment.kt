@@ -14,6 +14,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -71,8 +72,8 @@ class DailyPreparationFragment : Fragment()  {
     private fun init() {
         setUpUI()
         initLists()
-        observeData()
         registerConnectivityNetworkMonitor()
+        observeData()
     }
 
     private fun setUpUI() {
@@ -305,15 +306,18 @@ class DailyPreparationFragment : Fragment()  {
 
     }
     private fun showMessage(msg: String) {
-        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
-            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                resources.getColor(
-                    R.color.teal
+        lifecycleScope.launchWhenResumed {
+            Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                    resources.getColor(
+                        R.color.teal
+                    )
                 )
-            )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
-            {
-            }.show()
+                .setActionTextColor(resources.getColor(R.color.white))
+                .setAction(getString(R.string.dismiss))
+                {
+                }.show()
+        }
     }
     private fun registerConnectivityNetworkMonitor() {
         val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

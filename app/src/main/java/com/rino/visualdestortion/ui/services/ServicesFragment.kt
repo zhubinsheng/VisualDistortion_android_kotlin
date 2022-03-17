@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isGone
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -145,15 +146,17 @@ class ServicesFragment : Fragment() {
     }
 
     private fun showMessage(msg: String) {
-        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
-            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                resources.getColor(
-                    R.color.teal
+        lifecycleScope.launchWhenResumed {
+            Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                    resources.getColor(
+                        R.color.teal
+                    )
                 )
-            )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction("قفل")
-            {
-            }.show()
+                .setActionTextColor(resources.getColor(R.color.white)).setAction("قفل")
+                {
+                }.show()
+        }
     }
 
     private fun registerConnectivityNetworkMonitor() {

@@ -48,7 +48,7 @@ interface ApiService {
                                ,@Part duringImg: MultipartBody.Part?
                                ,@Part afterImg: MultipartBody.Part
                                ,@Part("mSquare"         ) mSquare: Int?
-                               ,@Part("mCube"           ) mCube: Int?
+                               ,@Part("mCube"           ) mCube: Float?
                                ,@Part("numberR"         ) numberR: Int?
                                ,@Part("notes"           ) notes: RequestBody ?
 

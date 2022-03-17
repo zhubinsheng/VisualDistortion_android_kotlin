@@ -18,7 +18,7 @@ import retrofit2.http.Field
  //  lateinit var WorkersTypesList: Map<Long,Int>
  //  lateinit var equipmentList: Map<Long,Int>
      var mSquare: Int? = null
-     var mCube: Int? = null
+     var mCube: Float? = null
      var numberR: Int? = null
      var notes: String? = null
  //  lateinit var percentage: String

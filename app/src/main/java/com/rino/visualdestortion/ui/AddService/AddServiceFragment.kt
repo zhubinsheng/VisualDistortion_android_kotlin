@@ -28,6 +28,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
@@ -337,7 +338,7 @@ class AddServiceFragment : Fragment() {
         val formData = FormData()
         if (serviceName == "مخلفات الهدم") {
             if(binding.editTextMCube.text.toString()!="")
-            formData.mCube = binding.editTextMCube.text.toString().toInt()
+            formData.mCube = binding.editTextMCube.text.toString().toFloat()
             if(binding.editTextNumberR.text.toString()!="")
             formData.numberR = binding.editTextNumberR.text.toString().toInt()
         } else if (serviceName == "الكتابات المشوهة")
@@ -975,15 +976,18 @@ class AddServiceFragment : Fragment() {
         ) == PackageManager.PERMISSION_GRANTED
     }
     private fun showMessage(msg: String) {
-        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
-            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                resources.getColor(
-                    R.color.teal
+        lifecycleScope.launchWhenResumed {
+            Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                    resources.getColor(
+                        R.color.teal
+                    )
                 )
-            )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
-            {
-            }.show()
+                .setActionTextColor(resources.getColor(R.color.white))
+                .setAction(getString(R.string.dismiss))
+                {
+                }.show()
+        }
     }
     private fun registerConnectivityNetworkMonitor() {
         val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
