@@ -992,10 +992,10 @@ class AddServiceFragment : Fragment() {
             object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     super.onAvailable(network)
-                    if (activity != null) {
-                        activity!!.runOnUiThread {
-                            showMessage(getString(R.string.internet))                        }
-                    }
+//                    if (activity != null) {
+//                        activity!!.runOnUiThread {
+//                            showMessage(getString(R.string.internet))                        }
+//                    }
                 }
 
                 override fun onLost(network: Network) {

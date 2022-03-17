@@ -31,7 +31,6 @@ import java.util.*
 class DailyPreparationFragment : Fragment()  {
     private lateinit var viewModel: DailyPreparationViewModel
     private lateinit var binding: FragmentDailyPreparationBinding
-//    private lateinit var dailyPreparation: TodayDailyPrapration
     private lateinit var addServiceResponse: GetDailyPraprationData
     private lateinit var equipmentList: ArrayList<String>
     private lateinit var workersTypeList: ArrayList<String>
@@ -323,11 +322,11 @@ class DailyPreparationFragment : Fragment()  {
             object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     super.onAvailable(network)
-                    if (activity != null) {
-                        activity!!.runOnUiThread {
-                            showMessage(getString(R.string.internet))
-                        }
-                    }
+//                    if (activity != null) {
+//                        activity!!.runOnUiThread {
+//                            showMessage(getString(R.string.internet))
+//                        }
+//                    }
                 }
 
                 override fun onLost(network: Network) {
