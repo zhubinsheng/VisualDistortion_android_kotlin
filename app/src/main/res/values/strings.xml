@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VisualDestortion</string>
+    <string name="app_name">معالجة التشوة البصرى</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="company_name"> شركة رينو لعمليات الصيانة </string>
     <string name="welcome_msg"> مرحبا بك فى تطبيق رينو لمعالجة التشوة البصرى</string>
@@ -58,7 +58,7 @@
     <string name="address_txt">العنوان</string>
     <string name="period_time">المدة الزمنية</string>
     <string name="ViewQRCode">عرض الرقم التكويدى</string>
-    <string name="no_internet">"لا يوجد انترنت "</string>
+    <string name="no_internet">الرجاء الاتصال بالانترنت</string>
     <string name="shareQRCodeInWhatsapp">"مشاركة عبر الواتساب "</string>
     <string name="internet">"متصل بالانترنت "</string>
     <string name="dismiss">تجاهل</string>
@@ -74,6 +74,8 @@
     <string name="qrCode_must_4number">الكود التفعيلى يجب ان يحتوى على 4 ارقام</string>
     <string name="weak_password">كلمة المرور ضعيفة</string>
     <string name="pass_not_matched">كلمة المرور غير متطابقة</string>
+    <string name="no_data">لا توجد بيانات</string>
+    <string name="try_again">حاول مرة أخرى</string>
 
 
 </resources>

@@ -403,7 +403,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
-                        result = Result.Error(Exception("Bad Request getHistoryDataByService"))
+                        result = Result.Error(Exception("Bad Request"))
                     }
                     404 -> {
                         Log.e("Error 404", "Not Found")

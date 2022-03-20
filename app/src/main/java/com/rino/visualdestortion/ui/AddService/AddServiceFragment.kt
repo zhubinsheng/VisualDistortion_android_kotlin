@@ -694,7 +694,8 @@ class AddServiceFragment : Fragment() {
                         afterBitmap,
                         formatted.toString()
                     )
-                    try {
+                afterBitmap = compressBitmap(afterBitmap,30)
+                try {
                         val file = File(getRealPathFromURI(getImageUri(requireContext(), afterBitmap)!!))
                         println("afterfilePath" + file.path)
                         val requestFile: RequestBody =
@@ -727,7 +728,9 @@ class AddServiceFragment : Fragment() {
                         beforeBitmap,
                         formatted.toString()
                     )
-                    try {
+                beforeBitmap = compressBitmap(beforeBitmap,30)
+
+                try {
 
 //                val file = File(
 //                    getRealPathFromURI(data?.data!!)
@@ -770,6 +773,7 @@ class AddServiceFragment : Fragment() {
                         duringBitmap,
                         formatted.toString()
                     )
+                duringBitmap = compressBitmap(duringBitmap,30)
                 try {
 
 //                val file = File(
@@ -828,7 +832,12 @@ class AddServiceFragment : Fragment() {
 
         return bitmap
     }
-
+    private fun compressBitmap(bitmap: Bitmap, quality:Int):Bitmap{
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.WEBP, quality, stream)
+        val byteArray = stream.toByteArray()
+        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    }
     fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
         val bytes = ByteArrayOutputStream()
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)

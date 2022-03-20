@@ -1,6 +1,5 @@
 package com.rino.visualdestortion.ui.historyByServiceType
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -99,6 +98,7 @@ class HistoryByServiceTypeFragment : Fragment() {
                 binding.shimmer.visibility = View.GONE
                 binding.historyRecycle.visibility = View.VISIBLE
                 binding.animationView.visibility = View.GONE
+                binding.textNoData.visibility = View.GONE
             }
         }
     }
@@ -110,6 +110,7 @@ class HistoryByServiceTypeFragment : Fragment() {
             }
         }
     }
+
     private fun observeNavToService() {
         viewModel.navToTaskDetails.observe(viewLifecycleOwner) {
             it?.let {
@@ -126,19 +127,24 @@ class HistoryByServiceTypeFragment : Fragment() {
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-//                Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
-//                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-//                        resources.getColor(
-//                            R.color.teal
-//                        )
-//                    )
-//                    .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
-//                    {
-//                    }.show()
-                binding.shimmer.stopShimmer()
-                binding.shimmer.visibility = View.GONE
-                binding.historyRecycle.visibility = View.GONE
-                binding.animationView.visibility = View.VISIBLE
+                if(it.equals("Bad Request")) {
+                    binding.shimmer.stopShimmer()
+                    binding.shimmer.visibility = View.GONE
+                    binding.historyRecycle.visibility = View.GONE
+                    binding.animationView.visibility = View.VISIBLE
+                    binding.textNoData.visibility = View.VISIBLE
+                }
+                else{
+                    Snackbar.make(requireView(), it, Snackbar.LENGTH_INDEFINITE)
+                        .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                            resources.getColor(
+                                R.color.teal
+                            )
+                        )
+                        .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
+                        {
+                        }.show()
+                }
             }
         }
     }
@@ -146,7 +152,7 @@ class HistoryByServiceTypeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true
-        checkNetwork(serviceId)
+      //  checkNetwork(serviceId)
         registerConnectivityNetworkMonitor()
     }
 
@@ -205,6 +211,9 @@ class HistoryByServiceTypeFragment : Fragment() {
                 if (NetworkConnection.checkInternetConnection(requireContext())) {
                     viewModel.getHistoryData(serviceId, page, periodTimeList_en[index])
                 }
+                else{
+                    showMessage()
+                }
             }
     }
 
@@ -236,12 +245,10 @@ class HistoryByServiceTypeFragment : Fragment() {
                     super.onAvailable(network)
                     if (activity != null) {
                         activity!!.runOnUiThread {
-                            binding.textNoInternet.visibility = View.GONE
-                            binding.noNetworkResult.visibility = View.GONE
-                            binding.linearLayout.visibility = View.VISIBLE
-                            binding.periodTimeTextInputLayout.visibility = View.VISIBLE
-                            historyAdapter.clearList()
-                            viewModel.getHistoryData(serviceId)
+                                binding.noInternetLayout.visibility = View.GONE
+                                binding.linearLayout.visibility = View.VISIBLE
+                                historyAdapter.clearList()
+                                viewModel.getHistoryData(serviceId, 1,selectedPeriod)
                         }
                     }
                 }
@@ -250,11 +257,14 @@ class HistoryByServiceTypeFragment : Fragment() {
                     super.onLost(network)
                     if (activity != null) {
                         activity!!.runOnUiThread {
-//                                Toast.makeText(
-//                                    context, "لا يوجد انترنت ",
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
-                            showMessage()
+                            if(page==1) {
+                                showMessage()
+                                binding.noInternetLayout.visibility = View.VISIBLE
+                                binding.linearLayout.visibility = View.GONE
+                            }
+                            else{
+                                showMessage()
+                            }
                         }
                     }
                 }
@@ -270,7 +280,6 @@ class HistoryByServiceTypeFragment : Fragment() {
                 binding.textNoInternet.visibility = View.VISIBLE
                 binding.noNetworkResult.visibility = View.VISIBLE
                 binding.linearLayout.visibility = View.GONE
-                binding.periodTimeTextInputLayout.visibility = View.GONE
 
             }
         }

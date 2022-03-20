@@ -49,19 +49,19 @@ class HistoryByServiceViewModel(application: Application) : AndroidViewModel(app
             when (val result = modelRepository.getHistoryDataByService(serviceID,pageNumber,period)) {
                 is Result.Success -> {
                    // _loading.postValue(View.GONE)
-                    Log.i("getServiceData:", "${result.data}")
+                    Log.i("getHistoryData:", "${result.data}")
                     _getHistoryData.postValue(result.data)
                     _loading.postValue(View.GONE)
 
                 }
                 is Result.Error -> {
-                    Log.e("getServiceData:", "${result.exception.message}")
+                    Log.e("getHistoryData:", "${result.exception.message}")
                     _setError.postValue(result.exception.message)
                     _loading.postValue(View.GONE)
 
                 }
                 is Result.Loading -> {
-                    Log.i("getServiceData", "Loading")
+                    Log.i("getHistoryData", "Loading")
                     _loading.postValue(View.VISIBLE)
                 }
             }

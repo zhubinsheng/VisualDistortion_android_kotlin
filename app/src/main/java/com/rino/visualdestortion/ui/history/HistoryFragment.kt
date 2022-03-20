@@ -167,8 +167,7 @@ class HistoryFragment : Fragment() {
                         super.onAvailable(network)
                         if (activity != null) {
                             activity!!.runOnUiThread {
-                                binding.textNoInternet.visibility = View.GONE
-                                binding.noNetworkResult.visibility = View.GONE
+                               binding.noInternetLayout.visibility = View.GONE
                                 binding.linearLayout.visibility = View.VISIBLE
                                 viewModel.getHistoryData()
                             }
@@ -197,8 +196,7 @@ class HistoryFragment : Fragment() {
             viewModel.getHistoryData()
         } else {
             showMessage(getString(R.string.no_internet))
-            binding.textNoInternet.visibility = View.VISIBLE
-            binding.noNetworkResult.visibility = View.VISIBLE
+            binding.noInternetLayout.visibility = View.VISIBLE
             binding.linearLayout.visibility = View.GONE
 
         }
