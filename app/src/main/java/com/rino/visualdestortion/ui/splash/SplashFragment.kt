@@ -34,11 +34,6 @@ class SplashFragment : Fragment() {
 
     }
 
-    override fun onStart() {
-        super.onStart()
-
-    }
-
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true
@@ -57,7 +52,7 @@ class SplashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setAnimation()
         splashSetup()
-        registerConnectivityNetworkMonitor()
+     //   registerConnectivityNetworkMonitor()
         observeData()
     }
     private fun observeData() {
@@ -120,7 +115,7 @@ class SplashFragment : Fragment() {
                         if (NetworkConnection.checkInternetConnection(requireContext())) {
                             viewModel.isTodayPrepared()
                         } else {
-                            showMessage(getString(R.string.no_internet))
+                            navToError()
                         }
                     } }
                 else{
@@ -130,6 +125,11 @@ class SplashFragment : Fragment() {
 //                findNavController().navigate(R.id.welcomeFragment)
             }
         }
+    }
+
+    private fun navToError() {
+        val action = SplashFragmentDirections.actionSplashToError()
+        findNavController().navigate(action)
     }
 
     private fun setAnimation() {
@@ -150,47 +150,47 @@ class SplashFragment : Fragment() {
             R.anim.right_to_left
         )
     }
-    private fun showMessage(msg: String) {
-        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
-            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                resources.getColor(
-                    R.color.teal
-                )
-            )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(
-                R.string.dismiss))
-            {
-            }.show()
-    }
-    private fun registerConnectivityNetworkMonitor() {
-        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val builder = NetworkRequest.Builder()
-        connectivityManager.registerNetworkCallback(builder.build(),
-            object : ConnectivityManager.NetworkCallback() {
-                override fun onAvailable(network: Network) {
-                    super.onAvailable(network)
-                    if (activity != null) {
-                        activity!!.runOnUiThread {
-                            if (viewModel.isLogin()) {
-                                    viewModel.isTodayPrepared()
-                            }
-                            else{
-                                navToWelcome()
-                            }
-                        }
-                    }
-                }
-
-                override fun onLost(network: Network) {
-                    super.onLost(network)
-                    if (activity != null) {
-                        activity!!.runOnUiThread {
-                            showMessage(getString(R.string.no_internet))
-                        }
-                    }
-                }
-            }
-        )
-    }
+//    private fun showMessage(msg: String) {
+//        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+//            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+//                resources.getColor(
+//                    R.color.teal
+//                )
+//            )
+//            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(
+//                R.string.dismiss))
+//            {
+//            }.show()
+//    }
+//    private fun registerConnectivityNetworkMonitor() {
+//        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+//        val builder = NetworkRequest.Builder()
+//        connectivityManager.registerNetworkCallback(builder.build(),
+//            object : ConnectivityManager.NetworkCallback() {
+//                override fun onAvailable(network: Network) {
+//                    super.onAvailable(network)
+//                    if (activity != null) {
+//                        activity!!.runOnUiThread {
+//                            if (viewModel.isLogin()) {
+//                                    viewModel.isTodayPrepared()
+//                            }
+//                            else{
+//                                navToWelcome()
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                override fun onLost(network: Network) {
+//                    super.onLost(network)
+//                    if (activity != null) {
+//                        activity!!.runOnUiThread {
+//                            showMessage(getString(R.string.no_internet))
+//                        }
+//                    }
+//                }
+//            }
+//        )
+//    }
 
 }

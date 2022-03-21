@@ -1,4 +1,4 @@
-package com.rino.visualdestortion.ui.splash
+package com.rino.visualdestortion.ui.error
 
 import android.app.Application
 import android.util.Log
@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SplashViewModel (application: Application) : AndroidViewModel(application) {
+class ErrorViewModel (application: Application) : AndroidViewModel(application) {
     private val modelRepository: ModelRepo = ModelRepo(application)
     private val _isPrepared = MutableLiveData<Boolean>()
     private var _setError = MutableLiveData<String>()
@@ -33,7 +33,7 @@ class SplashViewModel (application: Application) : AndroidViewModel(application)
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = modelRepository.isDailyPrepared()) {
                 is Result.Success -> {
-                  //  _loading.postValue(View.GONE)
+                    //  _loading.postValue(View.GONE)
                     Log.i("login:", "${result.data}")
                     if (result.data?.isPrepared == true) {
                         withContext(Dispatchers.Main) {
@@ -47,19 +47,20 @@ class SplashViewModel (application: Application) : AndroidViewModel(application)
                 }
                 is Result.Error -> {
                     Log.e("isDailyPrepared:", "${result.exception.message}")
-                  //  _loading.postValue(View.GONE)
+                    //  _loading.postValue(View.GONE)
                     _setError.postValue(result.exception.message)
+
 
                 }
                 is Result.Loading -> {
                     Log.i("isDailyPrepared", "Loading")
-                //    _loading.postValue(View.VISIBLE)
+                    //    _loading.postValue(View.VISIBLE)
                 }
             }
         }
     }
 
     fun isLogin():Boolean{
-      return modelRepository.isLogin()
+        return modelRepository.isLogin()
     }
 }

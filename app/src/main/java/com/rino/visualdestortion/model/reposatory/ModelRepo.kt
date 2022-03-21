@@ -29,7 +29,6 @@ import com.rino.visualdestortion.model.remoteDataSource.ApiInterface
 import com.rino.visualdestortion.model.remoteDataSource.Result
 import com.rino.visualdestortion.utils.PREF_FILE_NAME
 import kotlinx.coroutines.flow.Flow
-import okhttp3.RequestBody
 import java.io.IOException
 
 class ModelRepo (application: Application):RemoteRepo,LocalRepo{

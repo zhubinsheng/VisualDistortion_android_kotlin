@@ -58,7 +58,7 @@
     <string name="address_txt">العنوان</string>
     <string name="period_time">المدة الزمنية</string>
     <string name="ViewQRCode">عرض الرقم التكويدى</string>
-    <string name="no_internet">الرجاء الاتصال بالانترنت</string>
+    <string name="no_internet"> لا يوجد اتصال بالانترنت</string>
     <string name="shareQRCodeInWhatsapp">"مشاركة عبر الواتساب "</string>
     <string name="internet">"متصل بالانترنت "</string>
     <string name="dismiss">تجاهل</string>
@@ -75,7 +75,8 @@
     <string name="weak_password">كلمة المرور ضعيفة</string>
     <string name="pass_not_matched">كلمة المرور غير متطابقة</string>
     <string name="no_data">لا توجد بيانات</string>
-    <string name="try_again">حاول مرة أخرى</string>
+    <string name="try_again">حدث خطأ أثناء الاتصال بالانترنت, حاول مرة أخرى</string>
+    <string name="connecting">جاري التحميل ...</string>
 
 
 </resources>

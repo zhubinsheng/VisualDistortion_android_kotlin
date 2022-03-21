@@ -5,56 +5,61 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.error.ErrorFragment">
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/no_network_result"
         android:layout_width="250dp"
         android:layout_height="250dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="8dp"
-        app:lottie_rawRes="@raw/error"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/text_no_internet"
+        app:layout_constraintStart_toStartOf="@+id/text_no_internet"
+        app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        android:scaleType="fitXY"
-        />
+        app:lottie_rawRes="@raw/error" />
 
     <TextView
         android:id="@+id/text_no_internet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/no_network_result"
-        app:layout_constraintEnd_toEndOf="@+id/no_network_result"
-        app:layout_constraintStart_toStartOf="@+id/no_network_result"
-        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/no_network_result"
+        android:textColor="@color/black"
+        android:textSize="@dimen/headerTextSize"
+        android:textStyle="bold"
         android:text="@string/no_internet"
         android:gravity="center"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginBottom="60dp"/>
 
-    <LinearLayout
-        android:id="@+id/tryAgainLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/text_no_internet"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/tryAgain_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_baseline_refresh_24"
+            android:layout_marginTop="@dimen/paddingLayout"
+            app:layout_constraintTop_toBottomOf="@id/no_network_result"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:clickable="true"
+            app:layout_constraintStart_toStartOf="parent"
+            />
 
         <TextView
             android:id="@+id/text_tryAgain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/no_network_result"
-            app:layout_constraintEnd_toEndOf="@+id/no_network_result"
-            app:layout_constraintStart_toStartOf="@+id/no_network_result"
-            android:textSize="16sp"
+            android:layout_marginTop="@dimen/paddingLayout"
+            app:layout_constraintTop_toBottomOf="@id/tryAgain_img"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="@dimen/subHeaderTextSize"
+            android:textColor="@color/dark_gray"
             android:text="@string/try_again"
             android:gravity="center"
-            android:layout_marginTop="16dp"/>
+            />
 
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
