@@ -51,7 +51,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
-                        result = Result.Error(Exception("Email or Password invalid"))
+                        result = Result.Error(Exception("خطأ فى البريد الكتروني او كلمة المرور"))
                     }
                     404 -> {
                         Log.e("Error 404", "Not Found")
@@ -60,6 +60,10 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     500 -> {
                         Log.e("Error 500", "Server Error")
                         result = Result.Error(Exception("server is down"))
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result = Result.Error(Exception(""))
                     }
                     else -> {
                         Log.e("Error", "Generic Error")
@@ -561,7 +565,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
-                        result = Result.Error(Exception("Not Auth please, logout and login again"))
+                        //result = Result.Error(Exception("Not Auth please, logout and login again"))
                         if(isLogin()){
                             Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
                             refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))

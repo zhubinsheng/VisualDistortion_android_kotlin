@@ -79,7 +79,7 @@ class LoginFragment : Fragment() {
              //   binding.progress.visibility = View.GONE
                 Toast.makeText(
                     requireActivity(),
-                    " Login Successfully",
+                    getString(R.string.success_login),
                     Toast.LENGTH_SHORT
                 ).show()
                 viewModel.isTodayPrepared()
@@ -88,7 +88,7 @@ class LoginFragment : Fragment() {
             } else {
                 Toast.makeText(
                     requireActivity(),
-                    " Invalid UserName or Password ",
+                            getString(R.string.invalid_email_or_pass),
                     Toast.LENGTH_SHORT
                 ).show()
             }

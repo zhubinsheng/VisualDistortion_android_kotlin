@@ -257,14 +257,10 @@ class HistoryByServiceTypeFragment : Fragment() {
                     super.onLost(network)
                     if (activity != null) {
                         activity!!.runOnUiThread {
-                            if(page==1) {
                                 showMessage()
                                 binding.noInternetLayout.visibility = View.VISIBLE
                                 binding.linearLayout.visibility = View.GONE
-                            }
-                            else{
-                                showMessage()
-                            }
+
                         }
                     }
                 }

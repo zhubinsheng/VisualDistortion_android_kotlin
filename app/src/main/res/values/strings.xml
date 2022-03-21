@@ -77,6 +77,9 @@
     <string name="no_data">لا توجد بيانات</string>
     <string name="try_again">حدث خطأ أثناء الاتصال بالانترنت, حاول مرة أخرى</string>
     <string name="connecting">جاري التحميل ...</string>
+    <string name="success_login">تسجيل دخول ناجح</string>
+    <string name="invalid_email_or_pass">خطأ فى البريد الالكترونى او كلمة المرور</string>
+    <string name="search_hint">ابحث برقم العملية</string>
 
 
 </resources>
