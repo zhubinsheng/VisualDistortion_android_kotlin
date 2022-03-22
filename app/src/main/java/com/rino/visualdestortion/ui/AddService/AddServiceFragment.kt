@@ -41,7 +41,6 @@ import com.rino.visualdestortion.utils.NetworkConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -696,7 +695,7 @@ class AddServiceFragment : Fragment() {
                     )
                 afterBitmap = compressBitmap(afterBitmap,30)
                 try {
-                        val file = File(getRealPathFromURI(getImageUri(requireContext(), afterBitmap)!!))
+                        val file = File(getRealPathFromURI(getImageUri(requireContext(), afterBitmap,"AFTER_IMG")))
                         println("afterfilePath" + file.path)
                         val requestFile: RequestBody =
                             file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
@@ -733,11 +732,11 @@ class AddServiceFragment : Fragment() {
                 try {
 
 //                val file = File(
-//                    getRealPathFromURI(data?.data!!)
+//                    getRealPathFromURI(data?.data)
 //                )
                         val file =
-                            File(getRealPathFromURI(getImageUri(requireContext(), beforeBitmap)!!))
-                        println("beforefilePath" + file.path)
+                            File(getRealPathFromURI(getImageUri(requireContext(), beforeBitmap,"bEFORE_IMG")))
+//                        println("beforefilePath" + file.path)
                         val requestFile: RequestBody =
                             file
                                 .asRequestBody("multipart/form-data".toMediaTypeOrNull())
@@ -777,10 +776,10 @@ class AddServiceFragment : Fragment() {
                 try {
 
 //                val file = File(
-//                    getRealPathFromURI(data?.data!!)
+//                    getRealPathFromURI(data?.data)
 //                )
                     val file =
-                        File(getRealPathFromURI(getImageUri(requireContext(), duringBitmap)!!))
+                        File(getRealPathFromURI(getImageUri(requireContext(), duringBitmap,"DURING_IMG_")))
                     println("duringFilePath" + file.path)
                     val requestFile: RequestBody =
                         file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
@@ -832,21 +831,25 @@ class AddServiceFragment : Fragment() {
 
         return bitmap
     }
+
     private fun compressBitmap(bitmap: Bitmap, quality:Int):Bitmap{
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.WEBP, quality, stream)
         val byteArray = stream.toByteArray()
         return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     }
-    fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
+
+    fun getImageUri(inContext: Context, inImage: Bitmap,title:String): Uri? {
         val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            inImage.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 20, bytes)
+        }
         val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
         val currentDate = sdf.format(Date())
         val path = MediaStore.Images.Media.insertImage(
             inContext.contentResolver,
             inImage,
-            "AFTER_IMG_" + currentDate.toString().replace(" ",""),
+            title+ currentDate.toString().replace(" ",""),
             null
         )
 //        val path = MediaStore.Images.Media.insertImage(
@@ -858,9 +861,9 @@ class AddServiceFragment : Fragment() {
         return Uri.parse(path)
     }
 
-    fun getRealPathFromURI(uri: Uri): String? {
+    fun getRealPathFromURI(uri: Uri?): String? {
         val cursor: Cursor? =
-            requireActivity().getContentResolver().query(uri, null, null, null, null)
+            uri?.let { requireActivity().getContentResolver().query(it, null, null, null, null) }
         cursor?.moveToFirst()
         val idx: Int? = cursor?.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
         return idx?.let { cursor.getString(it) }

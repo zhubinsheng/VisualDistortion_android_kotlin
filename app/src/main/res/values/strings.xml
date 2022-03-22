@@ -1,21 +1,19 @@
 <resources>
-    <string name="app_name">معالجة التشوة البصرى</string>
+    <string name="app_name">معالجة التشوه البصرى</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="company_name"> شركة رينو لعمليات الصيانة </string>
-    <string name="welcome_msg"> مرحبا بك فى تطبيق رينو لمعالجة التشوة البصرى</string>
+    <string name="welcome_msg"> مرحبا بك فى تطبيق رينو لمعالجة التشوه البصرى</string>
     <string name="login_msg"> قم بتسجيل الدخول بحسابك الشخصى لتسجيل الخدمات من كافة الأدارات فى المؤسسة </string>
     <string name="login">تسجيل الدخول</string>
     <string name="login_userName_hint">البريد الألكترونى</string>
     <string name="login_password_hint">كلمة المرور</string>
     <string name="forgot_password">استعادة كلمة المرور</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="already_have_account">لديك حساب </string>
     <string name="edit_profile">"تعديل الحساب "</string>
     <string name="logout">تسجيل الخروج</string>
     <string name="setting">الاعدادات</string>
     <string name="complaints">الشكاوى</string>
-    <string name="services">الخدمات</string>
+    <string name="services"> الخدمات الرئيسية </string>
     <string name="street">الشارع</string>
     <string name="municipalites">البلدية</string>
     <string name="sector">القطاع</string>
@@ -28,10 +26,10 @@
     <string name="spicialItems">بيانات خاصة</string>
     <string name="mSquare">متر مربع ( م2 )</string>
     <string name="mCube">متر مكعب ( م3 )</string>
-    <string name="numberR">عدد الردود</string>
+    <string name="numberR">عدد الردوم </string>
     <string name="notes">الملاحظات</string>
     <string name="submit">تسجيل</string>
-    <string name="QRCode">الرقم التكويدى</string>
+    <string name="QRCode">الرمز التكويدى</string>
     <string name="navigateToHome">العودة للقائمة الرئيسية</string>
     <string name="Percentage"> نسبة الانجاز الكلية %</string>
     <string name="afterImage">الصورة بعد المهمة</string>
@@ -55,9 +53,10 @@
     <string name="save">حفظ</string>
     <string name="close">الغاء</string>
     <string name="service_num">رقم الخدمة</string>
+    <string name="task_num">رقم العملية</string>
     <string name="address_txt">العنوان</string>
     <string name="period_time">المدة الزمنية</string>
-    <string name="ViewQRCode">عرض الرقم التكويدى</string>
+    <string name="ViewQRCode">عرض الرمز التكويدى</string>
     <string name="no_internet"> لا يوجد اتصال بالانترنت</string>
     <string name="shareQRCodeInWhatsapp">"مشاركة عبر الواتساب "</string>
     <string name="internet">"متصل بالانترنت "</string>
@@ -80,6 +79,7 @@
     <string name="success_login">تسجيل دخول ناجح</string>
     <string name="invalid_email_or_pass">خطأ فى البريد الالكترونى او كلمة المرور</string>
     <string name="search_hint">ابحث برقم العملية</string>
+    <string name="company_name_en"><![CDATA[Rhino Maintenance & Operation & Cleaning]]></string>
 
 
 </resources>
