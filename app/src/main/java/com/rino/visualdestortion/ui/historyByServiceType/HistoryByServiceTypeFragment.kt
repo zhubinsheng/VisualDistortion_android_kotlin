@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
@@ -22,6 +23,7 @@ import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentHistoryByServiceTypeBinding
 import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
 import com.rino.visualdestortion.model.pojo.history.ServiceData
+import com.rino.visualdestortion.ui.AddService.StreetAdapter
 import com.rino.visualdestortion.ui.home.MainActivity
 import com.rino.visualdestortion.utils.NetworkConnection
 
@@ -77,6 +79,7 @@ class HistoryByServiceTypeFragment : Fragment() {
     }
     private fun observeData() {
         observeHistoryData()
+        observeSearchHistoryData()
         observeNavToService()
         observeLoading()
         observeShowError()
@@ -103,6 +106,21 @@ class HistoryByServiceTypeFragment : Fragment() {
         }
     }
 
+    private fun observeSearchHistoryData() {
+        //   viewModel.getHistoryData(serviceId)
+        viewModel.getSearchHistoryData.observe(viewLifecycleOwner) {
+            it?.let {
+                historyAdapter.clearList()
+                historyAdapter.updateItems(arrayListOf(ServiceData(it)))
+                historyList = arrayListOf(ServiceData(it))
+                binding.shimmer.stopShimmer()
+                binding.shimmer.visibility = View.GONE
+                binding.historyRecycle.visibility = View.VISIBLE
+                binding.animationView.visibility = View.GONE
+                binding.textNoData.visibility = View.GONE
+            }
+        }
+    }
     private fun observeLoading() {
         viewModel.loading.observe(viewLifecycleOwner) {
             it?.let {
@@ -157,15 +175,30 @@ class HistoryByServiceTypeFragment : Fragment() {
     }
 
     private fun setUpUI() {
+   //     binding.mSearch.setQueryHint(getString(R.string.search_hint));
         binding.historyRecycle.visibility = View.VISIBLE
         binding.historyRecycle.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = historyAdapter
         }
+        binding.mSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    viewModel.searchHistoryDataByService(query)
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+
+                return false
+            }
+        })
         setPeriodTimeMenuItems()
         setupPagination()
 
     }
+
 
     private fun setupPagination() {
         binding.idNestedSV.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->

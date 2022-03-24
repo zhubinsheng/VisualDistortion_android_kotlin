@@ -93,6 +93,4 @@ class EquipmentsAdapter(private var itemsList: ArrayList<EquipmentItem>, private
         inner class ItemViewHolder(val binding: EquipmentItemBinding) :
             RecyclerView.ViewHolder(binding.root)
 
-
-
     }

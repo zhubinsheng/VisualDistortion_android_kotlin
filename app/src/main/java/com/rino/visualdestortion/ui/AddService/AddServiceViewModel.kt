@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.addService.Districts
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
@@ -23,10 +24,14 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
 
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
-    private var _navigateToQRCode = MutableLiveData<String>()
+    private var _selectedStreet = MutableLiveData<String>()
+    private var _selectedDistrict = MutableLiveData<Districts>()
+    private var _isSelectedStreet = MutableLiveData<Boolean>()
+    private var _isSelectedDistrict = MutableLiveData<Boolean>()
     private var _getDailyPreparation = MutableLiveData<DailyPreparation?>()
     private var _getServicesData = MutableLiveData<AddServiceResponse>()
     private var _setServiceForm = MutableLiveData<QRCode?>()
+
 
 
     val loading: LiveData<Int>
@@ -34,6 +39,18 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
 
     val setError: LiveData<String>
         get() = _setError
+
+    val selectedDistrict: LiveData<Districts>
+        get() = _selectedDistrict
+
+    val selectedStreet: LiveData<String>
+        get() = _selectedStreet
+
+    val isSelectedDistrict: LiveData<Boolean>
+        get() = _isSelectedDistrict
+
+    val isSelectedStreet: LiveData<Boolean>
+        get() = _isSelectedStreet
 
     val getServicesData: LiveData<AddServiceResponse>
         get() = _getServicesData
@@ -70,7 +87,18 @@ class AddServiceViewModel(application: Application) : AndroidViewModel(applicati
         }
 
     }
-
+    fun selectStreet(street:String){
+        _selectedStreet.value = street
+    }
+    fun selectDistrict(district:Districts){
+        _selectedDistrict.value = district
+    }
+    fun setIsSelectStreet(street:Boolean){
+        _isSelectedStreet.value = street
+    }
+    fun setIsSelectDistrict(district:Boolean){
+        _isSelectedDistrict.value = district
+    }
     fun setFormData(serviceForm: FormData) {
         _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {

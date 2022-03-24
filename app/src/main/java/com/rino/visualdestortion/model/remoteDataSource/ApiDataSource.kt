@@ -9,6 +9,8 @@ import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationD
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
+import com.rino.visualdestortion.model.pojo.history.SearchResponse
+import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -105,6 +107,13 @@ class ApiDataSource:ApiInterface {
         period:String
     ): Response<HistoryByServiceIdResponse> {
         return retrofit.getHistoryDataByService(auth,serviceTypeId,pageNumber,period)
+    }
+
+    override suspend fun searchHistoryDataByService(
+        auth: String,
+        taskNumber: String
+    ): Response<SearchResponse> {
+       return retrofit.searchHistoryDataByService(auth,taskNumber)
     }
 
     override suspend fun isDailyPrepared(auth: String): Response<CheckDailyPreparationResponse> {

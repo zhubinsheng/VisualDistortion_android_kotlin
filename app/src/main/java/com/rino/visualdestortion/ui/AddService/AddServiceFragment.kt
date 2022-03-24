@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.*
+import android.graphics.drawable.ColorDrawable
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.Network
@@ -17,12 +18,11 @@ import android.os.*
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
@@ -30,12 +30,18 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentAddServiceBinding
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.addService.Districts
 import com.rino.visualdestortion.model.pojo.addService.FormData
+import com.rino.visualdestortion.model.pojo.addService.Streets
 import com.rino.visualdestortion.ui.home.MainActivity
 import com.rino.visualdestortion.utils.NetworkConnection
 import kotlinx.coroutines.CoroutineScope
@@ -52,6 +58,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AddServiceFragment : Fragment() {
@@ -77,7 +84,8 @@ class AddServiceFragment : Fragment() {
     private var isMunicipalitySelected = false
     private var isDistrictSelected = false
     private var isStreetSelected = false
-
+    private lateinit var  streetPopup :PopupWindow
+    private lateinit var  districtPopup :PopupWindow
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -393,8 +401,51 @@ class AddServiceFragment : Fragment() {
         observeSetFormData()
         observeLoading()
         observeShowError()
+        observeSelectedStreet()
+        observeSelectedDistrict()
+        ObserveIsStreetSelected()
+        ObserveIsDistrictSelected()
     }
 
+    private fun ObserveIsDistrictSelected() {
+        viewModel.isSelectedDistrict.observe(viewLifecycleOwner) {
+            it?.let {
+                isDistrictSelected = it
+            }
+        }
+    }
+
+    private fun ObserveIsStreetSelected() {
+        viewModel.isSelectedStreet.observe(viewLifecycleOwner) {
+            it?.let {
+                isStreetSelected = it
+            }
+        }
+    }
+
+    private fun observeSelectedStreet() {
+        viewModel.selectedStreet.observe(viewLifecycleOwner) {
+            it?.let {
+                if(streetPopup.isShowing) {
+                    streetPopup.dismiss()
+                }
+                binding.streetTextView.setText(it)
+            }
+        }
+    }
+
+    private fun observeSelectedDistrict() {
+        viewModel.selectedDistrict.observe(viewLifecycleOwner) {
+            it?.let {
+                if(districtPopup.isShowing) {
+                    districtPopup.dismiss()
+                }
+                binding.districtsTextView.setText(it.name)
+                val list =  it.streets
+                setStreetPopup(list)
+            }
+        }
+    }
     private fun observeSetFormData() {
         viewModel.setServiceForm.observe(viewLifecycleOwner) {
             it?.let {
@@ -420,6 +471,7 @@ class AddServiceFragment : Fragment() {
 
     private fun prepareMenues() {
         setSectorsMenuItems()
+
     }
 
     private fun setSectorsMenuItems() {
@@ -458,10 +510,70 @@ class AddServiceFragment : Fragment() {
             AdapterView.OnItemClickListener { _, _, position, _ ->
        //         val selectedItem = parent.getItemAtPosition(position).toString()
                 isMunicipalitySelected = true
-                setDistrictsMenuItems(posSector, position)
-
+     //           setDistrictsMenuItems(posSector, position)
+                val list =  addServiceResponse.sectors?.get(posSector)?.
+                municipalites?.get(position)?.districts
+                setDistrictPopup(list)
             }
     }
+
+    private fun setDistrictPopup(list:ArrayList<Districts>?) {
+        binding.districtsTextView.setOnClickListener {
+            districtPopup = showDistrictPopup(list?: arrayListOf())
+        }
+    }
+
+    private fun showDistrictPopup(list: List<Districts>): PopupWindow {
+        val inflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.text_popup_view, null)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.textRecycle)
+        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+
+        val adapter = DistrictAdapter(arrayListOf(),viewModel)
+        recyclerView.adapter = adapter
+        adapter.updateItems(list)
+        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val searchView = view.findViewById<SearchView>(R.id.mSearch)
+        searchView.setQueryHint(getString(R.string.districts))
+        searchDistrict(searchView,list,adapter)
+        Log.e("ItemCount", adapter.getItemCount().toString())
+
+        streetPopup = PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        streetPopup.isOutsideTouchable = true
+        streetPopup.isFocusable = true
+        streetPopup.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        streetPopup.showAtLocation(requireView(), Gravity.CENTER, 0, 0);
+        return  streetPopup
+    }
+
+    private fun searchDistrict(searchView: SearchView, list: List<Districts>, adapter: DistrictAdapter) {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                if (query != null) {
+                    filterDistrict(query, list, adapter)
+                }
+                return false
+            }
+        })
+    }
+
+    private fun filterDistrict(query: String, list: List<Districts>, adapter: DistrictAdapter) {
+        val filteredList: ArrayList<Districts> = ArrayList()
+        if (list?.isNotEmpty() == true) {
+            for (item in list!!) {
+                if (item.name?.toLowerCase()?.contains(query.toLowerCase()) == true) {
+                    filteredList.add(item)
+                }
+            }
+            adapter.updateItems(filteredList)
+        }
+    }
+
 
     private fun setDistrictsMenuItems(posSector: Int, posMunicipalite: Int) {
         districtsList.clear()
@@ -480,12 +592,81 @@ class AddServiceFragment : Fragment() {
             AdapterView.OnItemClickListener { _, _, position, _ ->
            //     val selectedItem = parent.getItemAtPosition(position).toString()
                 isDistrictSelected = true
-                setStreetsMenuItems(posSector, posMunicipalite, position)
+             //   setStreetsMenuItems(posSector, posMunicipalite, position)
+              val list =  addServiceResponse.sectors?.get(posSector)?.
+              municipalites?.get(posMunicipalite)?.districts?.
+              get(position)?.streets
+
+                setStreetPopup(list)
                 // Display the clicked item using toast
                 //   Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
             }
     }
+    fun setStreetPopup(steetArrayList: ArrayList<Streets>?){
+        binding.streetTextView.setOnClickListener {
+            steetArrayList?.let { it1 -> setListOfStreets(it1) }
+            streetPopup = showStreetPopup()
+        }
 
+    }
+    fun setListOfStreets(streetArrayList: ArrayList<Streets>?){
+        streetList.clear()
+        if (streetArrayList != null) {
+            for (street in streetArrayList ){
+                streetList.add(street.name.toString())
+            }
+        }
+    }
+    private fun showStreetPopup(): PopupWindow {
+        val inflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.text_popup_view, null)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.textRecycle)
+     //   recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+        Log.e("streetList",streetList.toString())
+        val adapter = StreetAdapter(arrayListOf(),viewModel)
+        recyclerView.adapter = adapter
+        adapter.updateItems(streetList)
+        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val searchView = view.findViewById<SearchView>(R.id.mSearch)
+        searchView.setQueryHint(getString(R.string.street))
+        searchStreet(searchView,streetList,adapter)
+        Log.e("ItemCount", adapter.getItemCount().toString())
+
+        streetPopup = PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        streetPopup.isOutsideTouchable = true
+        streetPopup.isFocusable = true
+        streetPopup.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        streetPopup.showAtLocation(requireView(), Gravity.CENTER, 0, 0);
+        return  streetPopup
+    }
+
+    private fun searchStreet(searchView: SearchView,streetArrayList: ArrayList<String>?,adapter:StreetAdapter) {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                if (query != null) {
+                    filterStreet(query, streetArrayList, adapter)
+                }
+                return false
+            }
+        })
+
+    }
+        fun filterStreet(text: String,list: ArrayList<String>?,adapter: StreetAdapter) {
+            val filteredList: ArrayList<String> = ArrayList<String>()
+            if (list?.isNotEmpty() == true) {
+                for (item in list!!) {
+                    if (item.toLowerCase()?.contains(text.toLowerCase()) == true) {
+                        filteredList.add(item)
+                    }
+                }
+                adapter.updateItems(filteredList)
+            }
+        }
 
     private fun setStreetsMenuItems(posSector: Int, posMunicipalite: Int, posDistricts: Int) {
         streetList.clear()

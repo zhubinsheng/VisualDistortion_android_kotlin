@@ -8,6 +8,8 @@ import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationD
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
+import com.rino.visualdestortion.model.pojo.history.SearchResponse
+import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -38,6 +40,8 @@ interface ApiInterface{
     suspend fun getHistoryData(auth: String): Response<AllHistoryResponse>
 
     suspend fun getHistoryDataByService(auth: String ,serviceTypeId: Int,pageNumber:Int ,period:String): Response<HistoryByServiceIdResponse>
+
+    suspend fun searchHistoryDataByService( auth: String, taskNumber: String ): Response<SearchResponse>
 
     suspend fun isDailyPrepared(auth: String): Response<CheckDailyPreparationResponse>
 

@@ -70,7 +70,7 @@
     <string name="email_must_less_than50">"البريد الالكترونى يجيب الا يزيد عن 50 حرف "</string>
     <string name="whatsApp_not_installed">الوتساب غير مثبت</string>
     <string name="cancel">الغاء</string>
-    <string name="qrCode_must_4number">الكود التفعيلى يجب ان يحتوى على 4 ارقام</string>
+    <string name="qrCode_must_4number">الكود ا لتفعيلى يجب ان يحتوى على 4 ارقام</string>
     <string name="weak_password">كلمة المرور ضعيفة</string>
     <string name="pass_not_matched">كلمة المرور غير متطابقة</string>
     <string name="no_data">لا توجد بيانات</string>
@@ -80,6 +80,9 @@
     <string name="invalid_email_or_pass">خطأ فى البريد الالكترونى او كلمة المرور</string>
     <string name="search_hint">ابحث برقم العملية</string>
     <string name="company_name_en"><![CDATA[Rhino Maintenance & Operation & Cleaning]]></string>
+    <string name="privacy_policy">سياسة الخصوصية</string>
+    <string name="gallery">الاستوديو</string>
+    <string name="camera">الكاميرا</string>
 
 
 </resources>

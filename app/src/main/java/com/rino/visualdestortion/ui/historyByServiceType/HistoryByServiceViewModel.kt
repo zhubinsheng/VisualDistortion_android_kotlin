@@ -9,10 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
-import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
-import com.rino.visualdestortion.model.pojo.history.Data
-import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
-import com.rino.visualdestortion.model.pojo.history.ServiceData
+import com.rino.visualdestortion.model.pojo.history.*
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.home.ServiceTypes
 import com.rino.visualdestortion.model.remoteDataSource.Result
@@ -25,6 +22,7 @@ class HistoryByServiceViewModel(application: Application) : AndroidViewModel(app
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
     private var _getHistoryData = MutableLiveData<HistoryByServiceIdResponse?>()
+    private var _getSearchHistoryData = MutableLiveData<SearchResponse?>()
     private var _navToTaskDetails: MutableLiveData<ServiceData> = MutableLiveData()
 
     val navToTaskDetails: LiveData<ServiceData>
@@ -35,6 +33,9 @@ class HistoryByServiceViewModel(application: Application) : AndroidViewModel(app
 
     val setError: LiveData<String>
         get() = _setError
+
+    val getSearchHistoryData: LiveData<SearchResponse?>
+        get() = _getSearchHistoryData
 
     val getHistoryData: LiveData<HistoryByServiceIdResponse?>
         get() = _getHistoryData
@@ -62,6 +63,30 @@ class HistoryByServiceViewModel(application: Application) : AndroidViewModel(app
                 }
                 is Result.Loading -> {
                     Log.i("getHistoryData", "Loading")
+                    _loading.postValue(View.VISIBLE)
+                }
+            }
+        }
+    }
+    fun searchHistoryDataByService(taskNum:String) {
+        // _loading.postValue(View.VISIBLE)
+        viewModelScope.launch(Dispatchers.IO) {
+            when (val result = modelRepository.searchHistoryDataByService(taskNum)) {
+                is Result.Success -> {
+                    // _loading.postValue(View.GONE)
+                    Log.i("searchHistoryDataByService:", "${result.data}")
+                    _getSearchHistoryData.postValue(result.data)
+                    _loading.postValue(View.GONE)
+
+                }
+                is Result.Error -> {
+                    Log.e("searchHistoryDataByService:", "${result.exception.message}")
+                    _setError.postValue(result.exception.message)
+                    _loading.postValue(View.GONE)
+
+                }
+                is Result.Loading -> {
+                    Log.i("searchHistoryDataByService", "Loading")
                     _loading.postValue(View.VISIBLE)
                 }
             }

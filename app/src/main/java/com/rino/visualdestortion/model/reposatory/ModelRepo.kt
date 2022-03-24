@@ -17,6 +17,8 @@ import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationD
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
+import com.rino.visualdestortion.model.pojo.history.SearchResponse
+import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -396,7 +398,6 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         var result: Result<HistoryByServiceIdResponse?> = Result.Loading
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
-
             val response = apiDataSource.getHistoryDataByService("Bearer "+getToken(),serviceTypeId,pageNumber,period)
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
@@ -428,6 +429,54 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                         } }
                     else -> {
                         Log.e("Error", "Generic Error")
+                    }
+                }
+            }
+
+        }catch (e: IOException){
+            result = Result.Error(e)
+            Log.e("ModelRepository","IOException ${e.message}")
+            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+
+        }
+        return result
+    }
+
+    override suspend fun searchHistoryDataByService(taskNumber: String): Result<SearchResponse?> {
+        var result: Result<SearchResponse?> = Result.Loading
+        try {
+            Log.i("ModelRepository:@@", "Token ${getToken()}")
+            val response = apiDataSource.searchHistoryDataByService("Bearer "+getToken(),taskNumber)
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Resulttt $result")
+            } else {
+                Log.i("ModelRepository", "Error ${response.errorBody()?.string()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        result = Result.Error(Exception("Bad Request"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth please, logout and login again")
+                        //     result = Result.Error(Exception("Not Auth please, logout and login again"))
+                        if(isLogin()) {
+                            Log.i("Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                            //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                        } }
+                    else -> {
+
+                        Log.e("Error", "Generic Error${response.code()}")
                     }
                 }
             }

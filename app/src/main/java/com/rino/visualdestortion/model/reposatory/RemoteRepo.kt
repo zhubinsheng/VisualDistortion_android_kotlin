@@ -8,6 +8,8 @@ import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationD
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
 import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
 import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
+import com.rino.visualdestortion.model.pojo.history.SearchResponse
+import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -39,6 +41,8 @@ interface RemoteRepo {
       suspend fun getHistoryData(): Result<AllHistoryResponse?>
 
       suspend fun getHistoryDataByService(serviceTypeId: Int,pageNumber:Int ,period:String ): Result<HistoryByServiceIdResponse?>
+
+      suspend fun searchHistoryDataByService(taskNumber: String): Result<SearchResponse?>
 
       suspend fun isDailyPrepared(): Result<CheckDailyPreparationResponse?>
 
