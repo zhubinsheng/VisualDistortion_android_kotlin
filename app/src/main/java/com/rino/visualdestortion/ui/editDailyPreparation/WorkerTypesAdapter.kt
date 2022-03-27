@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.EquipmentItemBinding
 import com.rino.visualdestortion.model.pojo.dailyPraperation.PrepWorkers
+import com.rino.visualdestortion.utils.Constants
 
 
 class WorkerTypesAdapter(private var itemsList: ArrayList<PrepWorkers>, private var viewModel: EditDailyPViewModel, private  var context: Context) :
@@ -33,18 +34,18 @@ class WorkerTypesAdapter(private var itemsList: ArrayList<PrepWorkers>, private 
 
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.binding.itemCount.text = itemsList[position].count.toString()
+        holder.binding.itemCount.text = Constants.convertNumsToArabic(itemsList[position].count.toString())
         holder.binding.nameTxt.text = itemsList[position].name
 
         holder.binding.plusImg.setOnClickListener {
             itemsList[position].count = itemsList[position].count?.plus(1)
-            holder.binding.itemCount.text = itemsList[position].count.toString()
+            holder.binding.itemCount.text = Constants.convertNumsToArabic(itemsList[position].count.toString())
         }
 
         holder.binding.minImg.setOnClickListener {
             if (itemsList[position].count!! > 1) {
                 itemsList[position].count = itemsList[position].count?.minus(1)
-                holder.binding.itemCount.text = itemsList[position].count.toString()
+                holder.binding.itemCount.text = Constants.convertNumsToArabic(itemsList[position].count.toString())
             }
         }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frameLayout"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -50,7 +51,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/address_txt">
 
                 <LinearLayout
@@ -177,7 +178,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/spicialItems_txt">
 
                 <LinearLayout
@@ -273,7 +274,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/attachPic_txt">
 
                 <LinearLayout
@@ -297,8 +298,8 @@
                             android:layoutDirection="rtl"
                             android:textDirection="rtl"
                             app:errorEnabled="true"
-                            app:layout_constraintEnd_toEndOf="@+id/afterPicText"
-                            app:layout_constraintStart_toStartOf="@id/afterPicText"
+                            app:layout_constraintRight_toRightOf="@+id/afterPicText"
+                            app:layout_constraintLeft_toLeftOf="@id/afterPicText"
                             app:layout_constraintTop_toTopOf="parent">
 
                             <ImageView
@@ -316,8 +317,7 @@
                             android:padding="@dimen/paddingText"
                             android:text="@string/afterImage"
                             android:textColor="@color/dark_gray"
-
-                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/textInputAfterImg" />
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -328,8 +328,8 @@
                             android:layoutDirection="rtl"
                             android:textDirection="rtl"
                             app:errorEnabled="true"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/afterPicText">
 
                             <ImageView
@@ -348,8 +348,8 @@
                             android:text="@string/duringImage"
                             android:textColor="@color/dark_gray"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/textInputDuringImg" />
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/textInputbeforeImg"
@@ -359,8 +359,8 @@
                             android:layoutDirection="rtl"
                             android:textDirection="rtl"
                             app:errorEnabled="true"
-                            app:layout_constraintEnd_toEndOf="@+id/beforPicText"
-                            app:layout_constraintStart_toStartOf="@id/beforPicText"
+                            app:layout_constraintRight_toRightOf="@+id/beforPicText"
+                            app:layout_constraintLeft_toLeftOf="@id/beforPicText"
                             app:layout_constraintTop_toTopOf="parent">
 
                             <ImageView
@@ -379,7 +379,6 @@
                             android:padding="@dimen/paddingText"
                             android:text="@string/beforeImage"
                             android:textColor="@color/dark_gray"
-                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintRight_toRightOf="@id/textInputbeforeImg"
                             app:layout_constraintStart_toEndOf="@id/afterPicText"
                             app:layout_constraintTop_toBottomOf="@id/textInputbeforeImg" />
@@ -406,7 +405,7 @@
                 android:padding="15dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/notes_txt">
 
                 <LinearLayout
@@ -457,8 +456,8 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/subHeaderTextSize"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/notesCard" />
 
 

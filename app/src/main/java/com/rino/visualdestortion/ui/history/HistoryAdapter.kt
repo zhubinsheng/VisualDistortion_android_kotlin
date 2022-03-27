@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.databinding.HistoryItemBinding
 import com.rino.visualdestortion.model.pojo.history.Data
+import com.rino.visualdestortion.utils.Constants
 
 import kotlin.collections.ArrayList
 
@@ -31,10 +32,10 @@ class HistoryAdapter (private var historyList: ArrayList<Data>,
 
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         holder.binding.serviceName.text = historyList[position].serviceName
-        holder.binding.tasksCountTxt.text    = "${historyList[position].numberOfTasks.toString()} خدمة "
-        holder.binding.dateFromTxt.text = historyList[position].dateFrom
-        holder.binding.dateToTxt.text   = historyList[position].dateTo
-        holder.binding.daysCountTxt.text = "${historyList[position].numberOfDays.toString()} يوم "
+        holder.binding.tasksCountTxt.text    = "${Constants.convertNumsToArabic(historyList[position].numberOfTasks.toString())} خدمة "
+        holder.binding.dateFromTxt.text = Constants.convertNumsToArabic(historyList[position].dateFrom?:"")
+        holder.binding.dateToTxt.text   = Constants.convertNumsToArabic(historyList[position].dateTo?:"")
+        holder.binding.daysCountTxt.text = "${Constants.convertNumsToArabic(historyList[position].numberOfDays.toString())} يوم "
         holder.binding.card.setOnClickListener {
             historyList[position].serviceId?.let { it1 -> historyViewModel.navToHistoryById(it1) }
         }

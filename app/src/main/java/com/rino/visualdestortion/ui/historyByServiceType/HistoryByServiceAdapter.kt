@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.databinding.ServiceHistoryItemBinding
 import com.rino.visualdestortion.model.pojo.history.ServiceData
+import com.rino.visualdestortion.utils.Constants
 
 import kotlin.collections.ArrayList
 
@@ -30,9 +31,9 @@ class HistoryByServiceAdapter (private var historyList: ArrayList<ServiceData>,
     }
 
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
-        holder.binding.serviceNumValue.text = historyList[position].serviceNumber.toString()
+        holder.binding.serviceNumValue.text = Constants.convertNumsToArabic(historyList[position].serviceNumber.toString())
         holder.binding.addressValue.text    = historyList[position].fullLocation
-        holder.binding.dateFromTxt.text     = historyList[position].createdDate
+        holder.binding.dateFromTxt.text     = Constants.convertNumsToArabic(historyList[position].createdDate?:"")
   //      holder.binding.timeTxt.text         = historyList[position].createdDate?: "00/00/00 00:00".split(" ").toList()[1]
         holder.binding.card.setOnClickListener {
          historyViewModel.navToServiceDetails(historyList[position])

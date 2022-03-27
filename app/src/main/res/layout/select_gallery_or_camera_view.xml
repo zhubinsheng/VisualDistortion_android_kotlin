@@ -2,24 +2,24 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:padding="@dimen/paddingLayout">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/paddingLayout"
-        android:layout_marginBottom="@dimen/paddingLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-       >
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/gallary_img"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/gallery"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_margin="@dimen/paddingLayout"
+            android:src="@drawable/gallery"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -27,9 +27,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/gallery"
-            android:textSize="@dimen/subHeaderTextSize"
             android:layout_margin="@dimen/paddingLayout"
+            android:text="@string/gallery"
+            android:textSize="@dimen/newsMoreTextSize"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/gallary_img"
             app:layout_constraintStart_toStartOf="@+id/gallary_img"
@@ -37,20 +37,22 @@
 
         <ImageView
             android:id="@+id/camera_img"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/camera"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+
             android:layout_marginStart="100dp"
+            android:src="@drawable/camera"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/gallary_img"
             app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/camera"
-            android:textSize="@dimen/subHeaderTextSize"
             android:layout_margin="@dimen/paddingLayout"
+            android:text="@string/camera"
+            android:textSize="@dimen/newsMoreTextSize"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/camera_img"
             app:layout_constraintStart_toStartOf="@+id/camera_img"

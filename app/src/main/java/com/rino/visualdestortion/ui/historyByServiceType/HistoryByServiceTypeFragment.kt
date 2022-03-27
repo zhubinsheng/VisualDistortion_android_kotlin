@@ -25,6 +25,7 @@ import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
 import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.ui.AddService.StreetAdapter
 import com.rino.visualdestortion.ui.home.MainActivity
+import com.rino.visualdestortion.utils.Constants
 import com.rino.visualdestortion.utils.NetworkConnection
 
 
@@ -184,7 +185,8 @@ class HistoryByServiceTypeFragment : Fragment() {
         binding.mSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    viewModel.searchHistoryDataByService(query)
+
+                    viewModel.searchHistoryDataByService(Constants.convertNumsToEnglish(query))
                 }
                 return false
             }

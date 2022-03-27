@@ -34,38 +34,38 @@
                     android:id="@+id/serviceNumTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/paddingText"
+                    android:layout_marginRight="@dimen/paddingText"
                     android:padding="4dp"
                     android:text="@string/task_num"
                     android:textColor="@color/black"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/date_from_txt" />
 
                 <TextView
                     android:id="@+id/serviceNumValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/paddingText"
+                    android:layout_marginRight="@dimen/paddingText"
                     android:padding="4dp"
                     android:textSize="@dimen/normalTextSize"
                     android:text="25"
                     android:textColor="@color/dark_gray"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@+id/serviceNumTxt"
+                    app:layout_constraintRight_toLeftOf="@+id/serviceNumTxt"
                     app:layout_constraintTop_toBottomOf="@+id/date_from_txt" />
 
                 <TextView
                     android:id="@+id/addressTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/paddingText"
+                    android:layout_marginRight="@dimen/paddingText"
                     android:layout_marginBottom="@dimen/paddingLayout"
                     android:padding="4dp"
                     android:text="@string/address_txt"
                     android:textColor="@color/black"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/serviceNumTxt" />
 
                 <TextView
@@ -76,13 +76,13 @@
                     android:padding="4dp"
                     android:maxLines="2"
                     android:maxWidth="150dp"
-                    android:layout_marginEnd="27dp"
+                    android:layout_marginRight="27dp"
                     android:layout_marginTop="@dimen/paddingText"
                     android:text="25"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normalTextSize"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@+id/addressTxt"
+                    app:layout_constraintRight_toLeftOf="@+id/addressTxt"
                     app:layout_constraintTop_toBottomOf="@+id/serviceNumValue" />
 
                 <TextView
@@ -90,13 +90,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/paddingText"
-                    android:layout_marginStart="@dimen/paddingLayout"
+                    android:layout_marginLeft="@dimen/paddingLayout"
                     android:padding="@dimen/paddingText"
                     android:text="15"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/subTextTextSize"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
 <!--                <TextView-->

@@ -21,8 +21,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="285dp"
                 android:background="@color/teal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.cardview.widget.CardView
@@ -32,8 +32,8 @@
                 android:layout_margin="16dp"
                 app:cardCornerRadius="6dp"
                 app:cardElevation="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,8 +77,8 @@
                 android:layout_marginTop="@dimen/paddingLayout"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card"
                 app:layout_constraintWidth_percent="0.9">
 
@@ -102,37 +102,37 @@
                             android:id="@+id/serviceNumTxt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/paddingText"
+                            android:layout_marginRight="@dimen/paddingText"
                             android:padding="4dp"
                             android:text="@string/service_num"
                             android:textColor="@color/black"
                             android:textStyle="bold"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/date_from_txt" />
 
                         <TextView
                             android:id="@+id/serviceNumValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/paddingText"
+                            android:layout_marginRight="@dimen/paddingText"
                             android:padding="4dp"
                             android:textColor="@color/dark_gray"
                             android:textSize="@dimen/normalTextSize"
                             android:textStyle="bold"
-                            app:layout_constraintEnd_toStartOf="@+id/serviceNumTxt"
+                            app:layout_constraintRight_toLeftOf="@+id/serviceNumTxt"
                             app:layout_constraintTop_toBottomOf="@+id/date_from_txt" />
 
                         <TextView
                             android:id="@+id/addressTxt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/paddingText"
+                            android:layout_marginRight="@dimen/paddingText"
                             android:layout_marginBottom="@dimen/paddingLayout"
                             android:padding="4dp"
                             android:text="@string/address_txt"
                             android:textColor="@color/black"
                             android:textStyle="bold"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/serviceNumTxt" />
 
                         <TextView
@@ -140,7 +140,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/paddingText"
-                            android:layout_marginEnd="27dp"
+                            android:layout_marginRight="27dp"
                             android:maxWidth="250dp"
                             android:maxLines="2"
                             android:padding="4dp"
@@ -148,20 +148,20 @@
                             android:textDirection="rtl"
                             android:textSize="@dimen/normalTextSize"
                             android:textStyle="bold"
-                            app:layout_constraintEnd_toStartOf="@+id/addressTxt"
+                            app:layout_constraintRight_toLeftOf="@+id/addressTxt"
                             app:layout_constraintTop_toBottomOf="@+id/serviceNumValue" />
 
                         <TextView
                             android:id="@+id/date_from_txt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/paddingText"
+                            android:layout_marginLeft="@dimen/paddingText"
                             android:layout_marginTop="@dimen/paddingText"
                             android:padding="@dimen/paddingText"
                             android:textColor="@color/dark_gray"
                             android:textSize="@dimen/subTextTextSize"
                             android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <!--                <TextView-->
@@ -191,7 +191,7 @@
                 android:textSize="13sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/card_holder"
-                app:layout_constraintEnd_toEndOf="@id/card_holder"
+                app:layout_constraintRight_toRightOf="@id/card_holder"
                 />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -202,7 +202,7 @@
                 android:layout_marginTop="@dimen/paddingLayout"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="@id/equipment_txt"
+                app:layout_constraintRight_toRightOf="@id/equipment_txt"
                 app:layout_constraintTop_toBottomOf="@id/equipment_txt"
                 tools:listitem="@layout/item_details" />
 
@@ -216,7 +216,7 @@
                 android:textSize="13sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/equipmentsRecycle"
-                app:layout_constraintEnd_toEndOf="@id/card_holder"
+                app:layout_constraintRight_toRightOf="@id/card_holder"
                  />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -226,7 +226,7 @@
                 android:layout_marginTop="@dimen/paddingLayout"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="@+id/card_holder"
+                app:layout_constraintRight_toRightOf="@+id/card_holder"
                 app:layout_constraintTop_toBottomOf="@id/workerType_txt"
                 tools:listitem="@layout/item_details" />
 
@@ -239,7 +239,7 @@
                 android:textColor="@color/black"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@id/workerType_txt"
+                app:layout_constraintRight_toRightOf="@id/workerType_txt"
                 app:layout_constraintTop_toBottomOf="@+id/workerTypeRecycle" />
 
             <TextView
@@ -253,7 +253,7 @@
                 android:textColor="@color/dark_gray"
                 android:textSize="@dimen/normalTextSize"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@id/workerTypeRecycle"
+                app:layout_constraintRight_toRightOf="@id/workerTypeRecycle"
                 app:layout_constraintTop_toBottomOf="@+id/notesTxt" />
 
 <!--            <TextView-->
@@ -284,8 +284,8 @@
                 android:textSize="@dimen/newsMoreTextSize"
                 android:layout_width="230dp"
                 android:layout_margin="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/notes_value"
                 android:text="@string/ViewQRCode" />

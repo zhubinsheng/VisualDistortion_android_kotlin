@@ -153,7 +153,7 @@ class ServicesFragment : Fragment() {
                         R.color.teal
                     )
                 )
-                .setActionTextColor(resources.getColor(R.color.white)).setAction("قفل")
+                .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.close))
                 {
                 }.show()
         }
