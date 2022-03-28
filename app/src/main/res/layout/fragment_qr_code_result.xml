@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.qrCodeResult.QrCodeResultFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/img_header"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:background="@color/teal"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card"
+                android:layout_width="350dp"
+                android:layout_height="200dp"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="8dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/title_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/paddingText"
+                        android:padding="@dimen/paddingText"
+                        android:text="الصوره قبل المهمة"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/newsMoreTextSize"
+                        android:layout_gravity="center_horizontal"
+                        />
+                    <com.smarteist.autoimageslider.SliderView
+                        android:id="@+id/imageSlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:sliderAnimationDuration="600"
+                        app:sliderAutoCycleDirection="back_and_forth"
+                        app:sliderAutoCycleEnabled="true"
+                        app:sliderIndicatorAnimationDuration="600"
+                        app:sliderIndicatorMargin="15dp"
+                        app:sliderIndicatorOrientation="horizontal"
+                        app:sliderIndicatorPadding="3dp"
+                        app:sliderIndicatorRadius="2dp"
+                        app:sliderIndicatorSelectedColor="@color/teal"
+                        app:sliderIndicatorUnselectedColor="@color/dark_gray"
+                        app:sliderScrollTimeInSec="1"
+                        app:sliderStartAutoCycle="true" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_holder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_header"
+                app:layout_constraintWidth_percent="0.9">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/rectangle"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/paddingText"
+                    android:weightSum="10">
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="10">
+<!--                        android:padding="@dimen/paddingText">-->
+
+                        <TextView
+                            android:id="@+id/serviceNumTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/paddingText"
+                            android:layout_marginTop="@dimen/paddingLayout"
+                            android:padding="4dp"
+                            android:text="@string/service_Type"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/subHeaderTextSize"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/menetorNameTxt" />
+
+                        <TextView
+                            android:id="@+id/serviceNumValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/paddingLayout"
+                            android:maxWidth="250dp"
+                            android:maxLines="2"
+                            android:padding="4dp"
+                            android:textColor="@color/dark_gray"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/subHeaderTextSize"
+                            android:textStyle="bold"
+                            app:layout_constraintRight_toRightOf="@+id/menetorNameValue"
+                            app:layout_constraintTop_toBottomOf="@+id/menetorNameValue" />
+
+                        <TextView
+                            android:id="@+id/addressTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/paddingLayout"
+                          android:layout_marginBottom="@dimen/paddingLayout"
+                            android:layout_marginRight="@dimen/paddingText"
+                            android:padding="4dp"
+                            android:text="@string/created_date"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/subHeaderTextSize"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/serviceNumTxt" />
+
+                        <TextView
+                            android:id="@+id/addressValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/paddingLayout"
+                            android:layout_marginTop="@dimen/paddingLayout"
+                            android:maxWidth="250dp"
+                            android:padding="4dp"
+                            android:textColor="@color/dark_gray"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/subHeaderTextSize"
+                            android:textStyle="bold"
+                            app:layout_constraintRight_toRightOf="@+id/serviceNumValue"
+                         app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/serviceNumValue" />
+                        <TextView
+                            android:id="@+id/menetorNameTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/paddingText"
+                           android:layout_marginTop="@dimen/paddingLayout"
+                            android:layout_marginBottom="@dimen/paddingLayout"
+                            android:padding="4dp"
+                            android:text="@string/menetor_name"
+                            android:textSize="@dimen/subHeaderTextSize"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+                        <TextView
+                            android:id="@+id/menetorNameValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="27dp"
+                            android:layout_marginTop="@dimen/paddingLayout"
+                            android:maxWidth="250dp"
+                            android:padding="4dp"
+                            android:textColor="@color/dark_gray"
+                            android:textDirection="rtl"
+                            android:textSize="@dimen/subHeaderTextSize"
+                            android:textStyle="bold"
+                            app:layout_constraintRight_toLeftOf="@+id/menetorNameTxt"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+
+                        <!--                <TextView-->
+                        <!--                    android:id="@+id/time_txt"-->
+                        <!--                    android:layout_width="wrap_content"-->
+                        <!--                    android:layout_height="wrap_content"-->
+                        <!--                    android:padding="@dimen/paddingText"-->
+                        <!--                    android:text="15"-->
+                        <!--                    android:textColor="@color/dark_gray"-->
+                        <!--                    android:textSize="@dimen/subTextTextSize"-->
+                        <!--                    android:textStyle="bold"-->
+                        <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+                        <!--                    app:layout_constraintTop_toTopOf="parent" />-->
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <Button
+                android:layout_height="wrap_content"
+                android:id="@+id/viewLocation_btn"
+                android:textColor="@color/white"
+                android:background="@drawable/rectangle_button"
+                android:textStyle="bold"
+                android:layout_marginTop="50dp"
+                android:textSize="@dimen/newsMoreTextSize"
+                android:layout_width="230dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_holder"
+                android:text="@string/ViewLocation" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

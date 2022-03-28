@@ -95,8 +95,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="10">
-                        <!--                android:layout_weight="9"-->
-                        android:padding="@dimen/paddingText">
+
 
                         <TextView
                             android:id="@+id/serviceNumTxt"
