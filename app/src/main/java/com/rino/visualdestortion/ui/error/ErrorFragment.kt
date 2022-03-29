@@ -24,9 +24,6 @@ class ErrorFragment : Fragment() {
     private lateinit var binding: FragmentErrorBinding
     private lateinit var viewModel: ErrorViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
     override fun onResume() {
         super.onResume()
         (activity as MainActivity).bottomNavigation.isGone = true
@@ -50,6 +47,7 @@ class ErrorFragment : Fragment() {
     }
 
     private fun tryAgainOnClick() {
+        binding.textTryAgain.text = getString(R.string.try_again)
         binding.tryAgainImg.setOnClickListener{
             if(NetworkConnection.checkInternetConnection(requireContext())){
                 binding.textTryAgain.text = getString(R.string.connecting)
@@ -75,7 +73,6 @@ class ErrorFragment : Fragment() {
     }
     private fun observeIsPrepared() {
         viewModel.isPrepared.observe(viewLifecycleOwner) {
-            binding.textTryAgain.text = getString(R.string.try_again)
             if (!viewModel.isLogin()){
                 navToWelcome()
             }

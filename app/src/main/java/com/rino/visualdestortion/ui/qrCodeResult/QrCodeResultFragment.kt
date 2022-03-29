@@ -1,21 +1,21 @@
 package com.rino.visualdestortion.ui.qrCodeResult
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.SyncStateContract
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
-import com.rino.visualdestortion.R
+import androidx.core.view.isGone
 import com.rino.visualdestortion.databinding.FragmentQrCodeResultBinding
-import com.rino.visualdestortion.databinding.FragmentServiceDetailsBinding
-import com.rino.visualdestortion.model.pojo.history.ServiceData
-import com.rino.visualdestortion.ui.serviceDetails.ServiceDetailsFragmentDirections
+import com.rino.visualdestortion.ui.home.MainActivity
 import com.rino.visualdestortion.ui.serviceDetails.SliderAdapter
 import com.rino.visualdestortion.ui.serviceDetails.SliderData
+import com.rino.visualdestortion.utils.Constants
 import com.smarteist.autoimageslider.SliderView
 
 class QrCodeResultFragment : Fragment() {
@@ -23,49 +23,71 @@ class QrCodeResultFragment : Fragment() {
     private lateinit var sliderAdapter : SliderAdapter
     private lateinit var binding: FragmentQrCodeResultBinding
     private  lateinit var service: String
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentQrCodeResultBinding.inflate(inflater, container, false)
-        arguments?.let {
-            service = arguments?.get("scanResult").toString()
-            var result = service.lines()
-            Log.e("scan result",result.size.toString())
-            setUpUI(result)
-
-        }
+        init()
         return binding.root
     }
     override fun onResume() {
         super.onResume()
+        (activity as MainActivity).bottomNavigation.isGone = true
         binding.imageSlider.startAutoCycle()
     }
-    private fun setUpUI(result: List<String>) {
+    private fun init(){
+        arguments?.let {
+            service = arguments?.get("scanResult").toString()
+            var result = service.split("\r?\n|\r".toRegex()).toTypedArray()
+            val resultList = listOf(*result)
+            Log.e("scan result",resultList.toString())
+            setUpData(resultList)
 
-
+        }
+    }
+    @SuppressLint("SetTextI18n")
+    private fun setUpData(result: List<String>) {
         val createdBy    =  result[0].split(":")
-        val createdDate  =  result[1].split(":")
-        val serviceName  =  result[2].split(":")
-        val beforeImgUrl =  result[3].split(":")
-        val afterImgUrl  =  result[4].split(":")
-        val locationUrl  =  result[5].split(":")
-
+        val createdDate  =  result[3].split(":")
+        val serviceName  =  result[6].split(":")
+        val beforeImgUrl =  result[9].split(":")
+        val afterImgUrl  =  result[12].split(":")
+        val locationUrl  =  result[15].split(":")
         binding.menetorNameValue.text = createdBy[1]
-        binding.addressValue.text = createdDate[1]
-        binding.serviceNumValue.text = serviceName[1]
+        setCreatedDateToUI(createdDate)
+        setServiceName(serviceName[1])
 
         binding.viewLocationBtn.setOnClickListener{
-            navToLocationInMap(locationUrl[1])
+            navToLocationInMap(locationUrl[1].replace(" ","")+":"+locationUrl[2])
         }
+        setUpSlider(beforeImgUrl,afterImgUrl)
+    }
 
-        sliderDataArrayList= arrayListOf(SliderData(beforeImgUrl[1],"الصورة قبل المهمة"),
-            SliderData(afterImgUrl[1],"الصورة بعد المهمة"))
+    private fun setServiceName(serviceName: String) {
+        Log.e("serviceName@",serviceName)
+        val serviceNameAr = when(serviceName){
+            " StreetVendors "  -> "الباعة الجائلين"
+            " BannedSunshades " -> "المظلات المخالفة"
+            " BannedSigns " -> "اللوحات المخالفة"
+            " BannedPosters " -> "الملصقات الدعائية"
+            " BannedGraffiti " -> "الكتابات المشوهة"
+            " DemolitionWaste " -> "مخلفات الهدم"
+            else -> ""
+        }
+        binding.serviceNumValue.text =serviceName
+    }
+
+    private fun setCreatedDateToUI(createdDate: List<String>) {
+       val createdDateAr= Constants.convertNumsToArabic("${createdDate[1]} : ${createdDate[2]} : ${createdDate[3]}")
+        binding.addressValue.text = createdDateAr.reversed()
+    }
+
+
+    private fun setUpSlider(beforeImgUrl: List<String>, afterImgUrl: List<String>) {
+        sliderDataArrayList= arrayListOf(SliderData(beforeImgUrl[1].replace(" ","")+":"+beforeImgUrl[2],"الصورة قبل المهمة"),
+            SliderData(afterImgUrl[1].replace(" ","")+":"+afterImgUrl[2],"الصورة بعد المهمة"))
         binding.imageSlider.autoCycleDirection = SliderView.LAYOUT_DIRECTION_RTL
         sliderAdapter = SliderAdapter(requireContext(),sliderDataArrayList)
         binding.imageSlider.setSliderAdapter(sliderAdapter)
@@ -82,6 +104,6 @@ class QrCodeResultFragment : Fragment() {
 
     private fun navToLocationInMap(locationUrl: String) {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(locationUrl))
-        startActivity(browserIntent)
+        requireActivity().startActivity(browserIntent)
     }
 }

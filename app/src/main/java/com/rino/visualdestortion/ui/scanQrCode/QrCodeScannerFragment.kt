@@ -28,9 +28,6 @@ import okhttp3.Dispatcher
 class QrCodeScannerFragment : Fragment() {
     private lateinit var codeScanner: CodeScanner
     private lateinit var binding: FragmentQrCodeScannerBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,6 +59,8 @@ class QrCodeScannerFragment : Fragment() {
                     }
                     else{
                         codeScanner.releaseResources()
+                        codeScanner.stopPreview()
+                        codeScanner.startPreview()
                         showMessage(getString(R.string.wrong_qr_code))
                     }
                 }
@@ -102,7 +101,7 @@ class QrCodeScannerFragment : Fragment() {
     }
 
     private fun navToQrCodeResult(qrCodeUrl: String) {
-        val action = QrCodeScannerFragmentDirections.actionScannerToResultQrCode(qrCodeUrl?:"")
+        val action = QrCodeScannerFragmentDirections.actionScannerToResultQrCode(qrCodeUrl)
         findNavController().navigate(action)
     }
 
