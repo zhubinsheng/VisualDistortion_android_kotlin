@@ -67,16 +67,16 @@ class QrCodeResultFragment : Fragment() {
 
     private fun setServiceName(serviceName: String) {
         Log.e("serviceName@",serviceName)
-        val serviceNameAr = when(serviceName){
-            " StreetVendors "  -> "الباعة الجائلين"
-            " BannedSunshades " -> "المظلات المخالفة"
-            " BannedSigns " -> "اللوحات المخالفة"
-            " BannedPosters " -> "الملصقات الدعائية"
-            " BannedGraffiti " -> "الكتابات المشوهة"
-            " DemolitionWaste " -> "مخلفات الهدم"
+        val serviceNameAr = when(serviceName.replace(" ","")){
+            "StreetVendors"  -> "الباعة الجائلين"
+            "BannedSunshades" -> "المظلات المخالفة"
+            "BannedSigns" -> "اللوحات المخالفة"
+            "BannedPosters" -> "الملصقات الدعائية"
+            "BannedGraffiti" -> "الكتابات المشوهة"
+            "DemolitionWaste" -> "مخلفات الهدم"
             else -> ""
         }
-        binding.serviceNumValue.text =serviceName
+        binding.serviceNumValue.text = serviceNameAr
     }
 
     private fun setCreatedDateToUI(createdDate: List<String>) {

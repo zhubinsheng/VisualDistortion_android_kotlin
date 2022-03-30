@@ -12,12 +12,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.budiyev.android.codescanner.*
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentQrCodeScannerBinding
+import com.rino.visualdestortion.ui.home.MainActivity
 import com.rino.visualdestortion.ui.serviceDetails.ServiceDetailsFragmentDirections
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -92,6 +94,7 @@ class QrCodeScannerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        (activity as MainActivity).bottomNavigation.isGone = false
         codeScanner.startPreview()
     }
 

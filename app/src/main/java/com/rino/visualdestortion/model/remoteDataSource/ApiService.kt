@@ -6,10 +6,7 @@ import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
 import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
-import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
-import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
-import com.rino.visualdestortion.model.pojo.history.SearchResponse
-import com.rino.visualdestortion.model.pojo.history.ServiceData
+import com.rino.visualdestortion.model.pojo.history.*
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -71,8 +68,8 @@ interface ApiService {
     @GET("api/History/GetServiceTypeHistory/{serviceTypeId}")
     suspend fun getHistoryDataByService(@Header("Authorization") auth: String, @Path("serviceTypeId") serviceTypeId: Int, @Query("pageNumber") pageNumber:Int ,@Query("period") period:String ): Response<HistoryByServiceIdResponse>
 
-    @POST("api/History/SearchByServiceId/{taskNumber}")
-    suspend fun searchHistoryDataByService(@Header("Authorization") auth: String, @Path("taskNumber") taskNumber: String ): Response<SearchResponse>
+    @POST("api/History/SearchByServiceId")
+    suspend fun searchHistoryDataByService(@Header("Authorization") auth: String, @Body searchRequest: SearchRequest ): Response<SearchResponse>
 
 
     @GET("api/DailyPreparations/isPrepared")

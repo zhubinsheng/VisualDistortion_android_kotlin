@@ -15,10 +15,7 @@ import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
 import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
-import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
-import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
-import com.rino.visualdestortion.model.pojo.history.SearchResponse
-import com.rino.visualdestortion.model.pojo.history.ServiceData
+import com.rino.visualdestortion.model.pojo.history.*
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -263,7 +260,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Result $result")
             } else {
-                Log.i("ModelRepository", "Error${response.message().toString()}")
+                Log.i("ModelRepository", "Error${response.message()}")
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
@@ -442,11 +439,11 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         return result
     }
 
-    override suspend fun searchHistoryDataByService(taskNumber: String): Result<SearchResponse?> {
+    override suspend fun searchHistoryDataByService(searchRequest: SearchRequest): Result<SearchResponse?> {
         var result: Result<SearchResponse?> = Result.Loading
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
-            val response = apiDataSource.searchHistoryDataByService("Bearer "+getToken(),taskNumber)
+            val response = apiDataSource.searchHistoryDataByService("Bearer "+getToken(),searchRequest)
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Resulttt $result")

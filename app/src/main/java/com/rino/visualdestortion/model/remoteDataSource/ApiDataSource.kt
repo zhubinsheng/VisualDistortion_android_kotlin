@@ -7,10 +7,7 @@ import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
 import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
-import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
-import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
-import com.rino.visualdestortion.model.pojo.history.SearchResponse
-import com.rino.visualdestortion.model.pojo.history.ServiceData
+import com.rino.visualdestortion.model.pojo.history.*
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -21,7 +18,6 @@ import com.rino.visualdestortion.model.pojo.resetPassword.ResponseOTP
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.create
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 
@@ -50,17 +46,21 @@ class ApiDataSource:ApiInterface {
     override suspend fun setServiceForm(auth:String, serviceForm: FormData): Response<QRCode?>? {
         Log.e("ApiDataSource",serviceForm.beforeImg.toString())
         Log.e("ApiDataSource",serviceForm.afterImg.toString())
-        val serviceTypeIdBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.serviceTypeId)
-        val sectorNameBody:RequestBody    = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.sectorName)
-        val municipalityNameBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.municipalityName)
-        val districtNameBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.districtName)
-        val streetNameBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.streetName)
-        val latBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.lat)
-        val lngBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.lng)
+        val serviceTypeIdBody:RequestBody =
+            serviceForm.serviceTypeId.toRequestBody("text/plain".toMediaTypeOrNull())
+        val sectorNameBody:RequestBody    =
+            serviceForm.sectorName.toRequestBody("text/plain".toMediaTypeOrNull())
+        val municipalityNameBody:RequestBody =
+            serviceForm.municipalityName.toRequestBody("text/plain".toMediaTypeOrNull())
+        val districtNameBody:RequestBody =
+            serviceForm.districtName.toRequestBody("text/plain".toMediaTypeOrNull())
+        val streetNameBody:RequestBody =
+            serviceForm.streetName.toRequestBody("text/plain".toMediaTypeOrNull())
+        val latBody:RequestBody = serviceForm.lat.toRequestBody("text/plain".toMediaTypeOrNull())
+        val lngBody:RequestBody = serviceForm.lng.toRequestBody("text/plain".toMediaTypeOrNull())
         val notesBody: RequestBody? = serviceForm.notes?.let {
-            RequestBody.create("text/plain".toMediaTypeOrNull(),
-                it
-            )
+            it
+                .toRequestBody("text/plain".toMediaTypeOrNull())
         }
     //    val percentageBody:RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), serviceForm.percentage)
 
@@ -111,9 +111,9 @@ class ApiDataSource:ApiInterface {
 
     override suspend fun searchHistoryDataByService(
         auth: String,
-        taskNumber: String
+        searchRequest: SearchRequest
     ): Response<SearchResponse> {
-       return retrofit.searchHistoryDataByService(auth,taskNumber)
+       return retrofit.searchHistoryDataByService(auth,searchRequest)
     }
 
     override suspend fun isDailyPrepared(auth: String): Response<CheckDailyPreparationResponse> {

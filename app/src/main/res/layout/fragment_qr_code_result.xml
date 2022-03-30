@@ -25,7 +25,7 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card"
-                android:layout_width="350dp"
+                android:layout_width="270dp"
                 android:layout_height="200dp"
                 android:layout_margin="16dp"
                 app:cardCornerRadius="6dp"
@@ -121,7 +121,7 @@
                             android:textSize="@dimen/newsMoreTextSize"
                             android:textStyle="bold"
                             app:layout_constraintRight_toLeftOf="@+id/serviceNumTxt"
-                            app:layout_constraintTop_toBottomOf="@+id/menetorNameValue" />
+                            app:layout_constraintTop_toBottomOf="@+id/menetorNameTxt" />
 
                         <TextView
                             android:id="@+id/addressTxt"
@@ -152,8 +152,8 @@
                             android:textSize="@dimen/newsMoreTextSize"
                             android:textStyle="bold"
                             app:layout_constraintRight_toLeftOf="@id/addressTxt"
-                         app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/serviceNumValue" />
+                            app:layout_constraintBottom_toBottomOf="parent"
+                           />
                         <TextView
                             android:id="@+id/menetorNameTxt"
                             android:layout_width="100dp"

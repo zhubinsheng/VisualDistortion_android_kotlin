@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentHistoryByServiceTypeBinding
 import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
+import com.rino.visualdestortion.model.pojo.history.SearchRequest
 import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.ui.AddService.StreetAdapter
 import com.rino.visualdestortion.ui.home.MainActivity
@@ -73,11 +74,7 @@ class HistoryByServiceTypeFragment : Fragment() {
         historyAdapter.updateItems(emptyList())
 
     }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//        checkNetwork(serviceId)
-//        registerConnectivityNetworkMonitor()
-    }
+
     private fun observeData() {
         observeHistoryData()
         observeSearchHistoryData()
@@ -185,8 +182,8 @@ class HistoryByServiceTypeFragment : Fragment() {
         binding.mSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-
-                    viewModel.searchHistoryDataByService(Constants.convertNumsToEnglish(query))
+                val taskNum = Constants.convertNumsToEnglish(query).toInt()
+                    viewModel.searchHistoryDataByService(SearchRequest(taskNum,serviceId))
                 }
                 return false
             }

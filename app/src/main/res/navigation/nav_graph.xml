@@ -261,8 +261,7 @@
         <action
             android:id="@+id/action_scanner_to_result_QrCode"
             app:destination="@id/qrCodeResultFragment"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true" />
+          />
     </fragment>
     <fragment
         android:id="@+id/qrCodeResultFragment"

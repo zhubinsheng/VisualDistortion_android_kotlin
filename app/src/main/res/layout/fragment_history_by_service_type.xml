@@ -16,9 +16,10 @@
     <androidx.appcompat.widget.SearchView
         android:id="@+id/mSearch"
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="50dp"
         android:queryHint="@string/search_hint"
         app:defaultQueryHint="@string/search_hint"
+        android:inputType="number"
         android:iconifiedByDefault="false"
         android:layout_margin="8dp"
         android:layoutDirection="ltr"
