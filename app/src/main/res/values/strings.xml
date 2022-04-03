@@ -83,11 +83,9 @@
     <string name="privacy_policy">سياسة الخصوصية</string>
     <string name="gallery">الاستوديو</string>
     <string name="camera">الكاميرا</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="service_Type">نوع الخدمة</string>
     <string name="created_date">تاريخ الانشاء</string>
-    <string name="menetor_name">اسم المراقب</string>
+    <string name="menetor_name">البريد الالكترونى</string>
     <string name="ViewLocation">عرض الموقع</string>
     <string name="wrong_qr_code">رقم تكويدى خاطئ</string>
 

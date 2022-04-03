@@ -170,6 +170,7 @@ class HistoryByServiceTypeFragment : Fragment() {
         (activity as MainActivity).bottomNavigation.isGone = true
       //  checkNetwork(serviceId)
         registerConnectivityNetworkMonitor()
+        setPeriodTimeMenuItems()
     }
 
     private fun setUpUI() {
@@ -193,7 +194,7 @@ class HistoryByServiceTypeFragment : Fragment() {
                 return false
             }
         })
-        setPeriodTimeMenuItems()
+  //      setPeriodTimeMenuItems()
         setupPagination()
 
     }
