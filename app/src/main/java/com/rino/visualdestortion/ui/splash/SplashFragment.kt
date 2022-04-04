@@ -1,10 +1,6 @@
 package com.rino.visualdestortion.ui.splash
 
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkRequest
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,7 +10,6 @@ import android.view.animation.AnimationUtils
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentSplashBinding
 import com.rino.visualdestortion.ui.home.MainActivity
@@ -29,10 +24,6 @@ class SplashFragment : Fragment() {
     private val SPLASH_TIME_OUT = 3000L
     private lateinit var binding: FragmentSplashBinding
     private lateinit var viewModel: SplashViewModel
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onResume() {
         super.onResume()
