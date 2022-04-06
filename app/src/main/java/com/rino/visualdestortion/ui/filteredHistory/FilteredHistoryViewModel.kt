@@ -20,6 +20,10 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
     private var _getHistoryData = MutableLiveData<HistoryByServiceIdResponse?>()
     private var _getSearchHistoryData = MutableLiveData<SearchResponse?>()
     private var _navToSeeAll: MutableLiveData<String> = MutableLiveData()
+    private var _navToTaskDetails: MutableLiveData<ServiceData> = MutableLiveData()
+
+    val navToTaskDetails: LiveData<ServiceData>
+        get() = _navToTaskDetails
 
     val navToSeeAll: LiveData<String>
         get() = _navToSeeAll
@@ -40,10 +44,15 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
     {
         _navToSeeAll.value = period
     }
+
+    fun navToServiceDetails(serviceData: ServiceData) {
+       _navToTaskDetails.value = serviceData
+    }
+
     fun getHistoryData(serviceID:Int, period :String = "all") {
         // _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
-            when (val result = modelRepository.getHistoryDataByService(serviceID,period)) {
+            when (val result = modelRepository.getFilteredHistory(serviceID,period)) {
                 is Result.Success -> {
                     // _loading.postValue(View.GONE)
                     Log.i("getHistoryData:", "${result.data}")
@@ -64,6 +73,7 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
             }
         }
     }
+
     fun searchHistoryDataByService(searchRequest: SearchRequest) {
         // _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
@@ -89,7 +99,9 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
         }
 
     }
+
     fun viewLoading(loading:Int){
         _loading.value = loading
     }
+
 }

@@ -37,6 +37,8 @@ interface RemoteRepo {
 
       suspend fun getHistoryData(): Result<AllHistoryResponse?>
 
+      suspend fun getFilteredHistory(serviceTypeId: Int, period:String): Result<HistoryByServiceIdResponse?>
+
       suspend fun getHistoryDataByService(serviceTypeId: Int,pageNumber:Int ,period:String ): Result<HistoryByServiceIdResponse?>
 
       suspend fun searchHistoryDataByService(searchRequest: SearchRequest): Result<SearchResponse?>

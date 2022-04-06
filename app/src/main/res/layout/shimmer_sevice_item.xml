@@ -38,7 +38,7 @@
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/date_txt" />
+                   app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/serviceNumValue"
@@ -50,12 +50,13 @@
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     app:layout_constraintRight_toLeftOf="@+id/serviceNumTxt"
-                    app:layout_constraintTop_toBottomOf="@+id/date_txt" />
+                 app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/date_txt"
                     android:layout_width="30dp"
                     android:layout_height="15dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginLeft="@dimen/paddingText"
                     android:padding="@dimen/paddingText"
                     android:background="@color/shimmer_placeholder"
@@ -92,12 +93,13 @@
                     android:id="@+id/addressValue"
                     android:layout_width="70dp"
                     android:layout_height="15dp"
+                    android:layout_margin="@dimen/paddingText"
                     android:background="@color/shimmer_placeholder"
                     android:padding="@dimen/paddingText"
-                    android:layout_margin="@dimen/paddingText"
                     android:textColor="@color/dark_gray"
                     android:textSize="13sp"
                     app:layout_constraintRight_toLeftOf="@+id/address_txt"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/serviceNumValue" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

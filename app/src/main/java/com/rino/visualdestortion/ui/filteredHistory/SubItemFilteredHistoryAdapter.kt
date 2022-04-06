@@ -1,4 +1,4 @@
-package com.rino.visualdestortion.ui.historyByServiceType
+package com.rino.visualdestortion.ui.filteredHistory
 
 import android.app.AlertDialog
 import android.content.Context
@@ -6,15 +6,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.R
-import com.rino.visualdestortion.databinding.ServiceHistoryItemBinding
 import com.rino.visualdestortion.databinding.SubFilteredHistoryItemBinding
 import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.utils.Constants
 
-import kotlin.collections.ArrayList
-
-class HistoryByServiceAdapter (private var historyList: ArrayList<ServiceData>,
-                               private val historyViewModel: HistoryByServiceViewModel, private val context: Context) : RecyclerView.Adapter<HistoryByServiceAdapter.HistoryViewHolder>() {
+class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<ServiceData>,
+                                      private val historyViewModel: FilteredHistoryViewModel, private val context: Context
+) : RecyclerView.Adapter<SubItemFilteredHistoryAdapter.HistoryViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -37,12 +35,12 @@ class HistoryByServiceAdapter (private var historyList: ArrayList<ServiceData>,
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         holder.binding.serviceNumValue.text = Constants.convertNumsToArabic(historyList[position].serviceNumber.toString())
         holder.binding.dateFromTxt.text     = Constants.convertNumsToArabic(historyList[position].createdDate?:"")
-  //      holder.binding.timeTxt.text         = historyList[position].createdDate?: "00/00/00 00:00".split(" ").toList()[1]
+        //      holder.binding.timeTxt.text         = historyList[position].createdDate?: "00/00/00 00:00".split(" ").toList()[1]
         holder.binding.card.setOnClickListener {
-         historyViewModel.navToServiceDetails(historyList[position])
+            historyViewModel.navToServiceDetails(historyList[position])
         }
         holder.binding.addressTxt.setOnClickListener {
-         showDialog(historyList[position].fullLocation)
+            showDialog(historyList[position].fullLocation)
         }
         holder.binding.locationTxt.setOnClickListener {
             showDialog(historyList[position].fullLocation)
@@ -65,7 +63,7 @@ class HistoryByServiceAdapter (private var historyList: ArrayList<ServiceData>,
 
 
     fun updateItems(newList: List<ServiceData>) {
-   //     historyList.clear()
+        //     historyList.clear()
         historyList.addAll(newList)
         notifyDataSetChanged()
     }
@@ -73,7 +71,7 @@ class HistoryByServiceAdapter (private var historyList: ArrayList<ServiceData>,
         historyList.clear()
         notifyDataSetChanged()
     }
-    inner class HistoryViewHolder(val binding:  SubFilteredHistoryItemBinding) :
+    inner class HistoryViewHolder(val binding: SubFilteredHistoryItemBinding) :
         RecyclerView.ViewHolder(binding.root)
 
 }

@@ -35,8 +35,6 @@ class HistoryByServiceTypeFragment : Fragment() {
     private lateinit var binding: FragmentHistoryByServiceTypeBinding
     private lateinit var historyAdapter: HistoryByServiceAdapter
     private lateinit var historyList: ArrayList<ServiceData>
-    private lateinit var periodTimeList_ar: ArrayList<String>
-    private lateinit var periodTimeList_en: ArrayList<String>
     private lateinit var historyByServiceIdResponse: HistoryByServiceIdResponse
     private var selectedPeriod = "all"
     private var serviceId = 1
@@ -46,6 +44,7 @@ class HistoryByServiceTypeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             serviceId = arguments?.get("serviceID").toString().toInt()
+            selectedPeriod = arguments?.get("period").toString()
         }
     }
 
@@ -59,13 +58,11 @@ class HistoryByServiceTypeFragment : Fragment() {
     }
 
     private fun init() {
-        periodTimeList_ar = arrayListOf(" الكل "," الاسبوع الحالى "," الاسبوع السابق "," الشهر الحالى "," الشهر السابق "," السنة الحالية "," السنة السابقة "," منذ عامين ")
-        periodTimeList_en = arrayListOf("all","week","lastweek","month","lastmonth","year","lastyear","twoyearsago")
         binding.shimmer.startShimmer()
         binding.historyRecycle.visibility = View.GONE
         viewModel = HistoryByServiceViewModel(requireActivity().application)
         historyList = arrayListOf()
-        historyAdapter = HistoryByServiceAdapter(historyList, viewModel)
+        historyAdapter = HistoryByServiceAdapter(historyList, viewModel,requireContext())
         historyAdapter.updateItems(historyList)
         setUpUI()
 //        checkNetwork(serviceId)
@@ -170,7 +167,7 @@ class HistoryByServiceTypeFragment : Fragment() {
         (activity as MainActivity).bottomNavigation.isGone = true
       //  checkNetwork(serviceId)
         registerConnectivityNetworkMonitor()
-        setPeriodTimeMenuItems()
+     //   setPeriodTimeMenuItems()
     }
 
     private fun setUpUI() {
@@ -180,6 +177,8 @@ class HistoryByServiceTypeFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = historyAdapter
         }
+        binding.serviceTitle.text = Constants.getServaceNameAr(serviceId)
+        binding.periodTxt.text = selectedPeriod
         binding.mSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
@@ -226,29 +225,6 @@ class HistoryByServiceTypeFragment : Fragment() {
         })
     }
 
-    private fun setPeriodTimeMenuItems() {
-        binding.periodTimeTextView.setText(R.string.period_time)
-
-        val adapter = ArrayAdapter(
-            requireContext(), R.layout.dropdown_item,
-            periodTimeList_ar
-        )
-        binding.periodTimeTextView.setAdapter(adapter)
-        binding.periodTimeTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, _, position, id ->
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                historyAdapter.clearList()
-                page = 1
-                val index = periodTimeList_ar.indexOf(selectedItem)
-                selectedPeriod = periodTimeList_en[index]
-                if (NetworkConnection.checkInternetConnection(requireContext())) {
-                    viewModel.getHistoryData(serviceId, page, periodTimeList_en[index])
-                }
-                else{
-                    showMessage()
-                }
-            }
-    }
 
     private fun showMessage() {
         lifecycleScope.launchWhenResumed {

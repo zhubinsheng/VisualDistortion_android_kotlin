@@ -7,23 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FilteredItemBinding
-import com.rino.visualdestortion.model.pojo.dailyPraperation.PrepEquipments
-import com.rino.visualdestortion.model.pojo.history.NavToSeeAll
 import com.rino.visualdestortion.model.pojo.history.ServiceData
 
 
 class FilteredHistoryAdapter (private var filteredHistoryList: ArrayList<ServiceData>,
                               private val historyViewModel: FilteredHistoryViewModel,private val context: Context
 ) : RecyclerView.Adapter<FilteredHistoryAdapter.FilteredHistoryViewHolder>() {
-    private lateinit var historyAdapter: FilteredHistoryAdapter
-    private lateinit var historyList: ArrayList<ServiceData>
+    private lateinit var historyAdapter: SubItemFilteredHistoryAdapter
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
 
     ): FilteredHistoryViewHolder {
+        historyAdapter = SubItemFilteredHistoryAdapter(arrayListOf(),historyViewModel,context)
         return FilteredHistoryViewHolder(
             FilteredItemBinding.inflate(
                 LayoutInflater.from(parent.context),

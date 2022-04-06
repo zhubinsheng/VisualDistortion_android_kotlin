@@ -1,6 +1,5 @@
 package com.rino.visualdestortion.utils
 object Constants {
-    const val BASE_URL1 = "https://13fb-102-42-181-124.ngrok.io/"
     const val BASE_URL = "https://amanat-jeddah-staging.azurewebsites.net/"
 
     fun convertNumsToArabic(value: String): String {
@@ -17,5 +16,17 @@ object Constants {
             .replace("٥","5").replace("٦", "6")
             .replace( "٧", "7").replace("٨", "8")
             .replace("٩", "9").replace( "٠","0"))
+    }
+    fun getServaceNameAr(id: Int): String {
+        val serviceNameAr = when(id){
+            1  -> "الباعة الجائلين"
+            2 -> "المظلات المخالفة"
+            3 -> "اللوحات المخالفة"
+            4 -> "الملصقات الدعائية"
+            5 -> "الكتابات المشوهة"
+            6 -> "مخلفات الهدم"
+            else -> ""
+        }
+        return  serviceNameAr
     }
 }

@@ -291,7 +291,7 @@
             />
         <action
         android:id="@+id/action_filtered_history_to_history_by_service"
-        app:destination="@id/serviceDetailsFragment"
+        app:destination="@id/historyByServiceTypeFragment"
         />
     </fragment>
 </navigation>

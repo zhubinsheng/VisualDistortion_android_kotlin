@@ -66,7 +66,7 @@ class FilteredHistotyFragment : Fragment() {
         binding.historyRecycle.visibility = View.GONE
         viewModel = FilteredHistoryViewModel(requireActivity().application)
         historyList = arrayListOf()
-        historyAdapter = FilteredHistoryAdapter(historyList, viewModel)
+        historyAdapter = FilteredHistoryAdapter(historyList, viewModel,requireContext())
         historyAdapter.updateItems(historyList)
         setUpUI()
 //        checkNetwork(serviceId)
@@ -80,6 +80,7 @@ class FilteredHistotyFragment : Fragment() {
         observeHistoryData()
         observeSearchHistoryData()
         observeNavToService()
+        observeNavToServiceDetails()
       //  observeLoading()
         observeShowError()
     }
@@ -136,6 +137,14 @@ class FilteredHistotyFragment : Fragment() {
         }
     }
 
+    private fun observeNavToServiceDetails() {
+        viewModel.navToTaskDetails.observe(viewLifecycleOwner) {
+            it?.let {
+                navToServiceDetails(it)
+            }
+        }
+    }
+
     private fun navToServiceDetails(serviceData: ServiceData) {
         val action = HistoryByServiceTypeFragmentDirections.actionHistoryByIDToServiceDetails(serviceData)
         findNavController().navigate(action)
@@ -143,14 +152,14 @@ class FilteredHistotyFragment : Fragment() {
 
 
     private fun navToSeeAll(period: String) {
-        val action = FilteredHistotyFragmentDirections.actionFilteredHistoryToHistoryByService(period,serviceId)
+        val action = FilteredHistotyFragmentDirections.actionFilteredHistoryToHistoryByService(period,serviceId.toString())
         findNavController().navigate(action)
     }
 
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-                if(it.equals("Bad Request")) {
+                if(it.equals("No content")) {
                     binding.shimmer.stopShimmer()
                     binding.shimmer.visibility = View.GONE
                     binding.historyRecycle.visibility = View.GONE
@@ -164,7 +173,7 @@ class FilteredHistotyFragment : Fragment() {
                                 R.color.teal
                             )
                         )
-                        .setActionTextColor(resources.getColor(R.color.white)).setAction("Ok")
+                        .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.cancel))
                         {
                         }.show()
                 }
@@ -187,6 +196,7 @@ class FilteredHistotyFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = historyAdapter
         }
+        binding.serviceTitle.text = Constants.getServaceNameAr(serviceId)
         binding.mSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {

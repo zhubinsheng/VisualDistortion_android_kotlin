@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/ARG project/VisualDistortion/app/src/main/res/layout/filtered_item.xml" value="0.358695652173913" />
+        <entry key="..\:/ARG project/VisualDistortion/app/src/main/res/layout/fragment_filtered_histoty.xml" value="0.35260416666666666" />
+        <entry key="..\:/ARG project/VisualDistortion/app/src/main/res/layout/fragment_history_by_service_type.xml" value="0.29473225946887244" />
+        <entry key="..\:/ARG project/VisualDistortion/app/src/main/res/layout/shimmer_sevice_item.xml" value="0.358695652173913" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/drawable/card.xml" value="0.196" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/card_details.xml" value="0.35280797101449274" />
         <entry key="..\:/android projects/amanet_jada/app/src/main/res/layout/equipment_item.xml" value="0.35280797101449274" />
@@ -38,12 +42,5 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
-  </component>
-  <component name="VisualizationToolProject">
-    <option name="state">
-      <ProjectState>
-        <option name="scale" value="0.2053182214472537" />
-      </ProjectState>
-    </option>
   </component>
 </project>

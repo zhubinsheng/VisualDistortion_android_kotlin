@@ -100,6 +100,14 @@ class ApiDataSource:ApiInterface {
         return retrofit.getHistoryData(auth)
     }
 
+    override suspend fun getFilteredHistory(
+        auth: String,
+        serviceTypeId: Int,
+        period: String
+    ): Response<HistoryByServiceIdResponse> {
+       return retrofit.getFilteredHistory(auth, serviceTypeId, period)
+    }
+
     override suspend fun getHistoryDataByService(
         auth: String,
         serviceTypeId: Int,

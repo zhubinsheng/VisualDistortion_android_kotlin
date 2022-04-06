@@ -65,6 +65,9 @@ interface ApiService {
     @GET("api/History/GetServiceTypeHistory")
     suspend fun getHistoryData( @Header("Authorization") auth: String): Response<AllHistoryResponse>
 
+    @GET("api/History/GetServiceTypeHistory/{ServiceTypeId}")
+    suspend fun getFilteredHistory(@Header("Authorization") auth: String, @Path("serviceTypeId") serviceTypeId: Int,@Query("period") period:String ): Response<HistoryByServiceIdResponse>
+
     @GET("api/History/GetServiceTypeHistory/{serviceTypeId}")
     suspend fun getHistoryDataByService(@Header("Authorization") auth: String, @Path("serviceTypeId") serviceTypeId: Int, @Query("pageNumber") pageNumber:Int ,@Query("period") period:String ): Response<HistoryByServiceIdResponse>
 
