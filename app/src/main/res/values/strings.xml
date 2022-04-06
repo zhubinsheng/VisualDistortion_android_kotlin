@@ -92,6 +92,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="show_all">عرض الكل</string>
     <string name="day">اليوم</string>
+    <string name="full_address">"العنوان "</string>
 
 
 </resources>

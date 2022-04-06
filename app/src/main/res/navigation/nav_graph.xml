@@ -95,7 +95,7 @@
         tools:layout="@layout/fragment_history" >
         <action
             android:id="@+id/action_history_to_historyByID"
-            app:destination="@id/historyByServiceTypeFragment"
+            app:destination="@id/filteredHistotyFragment"
             />
     </fragment>
     <fragment
@@ -212,6 +212,10 @@
             android:name="serviceID"
             app:argType="string"
             android:defaultValue="1"/>
+        <argument
+            android:name="period"
+            app:argType="string"
+            android:defaultValue=""/>
         <action
             android:id="@+id/action_historyByID_to_serviceDetails"
             app:destination="@id/serviceDetailsFragment"
@@ -271,5 +275,23 @@
             android:name="scanResult"
             app:argType="string"
             android:defaultValue=""/>
+    </fragment>
+    <fragment
+        android:id="@+id/filteredHistotyFragment"
+        android:name="com.rino.visualdestortion.ui.filteredHistory.FilteredHistotyFragment"
+        android:label="fragment_filtered_histoty"
+        tools:layout="@layout/fragment_filtered_histoty" >
+        <argument
+            android:name="serviceID"
+            app:argType="string"
+            android:defaultValue="1"/>
+        <action
+            android:id="@+id/action_historyByID_to_serviceDetails"
+            app:destination="@id/serviceDetailsFragment"
+            />
+        <action
+        android:id="@+id/action_filtered_history_to_history_by_service"
+        app:destination="@id/serviceDetailsFragment"
+        />
     </fragment>
 </navigation>
