@@ -15,10 +15,7 @@ import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
 import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
-import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
-import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
-import com.rino.visualdestortion.model.pojo.history.SearchRequest
-import com.rino.visualdestortion.model.pojo.history.SearchResponse
+import com.rino.visualdestortion.model.pojo.history.*
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -488,8 +485,8 @@ class ModelRepo(application: Application) : RemoteRepo, LocalRepo {
     override suspend fun getFilteredHistory(
         serviceTypeId: Int,
         period: String
-    ): Result<HistoryByServiceIdResponse?> {
-        var result: Result<HistoryByServiceIdResponse?> = Result.Loading
+    ): Result<FilteredHistoryResponse?> {
+        var result: Result<FilteredHistoryResponse?> = Result.Loading
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
             val response = apiDataSource.getFilteredHistory(

@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.databinding.FilteredItemBinding
+import com.rino.visualdestortion.model.pojo.history.Data
+import com.rino.visualdestortion.model.pojo.history.Items
 import com.rino.visualdestortion.model.pojo.history.ServiceData
+import com.rino.visualdestortion.utils.Constants
 
 
-class FilteredHistoryAdapter (private var filteredHistoryList: ArrayList<ServiceData>,
+class FilteredHistoryAdapter (private var filteredHistoryList: ArrayList<Data>,
                               private val historyViewModel: FilteredHistoryViewModel,private val context: Context
 ) : RecyclerView.Adapter<FilteredHistoryAdapter.FilteredHistoryViewHolder>() {
     private lateinit var historyAdapter: SubItemFilteredHistoryAdapter
@@ -35,14 +38,17 @@ class FilteredHistoryAdapter (private var filteredHistoryList: ArrayList<Service
     }
 
     override fun onBindViewHolder(holder: FilteredHistoryViewHolder, position: Int) {
-//        holder.binding.serviceNumValue.text = Constants.convertNumsToArabic(historyList[position].serviceNumber.toString())
-//        holder.binding.addressValue.text    = historyList[position].fullLocation
-//        holder.binding.dateFromTxt.text     = Constants.convertNumsToArabic(historyList[position].createdDate?:"")
+        val temp = filteredHistoryList[position]
+        holder.binding.periodTxt.text = temp.title
+        holder.binding.periodValue.text = temp.period
+        holder.binding.taskNumTxt.text = Constants.convertNumsToArabic(temp.count.toString())
+
         holder.binding.historyRecycle.visibility = View.VISIBLE
         holder.binding.historyRecycle.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = historyAdapter
         }
+        historyAdapter.updateItems(temp.items)
         holder.binding.showAllTxt.setOnClickListener {
             historyViewModel.navToSeeAll("")
         }
@@ -52,7 +58,7 @@ class FilteredHistoryAdapter (private var filteredHistoryList: ArrayList<Service
 
     }
 
-    fun updateItems(newList: List<ServiceData>) {
+    fun updateItems(newList: List<Data>) {
         filteredHistoryList.clear()
         filteredHistoryList.addAll(newList)
         notifyDataSetChanged()

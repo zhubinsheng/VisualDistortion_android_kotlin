@@ -5,11 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.databinding.HistoryItemBinding
 import com.rino.visualdestortion.model.pojo.history.Data
+import com.rino.visualdestortion.model.pojo.history.ServiceTypeData
 import com.rino.visualdestortion.utils.Constants
 
 import kotlin.collections.ArrayList
 
-class HistoryAdapter (private var historyList: ArrayList<Data>,
+class HistoryAdapter (private var historyList: ArrayList<ServiceTypeData>,
                       private val historyViewModel: HistoryViewModel) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -44,7 +45,7 @@ class HistoryAdapter (private var historyList: ArrayList<Data>,
 
 
 
-    fun updateItems(newList: List<Data>) {
+    fun updateItems(newList: List<ServiceTypeData>) {
         historyList.clear()
         historyList.addAll(newList)
         notifyDataSetChanged()

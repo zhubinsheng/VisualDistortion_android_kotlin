@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.SubFilteredHistoryItemBinding
+import com.rino.visualdestortion.model.pojo.history.Items
 import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.utils.Constants
 
-class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<ServiceData>,
+class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<Items>,
                                       private val historyViewModel: FilteredHistoryViewModel, private val context: Context
 ) : RecyclerView.Adapter<SubItemFilteredHistoryAdapter.HistoryViewHolder>() {
 
@@ -62,7 +63,7 @@ class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<ServiceD
     }
 
 
-    fun updateItems(newList: List<ServiceData>) {
+    fun updateItems(newList: List<Items>) {
         //     historyList.clear()
         historyList.addAll(newList)
         notifyDataSetChanged()

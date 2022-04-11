@@ -17,12 +17,12 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
     private val modelRepository: ModelRepo = ModelRepo(application)
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
-    private var _getHistoryData = MutableLiveData<HistoryByServiceIdResponse?>()
+    private var _getHistoryData = MutableLiveData<FilteredHistoryResponse?>()
     private var _getSearchHistoryData = MutableLiveData<SearchResponse?>()
     private var _navToSeeAll: MutableLiveData<String> = MutableLiveData()
-    private var _navToTaskDetails: MutableLiveData<ServiceData> = MutableLiveData()
+    private var _navToTaskDetails: MutableLiveData<Items> = MutableLiveData()
 
-    val navToTaskDetails: LiveData<ServiceData>
+    val navToTaskDetails: LiveData<Items>
         get() = _navToTaskDetails
 
     val navToSeeAll: LiveData<String>
@@ -37,7 +37,7 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
     val getSearchHistoryData: LiveData<SearchResponse?>
         get() = _getSearchHistoryData
 
-    val getHistoryData: LiveData<HistoryByServiceIdResponse?>
+    val getHistoryData: LiveData<FilteredHistoryResponse?>
         get() = _getHistoryData
 
     fun navToSeeAll(period: String)
@@ -45,8 +45,8 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
         _navToSeeAll.value = period
     }
 
-    fun navToServiceDetails(serviceData: ServiceData) {
-       _navToTaskDetails.value = serviceData
+    fun navToServiceDetails(item: Items) {
+       _navToTaskDetails.value = item
     }
 
     fun getHistoryData(serviceID:Int, period :String = "all") {

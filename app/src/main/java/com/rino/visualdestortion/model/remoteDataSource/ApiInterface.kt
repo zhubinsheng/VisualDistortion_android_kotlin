@@ -36,7 +36,7 @@ interface ApiInterface{
 
     suspend fun getHistoryData(auth: String): Response<AllHistoryResponse>
 
-    suspend fun getFilteredHistory(auth: String,serviceTypeId: Int, period:String ): Response<HistoryByServiceIdResponse>
+    suspend fun getFilteredHistory(auth: String,serviceTypeId: Int, period:String ): Response<FilteredHistoryResponse>
 
     suspend fun getHistoryDataByService(auth: String ,serviceTypeId: Int,pageNumber:Int ,period:String): Response<HistoryByServiceIdResponse>
 

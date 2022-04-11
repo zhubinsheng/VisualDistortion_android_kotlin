@@ -22,9 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentFilteredHistotyBinding
 import com.rino.visualdestortion.databinding.FragmentHistoryByServiceTypeBinding
-import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
-import com.rino.visualdestortion.model.pojo.history.SearchRequest
-import com.rino.visualdestortion.model.pojo.history.ServiceData
+import com.rino.visualdestortion.model.pojo.history.*
 import com.rino.visualdestortion.ui.historyByServiceType.HistoryByServiceAdapter
 import com.rino.visualdestortion.ui.historyByServiceType.HistoryByServiceTypeFragmentDirections
 import com.rino.visualdestortion.ui.historyByServiceType.HistoryByServiceViewModel
@@ -37,10 +35,10 @@ class FilteredHistotyFragment : Fragment() {
     private lateinit var viewModel: FilteredHistoryViewModel
     private lateinit var binding: FragmentFilteredHistotyBinding
     private lateinit var historyAdapter: FilteredHistoryAdapter
-    private lateinit var historyList: ArrayList<ServiceData>
+    private lateinit var historyList: ArrayList<Data>
     private lateinit var periodTimeList_ar: ArrayList<String>
     private lateinit var periodTimeList_en: ArrayList<String>
-    private lateinit var historyByServiceIdResponse: HistoryByServiceIdResponse
+    private lateinit var historyByServiceIdResponse: FilteredHistoryResponse
     private var selectedPeriod = "all"
     private var serviceId = 1
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,16 +71,15 @@ class FilteredHistotyFragment : Fragment() {
 //        registerConnectivityNetworkMonitor()
         observeData()
         historyAdapter.updateItems(emptyList())
-
     }
 
     private fun observeData() {
         observeHistoryData()
-        observeSearchHistoryData()
+     //   observeSearchHistoryData()
         observeNavToService()
-        observeNavToServiceDetails()
+      //  observeNavToServiceDetails()
       //  observeLoading()
-        observeShowError()
+         observeShowError()
     }
 
 
@@ -91,11 +88,9 @@ class FilteredHistotyFragment : Fragment() {
         viewModel.getHistoryData.observe(viewLifecycleOwner) {
             it?.let {
                 historyByServiceIdResponse = it
-                Log.e("hasNextPage",it.hasNextPage.toString())
-                Log.e("totalPages",it.totalPages.toString())
-                it.data.let { it1 ->
-                    historyAdapter.updateItems(it1)
-                    historyList = it1
+
+                    historyAdapter.updateItems( it.data)
+                    historyList = it.data
                 }
                 binding.shimmer.stopShimmer()
                 binding.shimmer.visibility = View.GONE
@@ -104,23 +99,22 @@ class FilteredHistotyFragment : Fragment() {
                 binding.textNoData.visibility = View.GONE
             }
         }
-    }
 
-    private fun observeSearchHistoryData() {
-        //   viewModel.getHistoryData(serviceId)
-        viewModel.getSearchHistoryData.observe(viewLifecycleOwner) {
-            it?.let {
-                historyAdapter.clearList()
-                historyAdapter.updateItems(arrayListOf(ServiceData(it)))
-                historyList = arrayListOf(ServiceData(it))
-                binding.shimmer.stopShimmer()
-                binding.shimmer.visibility = View.GONE
-                binding.historyRecycle.visibility = View.VISIBLE
-                binding.animationView.visibility = View.GONE
-                binding.textNoData.visibility = View.GONE
-            }
-        }
-    }
+//    private fun observeSearchHistoryData() {
+//        //   viewModel.getHistoryData(serviceId)
+//        viewModel.getSearchHistoryData.observe(viewLifecycleOwner) {
+//            it?.let {
+//                historyAdapter.clearList()
+//                historyAdapter.updateItems(arrayListOf(Items(it)))
+//                historyList = arrayListOf(Items(it))
+//                binding.shimmer.stopShimmer()
+//                binding.shimmer.visibility = View.GONE
+//                binding.historyRecycle.visibility = View.VISIBLE
+//                binding.animationView.visibility = View.GONE
+//                binding.textNoData.visibility = View.GONE
+//            }
+//        }
+//    }
 //    private fun observeLoading() {
 //        viewModel.loading.observe(viewLifecycleOwner) {
 //            it?.let {
@@ -137,13 +131,13 @@ class FilteredHistotyFragment : Fragment() {
         }
     }
 
-    private fun observeNavToServiceDetails() {
-        viewModel.navToTaskDetails.observe(viewLifecycleOwner) {
-            it?.let {
-                navToServiceDetails(it)
-            }
-        }
-    }
+//    private fun observeNavToServiceDetails() {
+//        viewModel.navToTaskDetails.observe(viewLifecycleOwner) {
+//            it?.let {
+//                navToServiceDetails(it)
+//            }
+//        }
+//    }
 
     private fun navToServiceDetails(serviceData: ServiceData) {
         val action = HistoryByServiceTypeFragmentDirections.actionHistoryByIDToServiceDetails(serviceData)
@@ -214,8 +208,6 @@ class FilteredHistotyFragment : Fragment() {
         //      setPeriodTimeMenuItems()
 
     }
-
-
 
 
     private fun setPeriodTimeMenuItems() {

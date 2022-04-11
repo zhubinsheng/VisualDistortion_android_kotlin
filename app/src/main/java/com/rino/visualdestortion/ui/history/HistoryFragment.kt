@@ -19,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentHistoryBinding
 import com.rino.visualdestortion.model.pojo.history.Data
+import com.rino.visualdestortion.model.pojo.history.ServiceTypeData
 import com.rino.visualdestortion.ui.home.MainActivity
 import com.rino.visualdestortion.utils.NetworkConnection
 
@@ -27,7 +28,7 @@ class HistoryFragment : Fragment() {
     private lateinit var viewModel: HistoryViewModel
     private lateinit var binding: FragmentHistoryBinding
     private lateinit var historyAdapter: HistoryAdapter
-    private lateinit var historyList: List<Data>
+    private lateinit var historyList: List<ServiceTypeData>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

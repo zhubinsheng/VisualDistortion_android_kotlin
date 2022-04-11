@@ -104,7 +104,7 @@ class ApiDataSource:ApiInterface {
         auth: String,
         serviceTypeId: Int,
         period: String
-    ): Response<HistoryByServiceIdResponse> {
+    ): Response<FilteredHistoryResponse> {
        return retrofit.getFilteredHistory(auth, serviceTypeId, period)
     }
 
