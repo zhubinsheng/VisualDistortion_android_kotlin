@@ -11,7 +11,7 @@ import com.rino.visualdestortion.model.pojo.history.Items
 import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.utils.Constants
 
-class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<Items>,
+class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<ServiceData>,
                                       private val historyViewModel: FilteredHistoryViewModel, private val context: Context
 ) : RecyclerView.Adapter<SubItemFilteredHistoryAdapter.HistoryViewHolder>() {
 
@@ -50,7 +50,7 @@ class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<Items>,
     fun showDialog(address: String?) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.app_name)
-        builder.setMessage("${R.string.full_address} \n ${address}")
+        builder.setMessage("${context.getString(R.string.full_address)} \n ${address}")
         builder.setIcon(android.R.drawable.ic_menu_mylocation)
         builder.setNeutralButton(R.string.cancel) { dialogInterface, which ->
 
@@ -63,8 +63,8 @@ class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<Items>,
     }
 
 
-    fun updateItems(newList: List<Items>) {
-        //     historyList.clear()
+    fun updateItems(newList: List<ServiceData>) {
+        historyList.clear()
         historyList.addAll(newList)
         notifyDataSetChanged()
     }

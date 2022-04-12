@@ -497,6 +497,12 @@ class ModelRepo(application: Application) : RemoteRepo, LocalRepo {
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Resulttt $result")
+                when (response.code()) {
+                    204 -> {
+                        Log.e("Error 204", "No content")
+                        result = Result.Error(Exception("No content"))
+                    }
+                }
             } else {
                 Log.i("ModelRepository", "Error${response.errorBody()?.string()}")
                 when (response.code()) {
@@ -555,8 +561,9 @@ class ModelRepo(application: Application) : RemoteRepo, LocalRepo {
 
     override suspend fun getHistoryDataByService(
         serviceTypeId: Int,
-        pageNumber: Int,
-        period: String
+        period: String,
+        pageNumber: Int
+
     ): Result<HistoryByServiceIdResponse?> {
         var result: Result<HistoryByServiceIdResponse?> = Result.Loading
         try {
@@ -564,8 +571,9 @@ class ModelRepo(application: Application) : RemoteRepo, LocalRepo {
             val response = apiDataSource.getHistoryDataByService(
                 "Bearer " + getToken(),
                 serviceTypeId,
-                pageNumber,
-                period
+                period,
+                pageNumber
+
             )
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
@@ -709,13 +717,16 @@ class ModelRepo(application: Application) : RemoteRepo, LocalRepo {
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
-                        // result = Result.Error(Exception("Not Auth please, logout and login again"))
+                         result = Result.Error(Exception("Not Auth please, logout and login again"))
                         if (isLogin()) {
                             Log.i(
                                 "Model Repo:",
                                 "isDailyPrepared:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
                             )
-                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                            val refreshResponse =refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+//                    when(refreshResponse){
+//
+//                    }
                         }
                     }
                     502 -> {

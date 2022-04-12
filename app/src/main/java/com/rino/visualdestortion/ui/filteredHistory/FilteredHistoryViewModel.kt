@@ -20,9 +20,9 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
     private var _getHistoryData = MutableLiveData<FilteredHistoryResponse?>()
     private var _getSearchHistoryData = MutableLiveData<SearchResponse?>()
     private var _navToSeeAll: MutableLiveData<String> = MutableLiveData()
-    private var _navToTaskDetails: MutableLiveData<Items> = MutableLiveData()
+    private var _navToTaskDetails: MutableLiveData<ServiceData> = MutableLiveData()
 
-    val navToTaskDetails: LiveData<Items>
+    val navToTaskDetails: LiveData<ServiceData>
         get() = _navToTaskDetails
 
     val navToSeeAll: LiveData<String>
@@ -45,12 +45,12 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
         _navToSeeAll.value = period
     }
 
-    fun navToServiceDetails(item: Items) {
+    fun navToServiceDetails(item: ServiceData) {
        _navToTaskDetails.value = item
     }
 
     fun getHistoryData(serviceID:Int, period :String = "all") {
-        // _loading.postValue(View.VISIBLE)
+         _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = modelRepository.getFilteredHistory(serviceID,period)) {
                 is Result.Success -> {

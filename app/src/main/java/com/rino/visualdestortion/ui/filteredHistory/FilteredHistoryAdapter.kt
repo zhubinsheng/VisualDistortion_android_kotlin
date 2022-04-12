@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FilteredItemBinding
 import com.rino.visualdestortion.model.pojo.history.Data
 import com.rino.visualdestortion.model.pojo.history.Items
@@ -40,20 +41,26 @@ class FilteredHistoryAdapter (private var filteredHistoryList: ArrayList<Data>,
     override fun onBindViewHolder(holder: FilteredHistoryViewHolder, position: Int) {
         val temp = filteredHistoryList[position]
         holder.binding.periodTxt.text = temp.title
-        holder.binding.periodValue.text = temp.period
-        holder.binding.taskNumTxt.text = Constants.convertNumsToArabic(temp.count.toString())
+        holder.binding.periodValue.text = Constants.convertNumsToArabic(temp.period)
+        holder.binding.taskNumTxt.text = Constants.convertNumsToArabic(temp.count.toString())+" "+context.getString(
+            R.string.task)
 
         holder.binding.historyRecycle.visibility = View.VISIBLE
+        val linearLayoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+        linearLayoutManager.stackFromEnd = true
         holder.binding.historyRecycle.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = linearLayoutManager
             adapter = historyAdapter
         }
         historyAdapter.updateItems(temp.items)
         holder.binding.showAllTxt.setOnClickListener {
-            historyViewModel.navToSeeAll("")
+            historyViewModel.navToSeeAll(temp.period?:"")
+        }
+        holder.binding.showAllBtn.setOnClickListener {
+            historyViewModel.navToSeeAll(temp.period?:"")
         }
         holder.binding.card.setOnClickListener {
-            historyViewModel.navToSeeAll("")
+            historyViewModel.navToSeeAll(temp.period?:"")
         }
 
     }

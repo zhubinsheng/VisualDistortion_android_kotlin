@@ -36,6 +36,8 @@ class FilteredHistotyFragment : Fragment() {
     private lateinit var binding: FragmentFilteredHistotyBinding
     private lateinit var historyAdapter: FilteredHistoryAdapter
     private lateinit var historyList: ArrayList<Data>
+    private lateinit var searchHistoryAdapter: SubItemFilteredHistoryAdapter
+    private lateinit var searchHistoryList: ArrayList<ServiceData>
     private lateinit var periodTimeList_ar: ArrayList<String>
     private lateinit var periodTimeList_en: ArrayList<String>
     private lateinit var historyByServiceIdResponse: FilteredHistoryResponse
@@ -64,22 +66,25 @@ class FilteredHistotyFragment : Fragment() {
         binding.historyRecycle.visibility = View.GONE
         viewModel = FilteredHistoryViewModel(requireActivity().application)
         historyList = arrayListOf()
+        searchHistoryList = arrayListOf()
         historyAdapter = FilteredHistoryAdapter(historyList, viewModel,requireContext())
         historyAdapter.updateItems(historyList)
+        searchHistoryAdapter = SubItemFilteredHistoryAdapter(searchHistoryList, viewModel,requireContext())
+        searchHistoryAdapter.updateItems(searchHistoryList)
         setUpUI()
 //        checkNetwork(serviceId)
-//        registerConnectivityNetworkMonitor()
+        registerConnectivityNetworkMonitor()
         observeData()
         historyAdapter.updateItems(emptyList())
     }
 
     private fun observeData() {
         observeHistoryData()
-     //   observeSearchHistoryData()
+        observeSearchHistoryData()
         observeNavToService()
-      //  observeNavToServiceDetails()
-      //  observeLoading()
-         observeShowError()
+        observeNavToServiceDetails()
+        observeLoading()
+        observeShowError()
     }
 
 
@@ -88,7 +93,6 @@ class FilteredHistotyFragment : Fragment() {
         viewModel.getHistoryData.observe(viewLifecycleOwner) {
             it?.let {
                 historyByServiceIdResponse = it
-
                     historyAdapter.updateItems( it.data)
                     historyList = it.data
                 }
@@ -100,28 +104,27 @@ class FilteredHistotyFragment : Fragment() {
             }
         }
 
-//    private fun observeSearchHistoryData() {
-//        //   viewModel.getHistoryData(serviceId)
-//        viewModel.getSearchHistoryData.observe(viewLifecycleOwner) {
-//            it?.let {
-//                historyAdapter.clearList()
-//                historyAdapter.updateItems(arrayListOf(Items(it)))
-//                historyList = arrayListOf(Items(it))
-//                binding.shimmer.stopShimmer()
-//                binding.shimmer.visibility = View.GONE
-//                binding.historyRecycle.visibility = View.VISIBLE
-//                binding.animationView.visibility = View.GONE
-//                binding.textNoData.visibility = View.GONE
-//            }
-//        }
-//    }
-//    private fun observeLoading() {
-//        viewModel.loading.observe(viewLifecycleOwner) {
-//            it?.let {
-//                binding.progress.visibility = it
-//            }
-//        }
-//    }
+    private fun observeSearchHistoryData() {
+        viewModel.getSearchHistoryData.observe(viewLifecycleOwner) {
+            it?.let {
+                binding.historyRecycle.visibility = View.GONE
+                binding.searchHistoryRecycle.visibility = View.VISIBLE
+                searchHistoryAdapter.updateItems(listOf(ServiceData(it)))
+                binding.shimmer.stopShimmer()
+                binding.shimmer.visibility = View.GONE
+                binding.historyRecycle.visibility = View.VISIBLE
+                binding.animationView.visibility = View.GONE
+                binding.textNoData.visibility = View.GONE
+            }
+        }
+    }
+    private fun observeLoading() {
+        viewModel.loading.observe(viewLifecycleOwner) {
+            it?.let {
+                binding.progress.visibility = it
+            }
+        }
+    }
 
     private fun observeNavToService() {
         viewModel.navToSeeAll.observe(viewLifecycleOwner) {
@@ -131,13 +134,13 @@ class FilteredHistotyFragment : Fragment() {
         }
     }
 
-//    private fun observeNavToServiceDetails() {
-//        viewModel.navToTaskDetails.observe(viewLifecycleOwner) {
-//            it?.let {
-//                navToServiceDetails(it)
-//            }
-//        }
-//    }
+    private fun observeNavToServiceDetails() {
+        viewModel.navToTaskDetails.observe(viewLifecycleOwner) {
+            it?.let {
+                navToServiceDetails(it)
+            }
+        }
+    }
 
     private fun navToServiceDetails(serviceData: ServiceData) {
         val action = HistoryByServiceTypeFragmentDirections.actionHistoryByIDToServiceDetails(serviceData)
@@ -146,14 +149,14 @@ class FilteredHistotyFragment : Fragment() {
 
 
     private fun navToSeeAll(period: String) {
-        val action = FilteredHistotyFragmentDirections.actionFilteredHistoryToHistoryByService(period,serviceId.toString())
+        val action = FilteredHistotyFragmentDirections.actionFilteredHistoryToHistoryByService(serviceId.toString(),period)
         findNavController().navigate(action)
     }
 
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-                if(it.equals("No content")) {
+                if(it.equals("No content")||it.equals("Bad Request")) {
                     binding.shimmer.stopShimmer()
                     binding.shimmer.visibility = View.GONE
                     binding.historyRecycle.visibility = View.GONE
@@ -190,12 +193,16 @@ class FilteredHistotyFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = historyAdapter
         }
+        binding.searchHistoryRecycle.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = searchHistoryAdapter
+        }
         binding.serviceTitle.text = Constants.getServaceNameAr(serviceId)
         binding.mSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
                     val taskNum = Constants.convertNumsToEnglish(query).toInt()
-                    viewModel.searchHistoryDataByService(SearchRequest(taskNum,serviceId))
+                    viewModel.searchHistoryDataByService(SearchRequest(query.toInt(),serviceId))
                 }
                 return false
             }
@@ -205,7 +212,7 @@ class FilteredHistotyFragment : Fragment() {
                 return false
             }
         })
-        //      setPeriodTimeMenuItems()
+              setPeriodTimeMenuItems()
 
     }
 

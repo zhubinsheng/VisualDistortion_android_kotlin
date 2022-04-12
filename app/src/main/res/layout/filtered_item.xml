@@ -18,84 +18,84 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         >
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
- >
-        <TextView
-            android:id="@+id/showAllTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/paddingText"
-            android:textStyle="bold"
-            android:text="@string/show_all"
-            android:layout_margin="@dimen/paddingLayout"
-            android:textColor="@color/teal"
-            android:textSize="@dimen/subHeaderTextSize"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/showAllTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/paddingLayout"
+                android:padding="@dimen/paddingText"
+                android:text="@string/show_all"
+                android:textColor="@color/teal"
+                android:textSize="@dimen/midTextSize"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/showAllBtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_baseline_border_all_24"
+                app:layout_constraintBottom_toBottomOf="@+id/showAllTxt"
+                app:layout_constraintLeft_toRightOf="@+id/showAllTxt"
+                app:layout_constraintTop_toTopOf="@+id/showAllTxt" />
+
+            <TextView
+                android:id="@+id/periodTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/paddingLayout"
+                android:padding="@dimen/paddingText"
+                android:text="@string/day"
+                android:textColor="@color/black"
+                android:textSize="@dimen/normalTextSize"
+                android:textStyle="bold"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/taskNumTxt" />
+
+            <TextView
+                android:id="@+id/periodValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/paddingLayout"
+                android:padding="@dimen/paddingText"
+                android:text="4/12/2020"
+                android:textColor="@color/dark_gray"
+                android:textSize="@dimen/normalTextSize"
+                android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/taskNumTxt" />
 
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/ic_baseline_border_all_24"
-        app:layout_constraintBottom_toBottomOf="@+id/showAllTxt"
-        app:layout_constraintLeft_toRightOf="@+id/showAllTxt"
-        app:layout_constraintTop_toTopOf="@+id/showAllTxt" />
+            <TextView
+                android:id="@+id/taskNumTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/paddingLayout"
+                android:padding="@dimen/paddingText"
+                android:text="4 عمليات"
+                android:textColor="@color/black"
+                android:textSize="@dimen/midTextSize"
+                android:textStyle="bold"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"  />
 
-    <TextView
-        android:id="@+id/periodTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/paddingText"
-        android:textStyle="bold"
-        android:text="@string/day"
-        android:textColor="@color/black"
-        android:layout_margin="@dimen/paddingLayout"
-        android:textSize="@dimen/subHeaderTextSize"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/periodValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/paddingLayout"
-        android:padding="@dimen/paddingText"
-        android:text="4/12/2020"
-        android:textColor="@color/dark_gray"
-        android:textSize="@dimen/normalTextSize"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/periodTxt"
-        app:layout_constraintRight_toLeftOf="@+id/periodTxt"
-        app:layout_constraintTop_toTopOf="@+id/periodTxt" />
-
-    <TextView
-        android:id="@+id/taskNumTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/paddingLayout"
-        android:padding="@dimen/paddingText"
-        android:text="4 عمليات"
-        android:textColor="@color/dark_gray"
-        android:textSize="@dimen/normalTextSize"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/periodTxt"
-        app:layout_constraintRight_toLeftOf="@+id/periodValue"
-        app:layout_constraintTop_toTopOf="@+id/periodTxt" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/historyRecycle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="@dimen/paddingLayout"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/showAllTxt"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        tools:listitem="@layout/sub_filtered_history_item" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/historyRecycle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/paddingLayout"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/periodTxt"
+                tools:listitem="@layout/sub_filtered_history_item" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

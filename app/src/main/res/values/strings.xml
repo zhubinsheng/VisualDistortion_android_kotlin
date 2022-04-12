@@ -93,6 +93,7 @@
     <string name="show_all">عرض الكل</string>
     <string name="day">اليوم</string>
     <string name="full_address">"العنوان "</string>
+    <string name="task">عملية</string>
 
 
 </resources>

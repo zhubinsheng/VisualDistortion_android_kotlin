@@ -7,10 +7,10 @@ class FilteredHistoryResponse {
 
 data class Data (
 
-    var title  : String?          = null,
-    var period : String?          = null,
-    var count  : Int?             = null,
-    var items  : ArrayList<Items> = arrayListOf()
+    var title  : String?    ,
+    var period : String      ,
+    var count  : Int?          ,
+    var items  : ArrayList<ServiceData> = arrayListOf()
 )
 data class Items (
 

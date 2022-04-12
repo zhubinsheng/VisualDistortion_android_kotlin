@@ -38,7 +38,7 @@ interface ApiInterface{
 
     suspend fun getFilteredHistory(auth: String,serviceTypeId: Int, period:String ): Response<FilteredHistoryResponse>
 
-    suspend fun getHistoryDataByService(auth: String ,serviceTypeId: Int,pageNumber:Int ,period:String): Response<HistoryByServiceIdResponse>
+    suspend fun getHistoryDataByService(auth: String ,serviceTypeId: Int,period:String,pageNumber:Int ): Response<HistoryByServiceIdResponse>
 
     suspend fun searchHistoryDataByService( auth: String, searchRequest: SearchRequest ): Response<SearchResponse>
 

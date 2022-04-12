@@ -111,10 +111,10 @@ class ApiDataSource:ApiInterface {
     override suspend fun getHistoryDataByService(
         auth: String,
         serviceTypeId: Int,
-        pageNumber: Int,
-        period:String
+        period:String,
+        pageNumber: Int
     ): Response<HistoryByServiceIdResponse> {
-        return retrofit.getHistoryDataByService(auth,serviceTypeId,pageNumber,period)
+        return retrofit.getHistoryDataByService(auth,serviceTypeId, period,pageNumber)
     }
 
     override suspend fun searchHistoryDataByService(

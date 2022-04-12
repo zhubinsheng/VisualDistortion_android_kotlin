@@ -36,7 +36,7 @@ class HistoryByServiceTypeFragment : Fragment() {
     private lateinit var historyAdapter: HistoryByServiceAdapter
     private lateinit var historyList: ArrayList<ServiceData>
     private lateinit var historyByServiceIdResponse: HistoryByServiceIdResponse
-    private var selectedPeriod = "all"
+    private var selectedPeriod = ""
     private var serviceId = 1
     private var page = 1
 
@@ -178,7 +178,7 @@ class HistoryByServiceTypeFragment : Fragment() {
             adapter = historyAdapter
         }
         binding.serviceTitle.text = Constants.getServaceNameAr(serviceId)
-        binding.periodTxt.text = selectedPeriod
+        binding.periodTxt.text = Constants.convertNumsToArabic(selectedPeriod)
         binding.mSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
