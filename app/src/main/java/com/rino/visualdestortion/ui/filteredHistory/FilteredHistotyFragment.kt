@@ -98,6 +98,7 @@ class FilteredHistotyFragment : Fragment() {
                 }
                 binding.shimmer.stopShimmer()
                 binding.shimmer.visibility = View.GONE
+                binding.searchHistoryRecycle.visibility = View.GONE
                 binding.historyRecycle.visibility = View.VISIBLE
                 binding.animationView.visibility = View.GONE
                 binding.textNoData.visibility = View.GONE
@@ -112,7 +113,6 @@ class FilteredHistotyFragment : Fragment() {
                 searchHistoryAdapter.updateItems(listOf(ServiceData(it)))
                 binding.shimmer.stopShimmer()
                 binding.shimmer.visibility = View.GONE
-                binding.historyRecycle.visibility = View.VISIBLE
                 binding.animationView.visibility = View.GONE
                 binding.textNoData.visibility = View.GONE
             }
@@ -160,6 +160,7 @@ class FilteredHistotyFragment : Fragment() {
                     binding.shimmer.stopShimmer()
                     binding.shimmer.visibility = View.GONE
                     binding.historyRecycle.visibility = View.GONE
+                    binding.searchHistoryRecycle.visibility = View.GONE
                     binding.animationView.visibility = View.VISIBLE
                     binding.textNoData.visibility = View.VISIBLE
                 }

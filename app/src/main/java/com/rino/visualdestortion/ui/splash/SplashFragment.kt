@@ -70,7 +70,11 @@ class SplashFragment : Fragment() {
     private fun observeShowError() {
         viewModel.setError.observe(viewLifecycleOwner) {
             it?.let {
-              navToError()
+                if(it=="login required, logout and login again")
+                    navToWelcome()
+                else {
+                    navToError()
+                }
             }
         }
     }

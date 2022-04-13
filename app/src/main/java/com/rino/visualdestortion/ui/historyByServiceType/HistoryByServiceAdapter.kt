@@ -2,6 +2,8 @@ package com.rino.visualdestortion.ui.historyByServiceType
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -45,7 +47,7 @@ class HistoryByServiceAdapter (private var historyList: ArrayList<ServiceData>,
          showDialog(historyList[position].fullLocation)
         }
         holder.binding.locationTxt.setOnClickListener {
-            showDialog(historyList[position].fullLocation)
+            navToLocationInMap(historyList[position].latitude?:"0",historyList[position].longtitude?:"0")
         }
     }
     fun showDialog(address: String?) {
@@ -62,7 +64,11 @@ class HistoryByServiceAdapter (private var historyList: ArrayList<ServiceData>,
         alertDialog.setCancelable(false)
         alertDialog.show()
     }
-
+    fun navToLocationInMap(lat : String, long :String){
+        val uri = "http://maps.google.com/maps?q=loc:${lat},${long}"
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        context.startActivity(intent)
+    }
 
     fun updateItems(newList: List<ServiceData>) {
    //     historyList.clear()

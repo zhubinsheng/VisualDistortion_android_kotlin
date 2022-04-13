@@ -183,7 +183,7 @@ class HistoryByServiceTypeFragment : Fragment() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
                 val taskNum = Constants.convertNumsToEnglish(query).toInt()
-                    viewModel.searchHistoryDataByService(SearchRequest(taskNum,serviceId))
+                    viewModel.searchHistoryDataByService(SearchRequest(taskNum,serviceId,selectedPeriod))
                 }
                 return false
             }

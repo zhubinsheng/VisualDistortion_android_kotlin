@@ -3,6 +3,7 @@ package com.rino.visualdestortion.model.reposatory
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import android.view.View
 import com.google.gson.Gson
 import com.rino.visualdestortion.model.localDataSource.MySharedPreference
 import com.rino.visualdestortion.model.localDataSource.PreferenceDataSource
@@ -717,16 +718,26 @@ class ModelRepo(application: Application) : RemoteRepo, LocalRepo {
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
-                         result = Result.Error(Exception("Not Auth please, logout and login again"))
                         if (isLogin()) {
                             Log.i(
                                 "Model Repo:",
                                 "isDailyPrepared:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
                             )
                             val refreshResponse =refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
-//                    when(refreshResponse){
-//
-//                    }
+                    when(refreshResponse){
+                        is Result.Success -> {
+                            Log.i("refresh token :", "${refreshResponse.data}")
+                            isDailyPrepared()
+
+                        }
+                        is Result.Error -> {
+                            Log.e("refresh token :", "${refreshResponse.exception.message}")
+                            result = Result.Error(Exception("login required, logout and login again"))
+
+
+                        }
+
+                    }
                         }
                     }
                     502 -> {

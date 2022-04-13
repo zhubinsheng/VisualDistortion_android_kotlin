@@ -2,14 +2,19 @@ package com.rino.visualdestortion.ui.filteredHistory
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.SubFilteredHistoryItemBinding
-import com.rino.visualdestortion.model.pojo.history.Items
 import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.utils.Constants
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<ServiceData>,
                                       private val historyViewModel: FilteredHistoryViewModel, private val context: Context
@@ -44,7 +49,7 @@ class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<ServiceD
             showDialog(historyList[position].fullLocation)
         }
         holder.binding.locationTxt.setOnClickListener {
-            showDialog(historyList[position].fullLocation)
+            navToLocationInMap(historyList[position].latitude?:"0",historyList[position].longtitude?:"0")
         }
     }
     fun showDialog(address: String?) {
@@ -62,6 +67,11 @@ class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<ServiceD
         alertDialog.show()
     }
 
+    fun navToLocationInMap(lat : String, long :String){
+        val uri = "http://maps.google.com/maps?q=loc:${lat},${long}"
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        context.startActivity(intent)
+    }
 
     fun updateItems(newList: List<ServiceData>) {
         historyList.clear()

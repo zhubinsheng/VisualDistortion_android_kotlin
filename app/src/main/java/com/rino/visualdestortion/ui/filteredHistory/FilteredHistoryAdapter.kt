@@ -2,6 +2,7 @@ package com.rino.visualdestortion.ui.filteredHistory
 
 import android.app.AlertDialog
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,13 +19,11 @@ import com.rino.visualdestortion.utils.Constants
 class FilteredHistoryAdapter (private var filteredHistoryList: ArrayList<Data>,
                               private val historyViewModel: FilteredHistoryViewModel,private val context: Context
 ) : RecyclerView.Adapter<FilteredHistoryAdapter.FilteredHistoryViewHolder>() {
-    private lateinit var historyAdapter: SubItemFilteredHistoryAdapter
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
 
     ): FilteredHistoryViewHolder {
-        historyAdapter = SubItemFilteredHistoryAdapter(arrayListOf(),historyViewModel,context)
         return FilteredHistoryViewHolder(
             FilteredItemBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -46,12 +45,14 @@ class FilteredHistoryAdapter (private var filteredHistoryList: ArrayList<Data>,
             R.string.task)
 
         holder.binding.historyRecycle.visibility = View.VISIBLE
+        var historyAdapter = SubItemFilteredHistoryAdapter(arrayListOf(),historyViewModel,context)
         val linearLayoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         linearLayoutManager.stackFromEnd = true
         holder.binding.historyRecycle.apply {
             layoutManager = linearLayoutManager
             adapter = historyAdapter
         }
+        Log.e("list Nermeen:",temp.items.toString())
         historyAdapter.updateItems(temp.items)
         holder.binding.showAllTxt.setOnClickListener {
             historyViewModel.navToSeeAll(temp.period?:"")
