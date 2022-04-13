@@ -137,6 +137,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/paddingLayout"
                 android:orientation="vertical">
 
                 <include layout="@layout/shimmer_sevice_item" />

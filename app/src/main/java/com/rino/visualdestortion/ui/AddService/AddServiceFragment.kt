@@ -24,15 +24,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
@@ -59,7 +59,6 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class AddServiceFragment : Fragment() {
@@ -208,21 +207,20 @@ class AddServiceFragment : Fragment() {
         }
     }
 
-//    private fun checkCameraOrStoragePermission() {
-//        if (isExternalStoragePermissionGranted()&&isCameraPermissionGranted()) {
-//            enableCameraOrGallery()
-//        } else {
-//            navigateToAppSetting()
-//        }
-//    }
-
     private fun enableGallery(GALLERY_REQUEST_CODE:Int) {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, GALLERY_REQUEST_CODE)
     }
     private fun enableCamera(CAMERA_REQUEST_CODE:Int) {
+
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        val f = File(Environment.getExternalStorageDirectory(), "image.jpg")
+//        if (f.exists()) {
+//            f.delete()
+//        }
+//        val mImageCaptureUri = Uri.fromFile(f)
+//        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri)
         startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
     }
 
@@ -241,22 +239,6 @@ class AddServiceFragment : Fragment() {
            }
     }
 
-//    private fun observeDailyPreparation() {
-//        viewModel.getDailyPreparation.observe(viewLifecycleOwner) {
-//            if (it != null) {
-//                formData.WorkersTypesList = it.workerTypesList
-//                formData.equipmentList = it.workerTypesList
-//                    viewModel.setFormData(formData)
-
-//                else{
-//                    getLatestLocation()
-//                    if (validateData(formData) && lat != "" && lng != "") {
-//                        viewModel.setFormData(formData)
-//                    }
-//               }
-//            }
-//        }
-//    }
 
     private fun getFormDataFromUi(serviceName: String): FormData {
         Log.e("Images","Before : ${beforeImgBody.toString()} ,During : ${duringImgBody.toString()} ,Aftar : ${afterImgBody.toString()}")
@@ -567,34 +549,6 @@ class AddServiceFragment : Fragment() {
         }
     }
 
-
-    private fun setDistrictsMenuItems(posSector: Int, posMunicipalite: Int) {
-        districtsList.clear()
-        binding.districtsTextView.setText(R.string.districts)
-        for (district in addServiceResponse.sectors?.get(posSector)?.municipalites?.get(
-            posMunicipalite
-        )?.districts!!) {
-            districtsList.add(district.name.toString())
-        }
-        val districtsAdapter = ArrayAdapter(
-            requireContext(), R.layout.dropdown_item,
-            districtsList
-        )
-        binding.districtsTextView.setAdapter(districtsAdapter)
-        binding.districtsTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { _, _, position, _ ->
-           //     val selectedItem = parent.getItemAtPosition(position).toString()
-                isDistrictSelected = true
-             //   setStreetsMenuItems(posSector, posMunicipalite, position)
-              val list =  addServiceResponse.sectors?.get(posSector)?.
-              municipalites?.get(posMunicipalite)?.districts?.
-              get(position)?.streets
-
-                setStreetPopup(list)
-                // Display the clicked item using toast
-                //   Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
-            }
-    }
     fun setStreetPopup(steetArrayList: ArrayList<Streets>?){
         binding.streetTextView.setOnClickListener {
             steetArrayList?.let { it1 -> setListOfStreets(it1) }
@@ -661,30 +615,6 @@ class AddServiceFragment : Fragment() {
             }
         }
 
-    private fun setStreetsMenuItems(posSector: Int, posMunicipalite: Int, posDistricts: Int) {
-        streetList.clear()
-        binding.streetTextView.clearListSelection()
-
-        for (street in addServiceResponse.sectors?.get(posSector)?.municipalites?.get(
-            posMunicipalite
-        )?.districts?.get(posDistricts)?.streets!!) {
-            streetList.add(street.name.toString())
-        }
-        val streetsAdapter = ArrayAdapter(
-            requireContext(), R.layout.dropdown_item,
-            streetList
-        )
-        binding.streetTextView.setAdapter(streetsAdapter)
-        binding.streetTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { _, _, position, _ ->
-   //             val selectedItem = parent.getItemAtPosition(position).toString()
-                isStreetSelected = true
-                //  setStreetsMenuItems(posSector,posMunicipalite,position)
-                // Display the clicked item using toast
-                // Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
-            }
-    }
-
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun validateData(formData: FormData): Boolean {
         var flagSector = true
@@ -750,21 +680,6 @@ class AddServiceFragment : Fragment() {
             binding.textInputAfterImg.isErrorEnabled = false
             flagAfterImg = true
         }
-//        if (formData.percentage == null || formData.percentage =="") {
-//            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
-//            flagPrecentage = false
-//        }
-//        else {
-//            if (formData.percentage.toInt() > 100) {
-//                binding.textInputPercentage.error = "هذا العنصر يجب ان يكون بين 0:100 "
-//                flagPrecentage = false
-//            }
-//            else{
-//            binding.textInputPercentage.error = null
-//            binding.textInputPercentage.isErrorEnabled = false
-//                flagPrecentage = true
-//            }
-//        }
 
         if (formData.notes != null) {
             if (formData.notes!!.length > 500) {
@@ -857,7 +772,8 @@ class AddServiceFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == AFTER_CAMERA_REQUEST_CODE && data != null) {
             val bitmap = data.extras?.get("data") as Bitmap
             binding.afterPic.setImageBitmap(bitmap)
-            setAfterImage(bitmap)
+           val afterBitmap = resizeBitmap(getRealPathFromURI(getImageUri(requireContext(), bitmap,"AFTER_IMG")))
+            setAfterImage(afterBitmap)
         }
         if (resultCode == Activity.RESULT_OK && requestCode == AFTER_GALLERY_REQUEST_CODE && data != null) {
             binding.afterPic.setImageURI(data?.data) // handle chosen image
@@ -882,7 +798,8 @@ class AddServiceFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == BEFORE_CAMERA_REQUEST_CODE && data != null) {
             val bitmap = data.extras?.get("data") as Bitmap
             binding.beforPic.setImageBitmap(bitmap)
-            setBeforeImage(bitmap)
+            val beforeBitmap = resizeBitmap(getRealPathFromURI(getImageUri(requireContext(), bitmap,"BEFORE_IMG")))
+            setBeforeImage(beforeBitmap)
         }
 
         if (resultCode == Activity.RESULT_OK && requestCode == DURING_GALLERY_REQUEST_CODE&& data != null) {
@@ -897,7 +814,8 @@ class AddServiceFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == DURING_CAMERA_REQUEST_CODE && data != null) {
             val bitmap = data.extras?.get("data") as Bitmap
             binding.duringPic.setImageBitmap(bitmap)
-            setDuringImage(bitmap)
+            val duringBitmap = resizeBitmap(getRealPathFromURI(getImageUri(requireContext(), bitmap,"DURING_IMG")))
+            setDuringImage(duringBitmap)
         }
         }
 
@@ -999,7 +917,24 @@ class AddServiceFragment : Fragment() {
         }
         binding.afterPic.setImageBitmap(afterBitmap)
     }
+private  fun  resizeBitmap(imagePath:String?):Bitmap{
+    val targetW = 800
+    val targetH = 1000
 
+    val bmOptions = BitmapFactory.Options()
+    bmOptions.inJustDecodeBounds = true
+    BitmapFactory.decodeFile(imagePath, bmOptions)
+    val photoW = bmOptions.outWidth
+    val photoH = bmOptions.outHeight
+
+    val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
+
+    bmOptions.inJustDecodeBounds = false
+    bmOptions.inSampleSize = scaleFactor
+    bmOptions.inPurgeable = true
+
+   return BitmapFactory.decodeFile(imagePath, bmOptions)
+}
     @SuppressLint("ResourceAsColor")
     private fun drawTextToBitmap(bitmap: Bitmap, text: String): Bitmap {
 

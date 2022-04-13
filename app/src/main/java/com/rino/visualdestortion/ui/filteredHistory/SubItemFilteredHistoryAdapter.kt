@@ -56,7 +56,7 @@ class SubItemFilteredHistoryAdapter (private var historyList: ArrayList<ServiceD
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.app_name)
         builder.setMessage("${context.getString(R.string.full_address)} \n ${address}")
-        builder.setIcon(android.R.drawable.ic_menu_mylocation)
+        builder.setIcon(R.drawable.ic_baseline_location_on_24)
         builder.setNeutralButton(R.string.cancel) { dialogInterface, which ->
 
         }
