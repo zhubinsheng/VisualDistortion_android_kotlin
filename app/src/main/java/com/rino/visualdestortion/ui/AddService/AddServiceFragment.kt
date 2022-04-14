@@ -260,8 +260,6 @@ class AddServiceFragment : Fragment() {
         formData.streetName = binding.streetTextView.text.toString()
         formData.lat = lat
         formData.lng = lng
-     //   formData.WorkersTypesList = workerTypesAdapter.getWorkerTypesMap()
-    //    formData.equipmentList = equipmentsAdapter.getEquipmentMap()
         formData.notes = binding.notesEditTxt.text.toString()
         if(beforeImgBody != null) {
 
@@ -275,8 +273,7 @@ class AddServiceFragment : Fragment() {
         if(duringImgBody != null) {
             formData.duringImg = duringImgBody as MultipartBody.Part
         }
-//        formData.percentage = binding.precentageEditTxt.text.toString()
-//          formData.percentage = "100"
+
         return formData
     }
 
@@ -374,7 +371,6 @@ class AddServiceFragment : Fragment() {
 
     private fun observeData() {
         observeGetServicesData()
-   //     observeDailyPreparation()
         observeSetFormData()
         observeLoading()
         observeShowError()
@@ -432,7 +428,7 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun navigateToQRCode(qrCode: String) {
-        val action = AddServiceFragmentDirections.actionAddServiceToQRCode(qrCode)
+        val action = AddServiceFragmentDirections.actionAddServiceToQRCode(qrCode,serviceName,serviceTypeId.toString())
         findNavController().navigate(action)
     }
 
@@ -448,7 +444,6 @@ class AddServiceFragment : Fragment() {
 
     private fun prepareMenues() {
         setSectorsMenuItems()
-
     }
 
     private fun setSectorsMenuItems() {

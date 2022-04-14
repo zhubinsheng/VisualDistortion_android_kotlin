@@ -38,6 +38,9 @@ class QRCodeFragment : Fragment() {
     private lateinit var binding: FragmentQRCodeBinding
     private lateinit var qrCodeImg:Bitmap
     private var url = ""
+    private var serviceId =""
+    private var serviceName = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -62,6 +65,8 @@ class QRCodeFragment : Fragment() {
         if (getArguments() != null) {
             // The getPrivacyPolicyLink() method will be created automatically.
             url = getArguments()?.get("QRCodeURL").toString()
+            serviceId = getArguments()?.get("serviceID").toString()
+            serviceName = getArguments()?.get("serviceName").toString()
             Log.e("QRCodeURL", url)
             if(NetworkConnection.checkInternetConnection(requireContext())){
                 downloadQRCode(url)
@@ -70,6 +75,9 @@ class QRCodeFragment : Fragment() {
                 showMessage(getString(R.string.no_internet))
             }
         }
+        binding.backImg.setOnClickListener{
+            navTAddService()
+        }
         binding.navigateToHome.setOnClickListener {
             navigateToHome()
         }
@@ -77,6 +85,12 @@ class QRCodeFragment : Fragment() {
             shareQRCodeInWhatsapp()
         }
     }
+
+    private fun navTAddService() {
+        val action = QRCodeFragmentDirections.actionQRCodeToAddForm(serviceName,serviceId)
+        findNavController().navigate(action)
+    }
+
     private fun shareQRCodeInWhatsapp() {
         val bitmap = ( binding.qrCodeImg.drawable.toBitmap())
         val imgUri: Uri = getImageUri(bitmap)

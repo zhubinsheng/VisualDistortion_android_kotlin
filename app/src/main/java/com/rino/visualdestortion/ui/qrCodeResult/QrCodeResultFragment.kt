@@ -53,8 +53,9 @@ class QrCodeResultFragment : Fragment() {
         val createdDate  =  result[3].split(":")
         val serviceName  =  result[6].split(":")
         val beforeImgUrl =  result[9].split(":")
-        val afterImgUrl  =  result[12].split(":")
-        val locationUrl  =  result[15].split(":")
+        val duringImgUrl =  result[12].split(":")
+        val afterImgUrl  =  result[15].split(":")
+        val locationUrl  =  result[18].split(":")
         binding.menetorNameValue.text = createdBy[1]
         setCreatedDateToUI(createdDate)
         setServiceName(serviceName[1])
@@ -62,7 +63,7 @@ class QrCodeResultFragment : Fragment() {
         binding.viewLocationBtn.setOnClickListener{
             navToLocationInMap(locationUrl[1].replace(" ","")+":"+locationUrl[2])
         }
-        setUpSlider(beforeImgUrl,afterImgUrl)
+        setUpSlider(beforeImgUrl,duringImgUrl,afterImgUrl)
     }
 
     private fun setServiceName(serviceName: String) {
@@ -85,8 +86,9 @@ class QrCodeResultFragment : Fragment() {
     }
 
 
-    private fun setUpSlider(beforeImgUrl: List<String>, afterImgUrl: List<String>) {
+    private fun setUpSlider(beforeImgUrl: List<String>, duringImgUrl: List<String>,afterImgUrl: List<String>) {
         sliderDataArrayList= arrayListOf(SliderData(beforeImgUrl[1].replace(" ","")+":"+beforeImgUrl[2],"الصورة قبل المهمة"),
+            SliderData(duringImgUrl[1].replace(" ","")+":"+duringImgUrl[2],"الصورة أثناء المهمة"),
             SliderData(afterImgUrl[1].replace(" ","")+":"+afterImgUrl[2],"الصورة بعد المهمة"))
         binding.imageSlider.autoCycleDirection = SliderView.LAYOUT_DIRECTION_RTL
         sliderAdapter = SliderAdapter(requireContext(),sliderDataArrayList)
@@ -97,7 +99,8 @@ class QrCodeResultFragment : Fragment() {
             val currentPos = binding.imageSlider.currentPagePosition
             when(currentPos){
                 0->binding.titleTxt.text ="الصورة قبل المهمة"
-                1->binding.titleTxt.text ="الصورة بعد المهمة"
+                1->binding.titleTxt.text ="الصورة أثناء المهمة"
+                2->binding.titleTxt.text ="الصورة بعد المهمة"
             }
         }
     }
