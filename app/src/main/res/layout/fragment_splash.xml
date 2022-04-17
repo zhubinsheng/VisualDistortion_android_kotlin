@@ -15,8 +15,8 @@
        android:background="@color/teal"
        android:src="@drawable/splash_icon"
        app:layout_constraintBottom_toBottomOf="parent"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintRight_toRightOf="parent"
+       app:layout_constraintLeft_toLeftOf="parent"
        app:layout_constraintTop_toTopOf="parent" />
 
    <TextView
@@ -29,7 +29,7 @@
        android:layout_marginTop="@dimen/welcomeMarginTop"
        android:textSize="25dp"
        android:textStyle="bold"
-       app:layout_constraintEnd_toStartOf="@+id/part2_txt"
+       app:layout_constraintRight_toLeftOf="@+id/part2_txt"
        app:layout_constraintTop_toBottomOf="@+id/logo_img" />
 
    <TextView
@@ -42,7 +42,7 @@
        android:layout_marginTop="@dimen/welcomeMarginTop"
        android:textSize="25dp"
        android:textStyle="bold"
-       app:layout_constraintStart_toEndOf="@+id/part2_txt"
+       app:layout_constraintLeft_toRightOf="@+id/part2_txt"
        app:layout_constraintTop_toBottomOf="@+id/logo_img" />
 
    <TextView
@@ -55,8 +55,8 @@
        android:layout_marginTop="@dimen/welcomeMarginTop"
        android:textSize="25dp"
        android:textStyle="bold"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintRight_toRightOf="parent"
+       app:layout_constraintLeft_toLeftOf="parent"
        app:layout_constraintTop_toBottomOf="@+id/logo_img" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

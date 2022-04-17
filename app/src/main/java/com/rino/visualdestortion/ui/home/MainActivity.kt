@@ -52,7 +52,8 @@ class MainActivity : AppCompatActivity() {
     private fun navigationSetup(navController: NavController, bottomNavigation: MeowBottomNavigation){
         bottomNavigation.add(MeowBottomNavigation.Model(1, R.drawable.ic_baseline_home_24))
         bottomNavigation.add(MeowBottomNavigation.Model(2, R.drawable.ic_baseline_history_24))
-        bottomNavigation.add(MeowBottomNavigation.Model(3, R.drawable.ic_baseline_settings_24))
+        bottomNavigation.add(MeowBottomNavigation.Model(3, R.drawable.ic_baseline_qr_code_scanner_24))
+        bottomNavigation.add(MeowBottomNavigation.Model(4, R.drawable.ic_baseline_settings_24))
         bottomNavigation.show(1)
         bottomNavigation.setOnClickMenuListener { model: MeowBottomNavigation.Model? ->
             when(model?.id){
@@ -66,8 +67,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 3->{
                     navController.popBackStack()
-                    navController.navigate(R.id.settingFragment)
+                    navController.navigate(R.id.qrCodeScannerFragment)
 
+                }
+                4->{
+                    navController.popBackStack()
+                    navController.navigate(R.id.settingFragment)
                 }
                 else->{
 

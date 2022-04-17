@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rino.visualdestortion.databinding.ItemDetailsBinding
 import com.rino.visualdestortion.model.pojo.history.WorkerstList
+import com.rino.visualdestortion.utils.Constants
 
 class WorkerTypeListAdapter  (private var itemsList: ArrayList<WorkerstList>, private var context: Context) :
     RecyclerView.Adapter<WorkerTypeListAdapter.ItemViewHolder>() {
@@ -30,7 +31,7 @@ class WorkerTypeListAdapter  (private var itemsList: ArrayList<WorkerstList>, pr
 
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.binding.itemCount.text = itemsList[position].count.toString()
+        holder.binding.itemCount.text = Constants.convertNumsToArabic(itemsList[position].count.toString())
         holder.binding.nameTxt.text = itemsList[position].title
 
     }

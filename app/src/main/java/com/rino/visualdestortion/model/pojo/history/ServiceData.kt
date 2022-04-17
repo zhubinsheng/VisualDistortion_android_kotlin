@@ -13,6 +13,8 @@ import com.google.gson.annotations.SerializedName
     @SerializedName("beforeImg"     ) var beforeImg     : String?                  = null,
     @SerializedName("duringImg"     ) var duringImg     : String?                  = null,
     @SerializedName("afterImg"      ) var afterImg      : String?                  = null,
+    @SerializedName("longtitude"      ) var longtitude      : String?                  = null,
+    @SerializedName("latitude"      ) var latitude      : String?                  = null,
     @SerializedName("fullLocation"  ) var fullLocation  : String?                  = null,
     @SerializedName("qrCodeImg"     ) var qrCodeImg     : String?                  = null,
     @SerializedName("sqrd"          ) var sqrd          : String?                  = null,
@@ -35,10 +37,27 @@ import com.google.gson.annotations.SerializedName
          parcel.readString(),
          parcel.readString(),
          parcel.readString(),
+         parcel.readString(),
+         parcel.readString(),
          parcel.readArrayList(null) as ArrayList<EquipmentList>,
          parcel.readArrayList(null) as ArrayList<WorkerstList>
      ) {
      }
+
+     constructor(it: SearchResponse) :
+             this(it.id,it.serviceNumber,it.notes,it.createdDate,
+             it.beforeImg,it.duringImg,it.afterImg,it.longtitude,it.latitude,it.fullLocation,it.qrCodeImg,it.sqrd,it.replyCount
+             ,it.quantityCubed, arrayListOf(), arrayListOf())
+     {
+                 for (item in it.equipmentList)
+                 {
+                     this.equipmentList.add(EquipmentList(item.name,item.count))
+                 }
+                 for (item in it.workerstList)
+                 {
+                     this.workerstList.add(WorkerstList(item.title,item.count))
+                 }
+             }
 
      override fun writeToParcel(parcel: Parcel, flags: Int) {
          parcel.writeString(id)

@@ -6,8 +6,7 @@ import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
 import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
-import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
-import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
+import com.rino.visualdestortion.model.pojo.history.*
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -48,7 +47,7 @@ interface ApiService {
                                ,@Part duringImg: MultipartBody.Part?
                                ,@Part afterImg: MultipartBody.Part
                                ,@Part("mSquare"         ) mSquare: Int?
-                               ,@Part("mCube"           ) mCube: Int?
+                               ,@Part("mCube"           ) mCube: Float?
                                ,@Part("numberR"         ) numberR: Int?
                                ,@Part("notes"           ) notes: RequestBody ?
 
@@ -57,6 +56,7 @@ interface ApiService {
 //                               ,@PartMap WorkersTypesList : HashMap<String, RequestBody>
 //                               ,@PartMap equipmentList : HashMap<String, RequestBody>
 //                               ,@Part("Percentage"      ) percentage: RequestBody ?
+
     @GET("api/form/createFrom")
     suspend fun getServiceForm( @Header("Authorization") auth: String): Response<AddServiceResponse>
 
@@ -66,8 +66,15 @@ interface ApiService {
     @GET("api/History/GetServiceTypeHistory")
     suspend fun getHistoryData( @Header("Authorization") auth: String): Response<AllHistoryResponse>
 
-    @GET("api/History/GetServiceTypeHistory/{serviceTypeId}")
-    suspend fun getHistoryDataByService(@Header("Authorization") auth: String, @Path("serviceTypeId") serviceTypeId: Int, @Query("pageNumber") pageNumber:Int ,@Query("period") period:String ): Response<HistoryByServiceIdResponse>
+    @GET("api/History/serviceTypeHistory/{serviceTypeId}")
+    suspend fun getFilteredHistory(@Header("Authorization") auth: String, @Path("serviceTypeId") serviceTypeId: Int,@Query("period") period:String ): Response<FilteredHistoryResponse>
+
+    @GET("api/History/SeeAllHistory/{serviceTypeId}")
+    suspend fun getHistoryDataByService(@Header("Authorization") auth: String, @Path("serviceTypeId") serviceTypeId: Int,@Query("period") period:String, @Query("pageNumber") pageNumber:Int  ): Response<HistoryByServiceIdResponse>
+
+    @POST("api/History/SearchByServiceId")
+    suspend fun searchHistoryDataByService(@Header("Authorization") auth: String, @Body searchRequest: SearchRequest ): Response<SearchResponse>
+
 
     @GET("api/DailyPreparations/isPrepared")
     suspend fun isDailyPrepared( @Header("Authorization") auth: String): Response<CheckDailyPreparationResponse>

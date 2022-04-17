@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isGone
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
@@ -239,16 +240,21 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun showMessage(msg: String) {
-        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
-            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                resources.getColor(
-                    R.color.teal
+        lifecycleScope.launchWhenResumed {
+            Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                    resources.getColor(
+                        R.color.teal
+                    )
                 )
-            )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(
-                R.string.dismiss))
-            {
-            }.show()
+                .setActionTextColor(resources.getColor(R.color.white)).setAction(
+                    getString(
+                        R.string.dismiss
+                    )
+                )
+                {
+                }.show()
+        }
     }
 
     private fun registerConnectivityNetworkMonitor() {

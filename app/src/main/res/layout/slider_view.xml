@@ -13,8 +13,8 @@
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/app_name"
         android:layout_marginTop="@dimen/paddingLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -27,7 +27,7 @@
         android:textColor="@color/dark_gray"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/myimage"
-        app:layout_constraintStart_toStartOf="@+id/myimage"
+        app:layout_constraintRight_toRightOf="@+id/myimage"
+        app:layout_constraintLeft_toLeftOf="@+id/myimage"
         app:layout_constraintTop_toBottomOf="@+id/myimage" />
 </androidx.constraintlayout.widget.ConstraintLayout>

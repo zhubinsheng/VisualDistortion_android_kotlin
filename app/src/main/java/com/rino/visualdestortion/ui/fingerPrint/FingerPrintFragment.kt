@@ -91,6 +91,8 @@ class FingerPrintFragment : Fragment() {
             .setDescription("Uses FP")
             .setNegativeButton("Cancel", requireActivity().mainExecutor, DialogInterface.OnClickListener { dialog, which ->
                 notifyErrorToUser("Authentication Cancelled")
+                viewModel.logout()
+                navgateToLogin()
             }).build()
 
         // start the authenticationCallback in mainExecutor
@@ -117,6 +119,8 @@ class FingerPrintFragment : Fragment() {
         cancellationSignal = CancellationSignal()
         cancellationSignal?.setOnCancelListener {
             notifyMsgToUser("Authentication was cancelled by the user")
+            viewModel.logout()
+            navgateToLogin()
         }
         return cancellationSignal as CancellationSignal
     }

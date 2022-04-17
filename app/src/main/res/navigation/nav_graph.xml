@@ -38,6 +38,11 @@
             app:destination="@id/welcomeFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splash_to_error"
+            app:destination="@id/errorFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment2"
@@ -90,7 +95,7 @@
         tools:layout="@layout/fragment_history" >
         <action
             android:id="@+id/action_history_to_historyByID"
-            app:destination="@id/historyByServiceTypeFragment"
+            app:destination="@id/filteredHistotyFragment"
             />
     </fragment>
     <fragment
@@ -135,12 +140,26 @@
             android:name="QRCodeURL"
             app:argType="string"
             android:defaultValue="http://sohamerp.com/avo/avo_privacy_policy.html"/>
+        <argument
+            android:name="serviceName"
+            app:argType="string"
+            android:defaultValue=""/>
+        <argument
+            android:name="serviceID"
+            app:argType="string"
+            android:defaultValue="1"/>
         <action
             android:id="@+id/action_QRCode_to_Services"
             app:destination="@id/servicesFragment"
             app:popUpTo="@id/servicesFragment"
             app:popEnterAnim="@anim/right_to_left"
           />
+        <action
+            android:id="@+id/action_QRCode_to_AddForm"
+            app:destination="@id/addServiceFragment"
+            app:popUpTo="@id/addServiceFragment"
+            app:popEnterAnim="@anim/right_to_left"
+            />
     </fragment>
     <fragment
         android:id="@+id/resetPasswordFragment"
@@ -207,6 +226,10 @@
             android:name="serviceID"
             app:argType="string"
             android:defaultValue="1"/>
+        <argument
+            android:name="period"
+            app:argType="string"
+            android:defaultValue=""/>
         <action
             android:id="@+id/action_historyByID_to_serviceDetails"
             app:destination="@id/serviceDetailsFragment"
@@ -226,5 +249,63 @@
             android:id="@+id/action_serviceDetails_to_QrCode"
             app:destination="@id/QRCodeFragment"
             />
+    </fragment>
+    <fragment
+        android:id="@+id/errorFragment"
+        android:name="com.rino.visualdestortion.ui.error.ErrorFragment"
+        android:label="fragment_error"
+        tools:layout="@layout/fragment_error" >
+        <action
+            android:id="@+id/action_error_to_ServiceFragment"
+            app:destination="@id/servicesFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_error_to_dailyPreparation"
+            app:destination="@id/dailyPreparationFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_error_to_welcome"
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/qrCodeScannerFragment"
+        android:name="com.rino.visualdestortion.ui.scanQrCode.QrCodeScannerFragment"
+        android:label="fragment_qr_code_scanner"
+        tools:layout="@layout/fragment_qr_code_scanner" >
+        <action
+            android:id="@+id/action_scanner_to_result_QrCode"
+            app:destination="@id/qrCodeResultFragment"
+          />
+    </fragment>
+    <fragment
+        android:id="@+id/qrCodeResultFragment"
+        android:name="com.rino.visualdestortion.ui.qrCodeResult.QrCodeResultFragment"
+        android:label="QrCodeResultFragment" >
+        <argument
+            android:name="scanResult"
+            app:argType="string"
+            android:defaultValue=""/>
+    </fragment>
+    <fragment
+        android:id="@+id/filteredHistotyFragment"
+        android:name="com.rino.visualdestortion.ui.filteredHistory.FilteredHistotyFragment"
+        android:label="fragment_filtered_histoty"
+        tools:layout="@layout/fragment_filtered_histoty" >
+        <argument
+            android:name="serviceID"
+            app:argType="string"
+            android:defaultValue="1"/>
+        <action
+            android:id="@+id/action_historyByID_to_serviceDetails"
+            app:destination="@id/serviceDetailsFragment"
+            />
+        <action
+        android:id="@+id/action_filtered_history_to_history_by_service"
+        app:destination="@id/historyByServiceTypeFragment"
+        />
     </fragment>
 </navigation>

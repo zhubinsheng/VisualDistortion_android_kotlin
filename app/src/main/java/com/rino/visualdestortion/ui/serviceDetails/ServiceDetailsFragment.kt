@@ -11,6 +11,7 @@ import com.rino.visualdestortion.databinding.FragmentServiceDetailsBinding
 import com.rino.visualdestortion.model.pojo.history.ServiceData
 import com.rino.visualdestortion.ui.AddService.AddServiceFragmentDirections
 import com.rino.visualdestortion.ui.qrCode.QRCodeFragmentDirections
+import com.rino.visualdestortion.utils.Constants
 import com.smarteist.autoimageslider.SliderView
 import com.squareup.picasso.Picasso
 
@@ -61,9 +62,9 @@ class ServiceDetailsFragment : Fragment() {
         binding.imageSlider.isAutoCycle = true
 
 
-        binding.dateFromTxt.text = service.createdDate
+        binding.dateFromTxt.text = Constants.convertNumsToArabic(service.createdDate?:"")
         binding.addressValue.text = service.fullLocation
-        binding.serviceNumValue.text = service.serviceNumber.toString()
+        binding.serviceNumValue.text = Constants.convertNumsToArabic(service.serviceNumber.toString())
         binding.notesValue.text = service.notes
   //      Picasso.with(context).load(service.qrCodeImg).into(binding.qrCodeImg)
         binding.viewQRCodeBtn.setOnClickListener{

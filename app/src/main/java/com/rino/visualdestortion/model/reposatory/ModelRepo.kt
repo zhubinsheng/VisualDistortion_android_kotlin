@@ -3,20 +3,20 @@ package com.rino.visualdestortion.model.reposatory
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import android.view.View
 import com.google.gson.Gson
 import com.rino.visualdestortion.model.localDataSource.MySharedPreference
-import com.rino.visualdestortion.model.localDataSource.sharedPref.Preference
 import com.rino.visualdestortion.model.localDataSource.PreferenceDataSource
 import com.rino.visualdestortion.model.localDataSource.room.DailyPreparation
 import com.rino.visualdestortion.model.localDataSource.room.DailyPreparationDataSource
+import com.rino.visualdestortion.model.localDataSource.sharedPref.Preference
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
 import com.rino.visualdestortion.model.pojo.addService.FormData
 import com.rino.visualdestortion.model.pojo.addService.QRCode
 import com.rino.visualdestortion.model.pojo.dailyPraperation.CheckDailyPreparationResponse
 import com.rino.visualdestortion.model.pojo.dailyPraperation.GetDailyPraprationData
 import com.rino.visualdestortion.model.pojo.dailyPraperation.TodayDailyPrapration
-import com.rino.visualdestortion.model.pojo.history.AllHistoryResponse
-import com.rino.visualdestortion.model.pojo.history.HistoryByServiceIdResponse
+import com.rino.visualdestortion.model.pojo.history.*
 import com.rino.visualdestortion.model.pojo.home.HomeServicesResponse
 import com.rino.visualdestortion.model.pojo.login.LoginRequest
 import com.rino.visualdestortion.model.pojo.login.LoginResponse
@@ -29,16 +29,22 @@ import com.rino.visualdestortion.model.remoteDataSource.ApiInterface
 import com.rino.visualdestortion.model.remoteDataSource.Result
 import com.rino.visualdestortion.utils.PREF_FILE_NAME
 import kotlinx.coroutines.flow.Flow
-import okhttp3.RequestBody
 import java.io.IOException
+import java.net.SocketTimeoutException
 
-class ModelRepo (application: Application):RemoteRepo,LocalRepo{
+class ModelRepo(application: Application) : RemoteRepo, LocalRepo {
     private val apiDataSource: ApiInterface = ApiDataSource()
     private val preference =
-        MySharedPreference(application.applicationContext.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE))
+        MySharedPreference(
+            application.applicationContext.getSharedPreferences(
+                PREF_FILE_NAME,
+                Context.MODE_PRIVATE
+            )
+        )
     private val sharedPreference: Preference = PreferenceDataSource(preference)
 
-    private val localDataSource: DailyPreparationDataSource = DailyPreparationDataSource(application)
+    private val localDataSource: DailyPreparationDataSource =
+        DailyPreparationDataSource(application)
 
     override suspend fun login(loginRequest: LoginRequest?): Result<LoginResponse?> {
         var result: Result<LoginResponse?> = Result.Loading
@@ -52,15 +58,20 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
-                        result = Result.Error(Exception("Email or Password invalid"))
+                        result = Result.Error(Exception("خطأ فى البريد الكتروني او كلمة المرور"))
                     }
                     404 -> {
                         Log.e("Error 404", "Not Found")
-                        result = Result.Error(Exception("Not Found"))
+                        //  result = Result.Error(Exception("Not Found"))
                     }
                     500 -> {
                         Log.e("Error 500", "Server Error")
                         result = Result.Error(Exception("server is down"))
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء فحص الشبكة"))
                     }
                     else -> {
                         Log.e("Error", "Generic Error")
@@ -69,10 +80,10 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 }
             }
 
-        }catch (e: IOException){
+        } catch (e: IOException) {
             result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+            Log.e("ModelRepository", "IOException ${e.message}")
+            Log.e("ModelRepository", "IOException ${e.localizedMessage}")
 
         }
         return result
@@ -105,16 +116,21 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                         Log.e("Error 500", "Server Error")
                         result = Result.Error(Exception("server is down"))
                     }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء فحص الشبكة"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
                 }
             }
 
-        }catch (e: IOException){
+        } catch (e: IOException) {
             result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+            Log.e("ModelRepository", "IOException ${e.message}")
+            Log.e("ModelRepository", "IOException ${e.localizedMessage}")
 
         }
         return result
@@ -142,18 +158,28 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                         Log.e("Error 500", "Server Error")
                         result = Result.Error(Exception("Server is down"))
                     }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
-                  //      result = Result.Error(Exception("Error"))
+                        //      result = Result.Error(Exception("Error"))
                     }
                 }
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            val message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
@@ -167,7 +193,8 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 Log.i("ModelRepository", "Result $result")
             } else {
                 val gson = Gson()
-                val eventResponse = gson.fromJson(response.errorBody()?.string(),ResponseOTP::class.java)
+                val eventResponse =
+                    gson.fromJson(response.errorBody()?.string(), ResponseOTP::class.java)
                 Log.i("ModelRepository", "Error${response.errorBody()?.string()}")
                 when (response.code()) {
                     400 -> {
@@ -184,6 +211,11 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                         result = Result.Error(Exception("Server is down"))
 
                     }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
                         //      result = Result.Error(Exception("Error"))
@@ -191,19 +223,24 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 }
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            val message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
 
-    override suspend fun setServiceForm(serviceForm: FormData):Result<QRCode?> {
+    override suspend fun setServiceForm(serviceForm: FormData): Result<QRCode?> {
         var result: Result<QRCode?> = Result.Loading
         try {
-            val response = apiDataSource.setServiceForm("Bearer ${getToken()}",serviceForm)
+            val response = apiDataSource.setServiceForm("Bearer ${getToken()}", serviceForm)
             Log.i("ModelRepositoryForm", "response :  $response")
             if (response?.isSuccessful == true) {
                 result = Result.Success(response.body())
@@ -214,7 +251,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 when (response?.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
-                        Log.e("Error 400", "SetForm: "+response.errorBody()?.string())
+                        Log.e("Error 400", "SetForm: " + response.errorBody()?.string())
                         result = Result.Error(Exception("Bad Request SetForm"))
                     }
                     404 -> {
@@ -226,12 +263,21 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth")
-                        if(isLogin()){
-                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
-                          refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
-                         // refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
-                          // refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
-                    }}
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                            // refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
+                            // refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                        }
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error ${response?.code()}")
                     }
@@ -239,11 +285,16 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
 
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
@@ -253,12 +304,12 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
 
-            val response = apiDataSource.getServiceForm("Bearer "+getToken())
+            val response = apiDataSource.getServiceForm("Bearer " + getToken())
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Result $result")
             } else {
-                Log.i("ModelRepository", "Error${response.message().toString()}")
+                Log.i("ModelRepository", "Error${response.message()}")
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
@@ -273,33 +324,48 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth")
-                        if(isLogin())
-                        {
-                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
-                      //  refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
-                          refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
-                         //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
-                    }}
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            //  refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                            //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                        }
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
                 }
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
-        return result    }
+
+        return result
+    }
 
     override suspend fun getHomeData(): Result<HomeServicesResponse?> {
         var result: Result<HomeServicesResponse?> = Result.Loading
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
 
-            val response = apiDataSource.getHomeData("Bearer "+getToken())
+            val response = apiDataSource.getHomeData("Bearer " + getToken())
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Result $result")
@@ -321,23 +387,37 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     401 -> {
                         Log.e("Error 401", "Not Auth")
                         //result = Result.Error(Exception("Not Auth please, logout and login again"))
-                        if(isLogin()){
-                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
-                        //refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
-                         refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
-                        //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
-                    }}
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            //refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                            //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                        }
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
                 }
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
@@ -347,7 +427,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
 
-            val response = apiDataSource.getHistoryData("Bearer "+getToken())
+            val response = apiDataSource.getHistoryData("Bearer " + getToken())
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Resulttt $result")
@@ -368,33 +448,134 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
-               //         result = Result.Error(Exception("Not Auth please, logout and login again"))
-                        if(isLogin()){
-                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
-                        refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
-                        //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
-                    }}
+                        //         result = Result.Error(Exception("Not Auth please, logout and login again"))
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                            //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                        }
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
                 }
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
 
-    override suspend fun getHistoryDataByService(serviceTypeId: Int,pageNumber: Int,period:String): Result<HistoryByServiceIdResponse?> {
+    override suspend fun getFilteredHistory(
+        serviceTypeId: Int,
+        period: String
+    ): Result<FilteredHistoryResponse?> {
+        var result: Result<FilteredHistoryResponse?> = Result.Loading
+        try {
+            Log.i("ModelRepository:@@", "Token ${getToken()}")
+            val response = apiDataSource.getFilteredHistory(
+                "Bearer " + getToken(),
+                serviceTypeId,
+                period
+            )
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Resulttt $result")
+                when (response.code()) {
+                    204 -> {
+                        Log.e("Error 204", "No content")
+                        result = Result.Error(Exception("No content"))
+                    }
+                }
+            } else {
+                Log.i("ModelRepository", "Error${response.errorBody()?.string()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        result = Result.Error(Exception("Bad Request"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                        result = Result.Error(Exception("Not Found"))
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    204 -> {
+                        Log.e("Error 204", "No content")
+                        result = Result.Error(Exception("No content"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth please, logout and login again")
+                        //     result = Result.Error(Exception("Not Auth please, logout and login again"))
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                            //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                        }
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
+                    else -> {
+                        Log.e("Error", "Generic Error")
+                    }
+                }
+            }
+
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
+        }
+        return result
+    }
+
+    override suspend fun getHistoryDataByService(
+        serviceTypeId: Int,
+        period: String,
+        pageNumber: Int
+
+    ): Result<HistoryByServiceIdResponse?> {
         var result: Result<HistoryByServiceIdResponse?> = Result.Loading
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
+            val response = apiDataSource.getHistoryDataByService(
+                "Bearer " + getToken(),
+                serviceTypeId,
+                period,
+                pageNumber
 
-            val response = apiDataSource.getHistoryDataByService("Bearer "+getToken(),serviceTypeId,pageNumber,period)
+            )
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Resulttt $result")
@@ -403,7 +584,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
-                        result = Result.Error(Exception("Bad Request getHistoryDataByService"))
+                        result = Result.Error(Exception("Bad Request"))
                     }
                     404 -> {
                         Log.e("Error 404", "Not Found")
@@ -415,25 +596,98 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
-                   //     result = Result.Error(Exception("Not Auth please, logout and login again"))
-                        if(isLogin()) {
-                            Log.i("Model Repo:",
+                        //     result = Result.Error(Exception("Not Auth please, logout and login again"))
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
                                 "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
                             )
                             refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
                             //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
-                        } }
+                        }
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
                 }
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
+        }
+        return result
+    }
 
+    override suspend fun searchHistoryDataByService(searchRequest: SearchRequest): Result<SearchResponse?> {
+        var result: Result<SearchResponse?> = Result.Loading
+        try {
+            Log.i("ModelRepository:@@", "Token ${getToken()}")
+            val response =
+                apiDataSource.searchHistoryDataByService("Bearer " + getToken(), searchRequest)
+            if (response.isSuccessful) {
+                result = Result.Success(response.body())
+                Log.i("ModelRepository", "Resulttt $result")
+            } else {
+                Log.i("ModelRepository", "Error ${response.errorBody()?.string()}")
+                when (response.code()) {
+                    400 -> {
+                        Log.e("Error 400", "Bad Request")
+                        result = Result.Error(Exception("Bad Request"))
+                    }
+                    404 -> {
+                        Log.e("Error 404", "Not Found")
+                    }
+                    500 -> {
+                        Log.e("Error 500", "Server Error")
+                        result = Result.Error(Exception("server is down"))
+                    }
+                    401 -> {
+                        Log.e("Error 401", "Not Auth please, logout and login again")
+                        //     result = Result.Error(Exception("Not Auth please, logout and login again"))
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                            //   refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwianRpIjoiNGZlMDQ5NjQtZDRjNC00ZWQ3LTkwOTAtNDhhZWJlMjBhYzJhIiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjQ1ZmVjYzlkLTI1NjAtNGNlMC04YTY4LTZlMjcyYzM1MDQ2ZiIsIm5iZiI6MTY0MjUwMTA1OCwiZXhwIjoxNjQyNTIyNjU4LCJpYXQiOjE2NDI1MDEwNTh9.MLjmtA69E__oy4aBAcicmMUcSmScYkyD6nK57c4oXCE","l1FAdwyASSqQxJVvAclqv5JkmHgoXWacweK5/iL0L/8="))
+                        }
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
+                    else -> {
+
+                        Log.e("Error", "Generic Error${response.code()}")
+                    }
+                }
+            }
+
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
@@ -443,7 +697,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
 
-            val response = apiDataSource.isDailyPrepared("Bearer "+getToken())
+            val response = apiDataSource.isDailyPrepared("Bearer " + getToken())
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Resulttt $result")
@@ -464,25 +718,49 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
-                       // result = Result.Error(Exception("Not Auth please, logout and login again"))
-                        if(isLogin()) {
+                        if (isLogin()) {
                             Log.i(
                                 "Model Repo:",
                                 "isDailyPrepared:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
                             )
-                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
-                        } }
+                            val refreshResponse =refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
+                    when(refreshResponse){
+                        is Result.Success -> {
+                            Log.i("refresh token :", "${refreshResponse.data}")
+                            isDailyPrepared()
+
+                        }
+                        is Result.Error -> {
+                            Log.e("refresh token :", "${refreshResponse.exception.message}")
+                            result = Result.Error(Exception("login required, logout and login again"))
+
+
+                        }
+
+                    }
+                        }
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
                 }
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
@@ -494,7 +772,11 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         var result: Result<Void?> = Result.Loading
         try {
 
-            val response = apiDataSource.setDailyPreparation("Bearer ${getToken()}",WorkersTypesList,equipmentList)
+            val response = apiDataSource.setDailyPreparation(
+                "Bearer ${getToken()}",
+                WorkersTypesList,
+                equipmentList
+            )
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepositoryForm", "Result $result")
@@ -503,7 +785,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
-                        Log.e("Error 400", "setDailyPreparation: "+response.errorBody()?.string())
+                        Log.e("Error 400", "setDailyPreparation: " + response.errorBody()?.string())
                         result = Result.Error(Exception("Bad Request setDailyPreparation"))
                     }
                     404 -> {
@@ -515,11 +797,24 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth")
-                        if(isLogin()){
-                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
-                        refreshToken(RefreshTokenRequest("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0","02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="))
-                    }
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(
+                                RefreshTokenRequest(
+                                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcnVzZXIxIiwianRpIjoiNmU5NTcyZTAtZjNmYS00YWIwLTg0ZGMtZWVlYmYwNzE5MjE3IiwiZW1haWwiOiJheW1hbm9tYXJhNTVAZ21haWwuY29tIiwiaXNzIjoiaHR0cHM6Ly9hbWFuYXQtamVkZGFoLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJodHRwczovL2FtYW5hdC1qZWRkYWgtc3RhZ2luZy5henVyZXdlYnNpdGVzLm5ldCIsInVpZCI6IjkxZmJkN2YxLTY0ZDctNGUzZC1iMDBiLWYwOWJiNTc5MzE1MiIsIm5iZiI6MTY0MjU4NjAxNCwiZXhwIjoxNjQyNjA3NjE0LCJpYXQiOjE2NDI1ODYwMTR9.mQq6kbudPaODn65aENzqivqbKxH7rqNfOuuZgP8oCQ0",
+                                    "02VBOXu+meD+7qGEfkgy082o3uef7bJjBdLKbqpfY8E="
+                                )
+                            )
                         }
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
@@ -527,11 +822,16 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
 
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
@@ -541,7 +841,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
 
-            val response = apiDataSource.getCreateDailyPreparation("Bearer "+getToken())
+            val response = apiDataSource.getCreateDailyPreparation("Bearer " + getToken())
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Resulttt $result")
@@ -562,11 +862,19 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                     }
                     401 -> {
                         Log.e("Error 401", "Not Auth please, logout and login again")
-                        result = Result.Error(Exception("Not Auth please, logout and login again"))
-                        if(isLogin()){
-                            Log.i("Model Repo:", "isLogin:"+isLogin()+", token:"+getToken()+",  refresh token:"+getRefreshToken())
-                            refreshToken(RefreshTokenRequest(getToken(),getRefreshToken()))
+                        //result = Result.Error(Exception("Not Auth please, logout and login again"))
+                        if (isLogin()) {
+                            Log.i(
+                                "Model Repo:",
+                                "isLogin:" + isLogin() + ", token:" + getToken() + ",  refresh token:" + getRefreshToken()
+                            )
+                            refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
                         }
+                    }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
                     }
                     else -> {
                         Log.e("Error", "Generic Error")
@@ -574,11 +882,16 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 }
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
@@ -588,7 +901,7 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         try {
             Log.i("ModelRepository:@@", "Token ${getToken()}")
 
-            val response = apiDataSource.getDailyPreparation("Bearer "+getToken())
+            val response = apiDataSource.getDailyPreparation("Bearer " + getToken())
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepository", "Resulttt $result")
@@ -618,20 +931,31 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                             refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
                         }
                     }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
                 }
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
+
     override suspend fun editDailyPreparation(
         WorkersTypesList: Map<Long, Int>,
         equipmentList: Map<Long, Int>
@@ -639,7 +963,11 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
         var result: Result<Void?> = Result.Loading
         try {
 
-            val response = apiDataSource.editDailyPreparation("Bearer ${getToken()}",WorkersTypesList,equipmentList)
+            val response = apiDataSource.editDailyPreparation(
+                "Bearer ${getToken()}",
+                WorkersTypesList,
+                equipmentList
+            )
             if (response.isSuccessful) {
                 result = Result.Success(response.body())
                 Log.i("ModelRepositoryForm", "Result $result")
@@ -648,7 +976,10 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                 when (response.code()) {
                     400 -> {
                         Log.e("Error 400", "Bad Request")
-                        Log.e("Error 400", "editDailyPreparation: "+response.errorBody()?.string())
+                        Log.e(
+                            "Error 400",
+                            "editDailyPreparation: " + response.errorBody()?.string()
+                        )
                         result = Result.Error(Exception("Bad Request editDailyPreparation"))
                     }
                     404 -> {
@@ -669,6 +1000,11 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
                             refreshToken(RefreshTokenRequest(getToken(), getRefreshToken()))
                         }
                     }
+                    502 -> {
+                        Log.e("Error 502", "Time out")
+                        result =
+                            Result.Error(Exception("حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى"))
+                    }
                     else -> {
                         Log.e("Error", "Generic Error")
                     }
@@ -676,33 +1012,41 @@ class ModelRepo (application: Application):RemoteRepo,LocalRepo{
 
             }
 
-        }catch (e: IOException){
-            result = Result.Error(e)
-            Log.e("ModelRepository","IOException ${e.message}")
-            Log.e("ModelRepository","IOException ${e.localizedMessage}")
-
+        } catch (e: IOException) {
+            var message: String
+            if (e is SocketTimeoutException) {
+                message = "حدث خطأ أثناء الاتصال بالانترنت برجاء المحاولة مرة أخرى."
+                result = Result.Error(java.lang.Exception(message))
+            } else {
+                result = Result.Error(e)
+                Log.e("ModelRepository", "IOException ${e.message}")
+                Log.e("ModelRepository", "IOException ${e.localizedMessage}")
+            }
         }
         return result
     }
 
     override fun getAllDailyPreparation(): Flow<List<DailyPreparation>> {
-      return localDataSource.getAllData()
+        return localDataSource.getAllData()
     }
 
-    override fun getDailyPreparation_By_ServiceTypeID(serviceTypeID: String,date :String): DailyPreparation? {
-       return localDataSource.getDailyPreparation_By_ServiceTypeID(serviceTypeID,date)
+    override fun getDailyPreparation_By_ServiceTypeID(
+        serviceTypeID: String,
+        date: String
+    ): DailyPreparation? {
+        return localDataSource.getDailyPreparation_By_ServiceTypeID(serviceTypeID, date)
     }
 
-    override  fun insertDailyPreparation(dailyPreparation: DailyPreparation) {
-      localDataSource.insertDailyPreparation(dailyPreparation)
+    override fun insertDailyPreparation(dailyPreparation: DailyPreparation) {
+        localDataSource.insertDailyPreparation(dailyPreparation)
     }
 
-    override  fun deleteAllDailyPreparation() {
-     localDataSource.deleteAll()
+    override fun deleteAllDailyPreparation() {
+        localDataSource.deleteAll()
     }
 
-    override fun delete_By_ServiceTypeID(serviceTypeID: String,date :String) {
-        localDataSource.deleteBy_ServiceTypeID(serviceTypeID,date)
+    override fun delete_By_ServiceTypeID(serviceTypeID: String, date: String) {
+        localDataSource.deleteBy_ServiceTypeID(serviceTypeID, date)
     }
 
     override fun getFirstTimeLaunch(): Boolean {

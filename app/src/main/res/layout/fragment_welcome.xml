@@ -4,32 +4,70 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/teal"
     tools:context=".ui.welcome.WelcomeFragment">
 
+    <ImageView
+        android:id="@+id/img_logo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="@dimen/paddingLayout"
+        android:scaleType="centerCrop"
+        android:src="@drawable/splash_icon"
+        app:layout_constraintBottom_toTopOf="@+id/company_ar"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+       />
+
+<!--    <TextView-->
+<!--        android:id="@+id/company_en"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="@dimen/paddingLayout"-->
+<!--        android:text="@string/company_name_en"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textStyle="bold"-->
+<!--        android:textSize="@dimen/normalTextSize"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/welcome_msg_txt"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
+
     <TextView
-        android:id="@+id/comp_name_txt"
+        android:id="@+id/company_ar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/paddingLayout"
         android:text="@string/company_name"
-        android:textSize="22sp"
-        android:textColor="@color/black"
-        android:layout_marginTop="200dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:textColor="@color/white"
+        android:textSize="@dimen/headerTextSize"
+        app:layout_constraintBottom_toTopOf="@+id/welcome_msg_txt"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+<!--    <TextView-->
+<!--        android:id="@+id/comp_name_txt"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="@string/company_name"-->
+<!--        android:textSize="22sp"-->
+<!--        android:textColor="@color/black"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"/>-->
 
     <TextView
         android:id="@+id/welcome_msg_txt"
         android:layout_width="270dp"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_msg"
-        android:gravity="center"
-        android:textSize="22sp"
-        android:textColor="@color/black"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/comp_name_txt" />
+        android:gravity="center"
+        android:text="@string/welcome_msg"
+        android:textColor="@color/white"
+        android:textSize="@dimen/headerTextSize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+ />
 
     <TextView
         android:id="@+id/login_msg_txt"
@@ -37,26 +75,27 @@
         android:layout_height="wrap_content"
         android:text="@string/login_msg"
         android:gravity="center"
-        android:textSize="22sp"
-        android:textColor="@color/black"
+        android:textSize="@dimen/headerTextSize"
+        android:textColor="@color/white"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/welcome_msg_txt" />
+
 
     <Button
         android:id="@+id/login_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rectangle_button"
-        android:layout_margin="40dp"
+        android:backgroundTint="@color/white"
+        android:layout_margin="50dp"
         android:text="@string/login"
-        android:textColor="@color/white"
+        android:textColor="@color/teal"
         android:textStyle="bold"
-        android:textSize="@dimen/newsMoreTextSize"
+        android:textSize="@dimen/subHeaderTextSize"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,15 +16,11 @@ import kotlinx.coroutines.withContext
 class SplashViewModel (application: Application) : AndroidViewModel(application) {
     private val modelRepository: ModelRepo = ModelRepo(application)
     private val _isPrepared = MutableLiveData<Boolean>()
-    private val _navToWelcome = MutableLiveData<Boolean>()
     private var _setError = MutableLiveData<String>()
     private var _loading = MutableLiveData<Int>(View.GONE)
 
     val isPrepared: LiveData<Boolean>
         get() = _isPrepared
-
-    val navToWelcome: LiveData<Boolean>
-        get() = _navToWelcome
 
     val loading: LiveData<Int>
         get() = _loading
@@ -53,7 +49,6 @@ class SplashViewModel (application: Application) : AndroidViewModel(application)
                     Log.e("isDailyPrepared:", "${result.exception.message}")
                   //  _loading.postValue(View.GONE)
                     _setError.postValue(result.exception.message)
-
 
                 }
                 is Result.Loading -> {

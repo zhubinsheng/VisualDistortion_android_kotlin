@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.*
+import android.graphics.drawable.ColorDrawable
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.Network
@@ -17,30 +18,36 @@ import android.os.*
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
 import com.rino.visualdestortion.databinding.FragmentAddServiceBinding
 import com.rino.visualdestortion.model.pojo.addService.AddServiceResponse
+import com.rino.visualdestortion.model.pojo.addService.Districts
 import com.rino.visualdestortion.model.pojo.addService.FormData
+import com.rino.visualdestortion.model.pojo.addService.Streets
 import com.rino.visualdestortion.ui.home.MainActivity
+import com.rino.visualdestortion.utils.Constants
 import com.rino.visualdestortion.utils.NetworkConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -67,7 +74,12 @@ class AddServiceFragment : Fragment() {
     private  var afterImgBody: MultipartBody.Part? = null
     private lateinit  var formData: FormData
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private val CAMERA_REQUEST_CODE = 200
+    private val BEFORE_CAMERA_REQUEST_CODE = 100
+    private val BEFORE_GALLERY_REQUEST_CODE = 200
+    private val DURING_CAMERA_REQUEST_CODE = 300
+    private val DURING_GALLERY_REQUEST_CODE = 400
+    private val AFTER_CAMERA_REQUEST_CODE = 500
+    private val AFTER_GALLERY_REQUEST_CODE = 600
     private val REQUEST_CODE = 100
     private var serviceTypeId = 1
     private var serviceName = "الكتابات المشوهة"
@@ -77,8 +89,11 @@ class AddServiceFragment : Fragment() {
     private var isMunicipalitySelected = false
     private var isDistrictSelected = false
     private var isStreetSelected = false
-
-
+    private lateinit var  streetPopup :PopupWindow
+    private lateinit var  districtPopup :PopupWindow
+    private lateinit var  beforePopup :PopupWindow
+    private lateinit var  duringPopup :PopupWindow
+    private lateinit var  afterPopup  :PopupWindow
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationProviderClient =
@@ -168,7 +183,7 @@ class AddServiceFragment : Fragment() {
         }
         binding.notesEditTxt.addTextChangedListener {
             val notesLength =  binding.notesEditTxt.text.toString().length
-            binding.notesLength.text = "$notesLength ${getString(R.string.chars)} "
+            binding.notesLength.text = "${Constants.convertNumsToArabic(notesLength.toString())} ${getString(R.string.chars)} "
         }
         binding.submitButton.setOnClickListener {
             submit()
@@ -185,119 +200,31 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun duringPicOnClick() {
-        checkCameraOrStoragePermission()
-    }
+        if (isExternalStoragePermissionGranted()&&isCameraPermissionGranted()) {
+          //  showDuringPopup()
+            enableGallery(AFTER_GALLERY_REQUEST_CODE)
 
-    private fun checkCameraOrStoragePermission() {
-        if (isExternalStoragePermissionGranted()) {
-            enableCameraOrGallery()
         } else {
             navigateToAppSetting()
         }
     }
 
-    private fun enableCameraOrGallery() {
+    private fun enableGallery(GALLERY_REQUEST_CODE:Int) {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
-        startActivityForResult(intent, 0)
+        startActivityForResult(intent, GALLERY_REQUEST_CODE)
     }
-//            var photoUri: Uri? = null
-//            val camIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//            photoUri = createPhotoTakenUri(context)
-//            // write the captured image to a file
-//            camIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-//
-//            val gallIntent = Intent(Intent.ACTION_GET_CONTENT)
-//            gallIntent.type = "image/*"
-//
-//            // look for available intents
-//            val info = ArrayList<ResolveInfo>()
-//            val yourIntentsList = ArrayList<Intent>()
-//            val packageManager = context.packageManager
-//
-//            packageManager.queryIntentActivities(camIntent, 0).forEach{
-//                val finalIntent = Intent(camIntent)
-//                finalIntent.component = ComponentName(it.activityInfo.packageName, it.activityInfo.name)
-//                yourIntentsList.add(finalIntent)
-//                info.add(it)
-//            }
-//
-//            packageManager.queryIntentActivities(gallIntent, 0).forEach {
-//                val finalIntent = Intent(gallIntent)
-//                finalIntent.component = ComponentName(it.activityInfo.packageName, it.activityInfo.name)
-//                yourIntentsList.add(finalIntent)
-//                info.add(it)
-//            }
-//
-//            val chooser = Intent.createChooser(gallIntent, "Select source")
-//            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, yourIntentsList.toTypedArray())
-//
-//            return chooser
-//
-//        }
-//
-//        private fun createFile(context: Context): File {
-//            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-//            val imageFileName = "IMG_" + timeStamp + "_"
-//            val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: throw IllegalStateException("Dir not found")
-//            return File.createTempFile(
-//                imageFileName,  /* prefix */
-//                ".jpg",  /* suffix */
-//                storageDir /* directory */
-//            )
-//        }
-//
-//        private fun createPhotoTakenUri(context: Context): Uri {
-//            val file = createFile(context)
-//            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                FileProvider.getUriForFile(context,
-//                    com.rino.visualdestortion.BuildConfig.APPLICATION_ID +".fileprovider", file)
-//            } else {
-//                Uri.fromFile(file)
-//            }
-//        }
+    private fun enableCamera(CAMERA_REQUEST_CODE:Int) {
 
-//        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-//        startActivityForResult(gallery, 0)
-//        val file: File? = requireActivity().getExternalFilesDir(Environment.DIRECTORY_DCIM)
-//        val cameraOutputUri = Uri.fromFile(file)
-//        val intent: Intent? = getPickIntent(cameraOutputUri)
-//        startActivityForResult(intent, -1)
-//    }
-//
-//    private fun getPickIntent(cameraOutputUri: Uri?): Intent? {
-//        val intents: MutableList<Intent> = ArrayList()
-//
-//        if (true) {
-//            intents.add(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        val f = File(Environment.getExternalStorageDirectory(), "image.jpg")
+//        if (f.exists()) {
+//            f.delete()
 //        }
-//
-//        if (true) {
-//            setCameraIntents(intents, cameraOutputUri)
-//        }
-//
-//        if (intents.isEmpty()) return null
-//        val result = Intent.createChooser(intents.removeAt(0), null)
-//        if (intents.isNotEmpty()) {
-//            result.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toString())
-//        }
-//        return result
-//
-//    }
-//
-//    private fun setCameraIntents(intents: MutableList<Intent>, cameraOutputUri: Uri?) {
-//        val captureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//        val packageManager: PackageManager = requireActivity().packageManager
-//        val listCam = packageManager.queryIntentActivities(captureIntent, 0)
-//        for (res in listCam) {
-//            val packageName = res.activityInfo.packageName
-//            val intent = Intent(captureIntent)
-//            intent.component = ComponentName(res.activityInfo.packageName, res.activityInfo.name)
-//            intent.setPackage(packageName)
-//            intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraOutputUri)
-//            intents.add(intent)
-//        }
-//    }
+//        val mImageCaptureUri = Uri.fromFile(f)
+//        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri)
+        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
+    }
 
     private fun submit() {
         formData = getFormDataFromUi(serviceName)
@@ -314,22 +241,6 @@ class AddServiceFragment : Fragment() {
            }
     }
 
-//    private fun observeDailyPreparation() {
-//        viewModel.getDailyPreparation.observe(viewLifecycleOwner) {
-//            if (it != null) {
-//                formData.WorkersTypesList = it.workerTypesList
-//                formData.equipmentList = it.workerTypesList
-//                    viewModel.setFormData(formData)
-
-//                else{
-//                    getLatestLocation()
-//                    if (validateData(formData) && lat != "" && lng != "") {
-//                        viewModel.setFormData(formData)
-//                    }
-//               }
-//            }
-//        }
-//    }
 
     private fun getFormDataFromUi(serviceName: String): FormData {
         Log.e("Images","Before : ${beforeImgBody.toString()} ,During : ${duringImgBody.toString()} ,Aftar : ${afterImgBody.toString()}")
@@ -337,7 +248,7 @@ class AddServiceFragment : Fragment() {
         val formData = FormData()
         if (serviceName == "مخلفات الهدم") {
             if(binding.editTextMCube.text.toString()!="")
-            formData.mCube = binding.editTextMCube.text.toString().toInt()
+            formData.mCube = binding.editTextMCube.text.toString().toFloat()
             if(binding.editTextNumberR.text.toString()!="")
             formData.numberR = binding.editTextNumberR.text.toString().toInt()
         } else if (serviceName == "الكتابات المشوهة")
@@ -351,8 +262,6 @@ class AddServiceFragment : Fragment() {
         formData.streetName = binding.streetTextView.text.toString()
         formData.lat = lat
         formData.lng = lng
-     //   formData.WorkersTypesList = workerTypesAdapter.getWorkerTypesMap()
-    //    formData.equipmentList = equipmentsAdapter.getEquipmentMap()
         formData.notes = binding.notesEditTxt.text.toString()
         if(beforeImgBody != null) {
 
@@ -366,17 +275,94 @@ class AddServiceFragment : Fragment() {
         if(duringImgBody != null) {
             formData.duringImg = duringImgBody as MultipartBody.Part
         }
-//        formData.percentage = binding.precentageEditTxt.text.toString()
-//          formData.percentage = "100"
+
         return formData
     }
 
     private fun afterPicOnClick() {
-        checkCameraPermission()
+        if (isExternalStoragePermissionGranted()&&isCameraPermissionGranted()) {
+        //    showAfterPopup()
+            enableGallery(AFTER_GALLERY_REQUEST_CODE)
+        } else {
+            navigateToAppSetting()
+        }
     }
 
     private fun beforePicOnClick() {
-        checkExternalStoragePermission()
+        if (isExternalStoragePermissionGranted()&&isCameraPermissionGranted()) {
+        //    showBeforePopup()
+            enableGallery(BEFORE_GALLERY_REQUEST_CODE)
+        } else {
+            navigateToAppSetting()
+        }
+    }
+    private fun showBeforePopup(){
+        val inflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.select_gallery_or_camera_view, null)
+        beforePopup = PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        beforePopup.isOutsideTouchable = true
+        beforePopup.isFocusable = true
+        binding.frameLayout.alpha = 0.3f
+        beforePopup.setOnDismissListener { binding.frameLayout.alpha = 1f }
+        beforePopup.animationStyle = R.anim.down_to_up
+        beforePopup.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.white)))
+        beforePopup.showAtLocation(requireView(), Gravity.BOTTOM, 0, 0)
+        val gallary_img = view.findViewById<ImageView>(R.id.gallary_img)
+        gallary_img.setOnClickListener{
+            beforePopup.dismiss()
+            enableGallery(BEFORE_GALLERY_REQUEST_CODE)
+        }
+        val camera_img = view.findViewById<ImageView>(R.id.camera_img)
+        camera_img.setOnClickListener{
+            beforePopup.dismiss()
+           enableCamera(BEFORE_CAMERA_REQUEST_CODE)
+        }
+    }
+
+    private fun showDuringPopup(){
+        val inflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.select_gallery_or_camera_view, null)
+        duringPopup = PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        duringPopup.isOutsideTouchable = true
+        binding.frameLayout.alpha = 0.3f
+        duringPopup.setOnDismissListener { binding.frameLayout.alpha = 1f }
+        duringPopup.isFocusable = true
+        duringPopup.animationStyle = R.anim.down_to_up
+        duringPopup.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.white)))
+        duringPopup.showAtLocation(requireView(), Gravity.BOTTOM, 0, 0)
+        val gallary_img = view.findViewById<ImageView>(R.id.gallary_img)
+        gallary_img.setOnClickListener{
+            duringPopup.dismiss()
+            enableGallery(DURING_GALLERY_REQUEST_CODE)
+        }
+        val camera_img = view.findViewById<ImageView>(R.id.camera_img)
+        camera_img.setOnClickListener{
+            duringPopup.dismiss()
+            enableCamera(DURING_CAMERA_REQUEST_CODE)
+        }
+    }
+
+    private fun showAfterPopup(){
+        val inflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.select_gallery_or_camera_view, null)
+        binding.frameLayout.alpha = 0.3f
+        afterPopup = PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        afterPopup.setOnDismissListener { binding.frameLayout.alpha = 1f }
+        afterPopup.isOutsideTouchable = true
+        afterPopup.isFocusable = true
+        afterPopup.animationStyle = R.anim.down_to_up
+        afterPopup.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.white)))
+        afterPopup.showAtLocation(requireView(), Gravity.BOTTOM, 0, 0)
+        val gallary_img = view.findViewById<ImageView>(R.id.gallary_img)
+        gallary_img.setOnClickListener{
+            afterPopup.dismiss()
+            enableGallery(AFTER_GALLERY_REQUEST_CODE)
+        }
+        val camera_img = view.findViewById<ImageView>(R.id.camera_img)
+        camera_img.setOnClickListener{
+            afterPopup.dismiss()
+            enableCamera(AFTER_CAMERA_REQUEST_CODE)
+        }
     }
 
     private fun initLists() {
@@ -389,12 +375,54 @@ class AddServiceFragment : Fragment() {
 
     private fun observeData() {
         observeGetServicesData()
-   //     observeDailyPreparation()
         observeSetFormData()
         observeLoading()
         observeShowError()
+        observeSelectedStreet()
+        observeSelectedDistrict()
+        ObserveIsStreetSelected()
+        ObserveIsDistrictSelected()
     }
 
+    private fun ObserveIsDistrictSelected() {
+        viewModel.isSelectedDistrict.observe(viewLifecycleOwner) {
+            it?.let {
+                isDistrictSelected = it
+            }
+        }
+    }
+
+    private fun ObserveIsStreetSelected() {
+        viewModel.isSelectedStreet.observe(viewLifecycleOwner) {
+            it?.let {
+                isStreetSelected = it
+            }
+        }
+    }
+
+    private fun observeSelectedStreet() {
+        viewModel.selectedStreet.observe(viewLifecycleOwner) {
+            it?.let {
+                if(streetPopup.isShowing) {
+                    streetPopup.dismiss()
+                }
+                binding.streetTextView.setText(it)
+            }
+        }
+    }
+
+    private fun observeSelectedDistrict() {
+        viewModel.selectedDistrict.observe(viewLifecycleOwner) {
+            it?.let {
+                if(districtPopup.isShowing) {
+                    districtPopup.dismiss()
+                }
+                binding.districtsTextView.setText(it.name)
+                val list =  it.streets
+                setStreetPopup(list)
+            }
+        }
+    }
     private fun observeSetFormData() {
         viewModel.setServiceForm.observe(viewLifecycleOwner) {
             it?.let {
@@ -404,7 +432,7 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun navigateToQRCode(qrCode: String) {
-        val action = AddServiceFragmentDirections.actionAddServiceToQRCode(qrCode)
+        val action = AddServiceFragmentDirections.actionAddServiceToQRCode(qrCode,serviceName,serviceTypeId.toString())
         findNavController().navigate(action)
     }
 
@@ -458,58 +486,133 @@ class AddServiceFragment : Fragment() {
             AdapterView.OnItemClickListener { _, _, position, _ ->
        //         val selectedItem = parent.getItemAtPosition(position).toString()
                 isMunicipalitySelected = true
-                setDistrictsMenuItems(posSector, position)
-
+     //           setDistrictsMenuItems(posSector, position)
+                val list =  addServiceResponse.sectors?.get(posSector)?.
+                municipalites?.get(position)?.districts
+                setDistrictPopup(list)
             }
     }
 
-    private fun setDistrictsMenuItems(posSector: Int, posMunicipalite: Int) {
-        districtsList.clear()
-        binding.districtsTextView.setText(R.string.districts)
-        for (district in addServiceResponse.sectors?.get(posSector)?.municipalites?.get(
-            posMunicipalite
-        )?.districts!!) {
-            districtsList.add(district.name.toString())
+    private fun setDistrictPopup(list:ArrayList<Districts>?) {
+        binding.districtsTextView.setOnClickListener {
+            districtPopup = showDistrictPopup(list?: arrayListOf())
         }
-        val districtsAdapter = ArrayAdapter(
-            requireContext(), R.layout.dropdown_item,
-            districtsList
-        )
-        binding.districtsTextView.setAdapter(districtsAdapter)
-        binding.districtsTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { _, _, position, _ ->
-           //     val selectedItem = parent.getItemAtPosition(position).toString()
-                isDistrictSelected = true
-                setStreetsMenuItems(posSector, posMunicipalite, position)
-                // Display the clicked item using toast
-                //   Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
-            }
     }
 
+    private fun showDistrictPopup(list: List<Districts>): PopupWindow {
+        val inflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.text_popup_view, null)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.textRecycle)
+        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+        val adapter = DistrictAdapter(arrayListOf(),viewModel)
+        recyclerView.adapter = adapter
+        adapter.updateItems(list)
+        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val searchView = view.findViewById<SearchView>(R.id.mSearch)
+        searchView.setQueryHint(getString(R.string.districts))
+        searchDistrict(searchView,list,adapter)
+        Log.e("ItemCount", adapter.getItemCount().toString())
+        streetPopup = PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        streetPopup.isOutsideTouchable = true
+        streetPopup.isFocusable = true
+        streetPopup.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        streetPopup.showAtLocation(requireView(), Gravity.CENTER, 0, 0);
+        return  streetPopup
+    }
 
-    private fun setStreetsMenuItems(posSector: Int, posMunicipalite: Int, posDistricts: Int) {
+    private fun searchDistrict(searchView: SearchView, list: List<Districts>, adapter: DistrictAdapter) {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                if (query != null) {
+                    filterDistrict(query, list, adapter)
+                }
+                return false
+            }
+        })
+    }
+
+    private fun filterDistrict(query: String, list: List<Districts>, adapter: DistrictAdapter) {
+        val filteredList: ArrayList<Districts> = ArrayList()
+        if (list?.isNotEmpty() == true) {
+            for (item in list!!) {
+                if (item.name?.toLowerCase()?.contains(query.toLowerCase()) == true) {
+                    filteredList.add(item)
+                }
+            }
+            adapter.updateItems(filteredList)
+        }
+    }
+
+    fun setStreetPopup(steetArrayList: ArrayList<Streets>?){
+        binding.streetTextView.setOnClickListener {
+            steetArrayList?.let { it1 -> setListOfStreets(it1) }
+            streetPopup = showStreetPopup()
+        }
+
+    }
+    fun setListOfStreets(streetArrayList: ArrayList<Streets>?){
         streetList.clear()
-        binding.streetTextView.clearListSelection()
-
-        for (street in addServiceResponse.sectors?.get(posSector)?.municipalites?.get(
-            posMunicipalite
-        )?.districts?.get(posDistricts)?.streets!!) {
-            streetList.add(street.name.toString())
-        }
-        val streetsAdapter = ArrayAdapter(
-            requireContext(), R.layout.dropdown_item,
-            streetList
-        )
-        binding.streetTextView.setAdapter(streetsAdapter)
-        binding.streetTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { _, _, position, _ ->
-   //             val selectedItem = parent.getItemAtPosition(position).toString()
-                isStreetSelected = true
-                //  setStreetsMenuItems(posSector,posMunicipalite,position)
-                // Display the clicked item using toast
-                // Toast.makeText(requireContext(),"Selected : $selectedItem",Toast.LENGTH_SHORT).show()
+        if (streetArrayList != null) {
+            for (street in streetArrayList ){
+                streetList.add(street.name.toString())
             }
+        }
     }
+    private fun showStreetPopup(): PopupWindow {
+        val inflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.text_popup_view, null)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.textRecycle)
+     //   recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+        Log.e("streetList",streetList.toString())
+        val adapter = StreetAdapter(arrayListOf(),viewModel)
+        recyclerView.adapter = adapter
+        adapter.updateItems(streetList)
+        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val searchView = view.findViewById<SearchView>(R.id.mSearch)
+        searchView.setQueryHint(getString(R.string.street))
+        searchStreet(searchView,streetList,adapter)
+        Log.e("ItemCount", adapter.getItemCount().toString())
+
+        streetPopup = PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        streetPopup.isOutsideTouchable = true
+        streetPopup.isFocusable = true
+        streetPopup.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        streetPopup.showAtLocation(requireView(), Gravity.CENTER, 0, 0);
+        return  streetPopup
+    }
+
+    private fun searchStreet(searchView: SearchView,streetArrayList: ArrayList<String>?,adapter:StreetAdapter) {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                if (query != null) {
+                    filterStreet(query, streetArrayList, adapter)
+                }
+                return false
+            }
+        })
+
+    }
+        fun filterStreet(text: String,list: ArrayList<String>?,adapter: StreetAdapter) {
+            val filteredList: ArrayList<String> = ArrayList<String>()
+            if (list?.isNotEmpty() == true) {
+                for (item in list!!) {
+                    if (item.toLowerCase()?.contains(text.toLowerCase()) == true) {
+                        filteredList.add(item)
+                    }
+                }
+                adapter.updateItems(filteredList)
+            }
+        }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun validateData(formData: FormData): Boolean {
@@ -576,21 +679,6 @@ class AddServiceFragment : Fragment() {
             binding.textInputAfterImg.isErrorEnabled = false
             flagAfterImg = true
         }
-//        if (formData.percentage == null || formData.percentage =="") {
-//            binding.textInputPercentage.error = "برجاء ادخال هذا العنصر"
-//            flagPrecentage = false
-//        }
-//        else {
-//            if (formData.percentage.toInt() > 100) {
-//                binding.textInputPercentage.error = "هذا العنصر يجب ان يكون بين 0:100 "
-//                flagPrecentage = false
-//            }
-//            else{
-//            binding.textInputPercentage.error = null
-//            binding.textInputPercentage.isErrorEnabled = false
-//                flagPrecentage = true
-//            }
-//        }
 
         if (formData.notes != null) {
             if (formData.notes!!.length > 500) {
@@ -680,118 +768,172 @@ class AddServiceFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST_CODE && data != null) {
+        if (resultCode == Activity.RESULT_OK && requestCode == AFTER_CAMERA_REQUEST_CODE && data != null) {
             val bitmap = data.extras?.get("data") as Bitmap
             binding.afterPic.setImageBitmap(bitmap)
-            var afterBitmap =bitmap.copy(Bitmap. Config.ARGB_8888,true)
-            CoroutineScope(Dispatchers.Default).launch {
-                val current = LocalDateTime.now()
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-                val formatted = current.format(formatter)
-             afterBitmap =
-                    drawTextToBitmap(
-                        afterBitmap,
-                        formatted.toString()
-                    )
-                    try {
-                        val file = File(getRealPathFromURI(getImageUri(requireContext(), afterBitmap)!!))
-                        println("afterfilePath" + file.path)
-                        val requestFile: RequestBody =
-                            file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-                        afterImgBody = MultipartBody.Part.createFormData(
-                            "afterImg",
-                            file.name.trim(),
-                            requestFile
-                        )
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-            }
-            binding.afterPic.setImageBitmap(afterBitmap)
+           val afterBitmap = resizeBitmap(getRealPathFromURI(getImageUri(requireContext(), bitmap,"AFTER_IMG")))
+            setAfterImage(afterBitmap)
         }
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == AFTER_GALLERY_REQUEST_CODE && data != null) {
+            binding.afterPic.setImageURI(data?.data) // handle chosen image
+            //    var bitmap = data?.data as Bitmap
+            val bitmap = MediaStore.Images.Media.getBitmap(
+                requireContext().getContentResolver(),
+                data?.data
+            )
+            setAfterImage(bitmap)
+        }
+
+        if (resultCode == Activity.RESULT_OK && requestCode == BEFORE_GALLERY_REQUEST_CODE && data !=null) {
             binding.beforPic.setImageURI(data?.data) // handle chosen image
             //    var bitmap = data?.data as Bitmap
             val bitmap = MediaStore.Images.Media.getBitmap(
                 requireContext().getContentResolver(),
                 data?.data
             )
-            var beforeBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-            CoroutineScope(Dispatchers.Default).launch {
-                val current = LocalDateTime.now()
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-                val formatted = current.format(formatter)
-              beforeBitmap =
-                    drawTextToBitmap(
-                        beforeBitmap,
-                        formatted.toString()
-                    )
-                    try {
-
-//                val file = File(
-//                    getRealPathFromURI(data?.data!!)
-//                )
-                        val file =
-                            File(getRealPathFromURI(getImageUri(requireContext(), beforeBitmap)!!))
-                        println("beforefilePath" + file.path)
-                        val requestFile: RequestBody =
-                            file
-                                .asRequestBody("multipart/form-data".toMediaTypeOrNull())
-                        beforeImgBody = MultipartBody.Part.createFormData(
-                            "beforeImg",
-                            file.name.trim(),
-                            requestFile
-                        )
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                }
-            binding.beforPic.setImageBitmap(beforeBitmap)
+            setBeforeImage(bitmap)
             }
-        if (resultCode == Activity.RESULT_OK && requestCode == 0) {
+
+        if (resultCode == Activity.RESULT_OK && requestCode == BEFORE_CAMERA_REQUEST_CODE && data != null) {
+            val bitmap = data.extras?.get("data") as Bitmap
+            binding.beforPic.setImageBitmap(bitmap)
+            val beforeBitmap = resizeBitmap(getRealPathFromURI(getImageUri(requireContext(), bitmap,"BEFORE_IMG")))
+            setBeforeImage(beforeBitmap)
+        }
+
+        if (resultCode == Activity.RESULT_OK && requestCode == DURING_GALLERY_REQUEST_CODE&& data != null) {
             binding.duringPic.setImageURI(data?.data) // handle chosen image
             //    var bitmap = data?.data as Bitmap
             val bitmap = MediaStore.Images.Media.getBitmap(
                 requireContext().getContentResolver(),
                 data?.data
             )
-            if(bitmap == null)
-            {
-                Toast.makeText(context, "null", Toast.LENGTH_SHORT).show()
-            }
-            var duringBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-            CoroutineScope(Dispatchers.Default).launch {
-                val current = LocalDateTime.now()
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-                val formatted = current.format(formatter)
-                duringBitmap =
-                    drawTextToBitmap(
-                        duringBitmap,
-                        formatted.toString()
-                    )
-                try {
+            setDuringImage(bitmap)
+        }
+        if (resultCode == Activity.RESULT_OK && requestCode == DURING_CAMERA_REQUEST_CODE && data != null) {
+            val bitmap = data.extras?.get("data") as Bitmap
+            binding.duringPic.setImageBitmap(bitmap)
+            val duringBitmap = resizeBitmap(getRealPathFromURI(getImageUri(requireContext(), bitmap,"DURING_IMG")))
+            setDuringImage(duringBitmap)
+        }
+        }
+
+    private fun setDuringImage(bitmap: Bitmap) {
+        var duringBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        CoroutineScope(Dispatchers.Default).launch {
+            val current = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+            val formatted = current.format(formatter)
+            duringBitmap =
+                drawTextToBitmap(
+                    duringBitmap,
+                    formatted.toString()
+                )
+            duringBitmap = compressBitmap(duringBitmap,30)
+            try {
 
 //                val file = File(
-//                    getRealPathFromURI(data?.data!!)
+//                    getRealPathFromURI(data?.data)
 //                )
-                    val file =
-                        File(getRealPathFromURI(getImageUri(requireContext(), duringBitmap)!!))
-                    println("duringFilePath" + file.path)
-                    val requestFile: RequestBody =
-                        file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-                    duringImgBody = MultipartBody.Part.createFormData(
-                        "duringImg",
-                        file.name.trim(),
-                        requestFile
-                    )
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
+                val file =
+                    File(getRealPathFromURI(getImageUri(requireContext(), duringBitmap,"DURING_IMG_")))
+                println("duringFilePath" + file.path)
+                val requestFile: RequestBody =
+                    file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                duringImgBody = MultipartBody.Part.createFormData(
+                    "duringImg",
+                    file.name.trim(),
+                    requestFile
+                )
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
-            binding.duringPic.setImageBitmap(duringBitmap)
         }
-        }
+        binding.duringPic.setImageBitmap(duringBitmap)
+    }
 
+    private fun setBeforeImage(bitmap: Bitmap) {
+        var beforeBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        CoroutineScope(Dispatchers.Default).launch {
+            val current = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+            val formatted = current.format(formatter)
+            beforeBitmap =
+                drawTextToBitmap(
+                    beforeBitmap,
+                    formatted.toString()
+                )
+            beforeBitmap = compressBitmap(beforeBitmap,30)
+
+            try {
+
+//                val file = File(
+//                    getRealPathFromURI(data?.data)
+//                )
+                val file =
+                    File(getRealPathFromURI(getImageUri(requireContext(), beforeBitmap,"bEFORE_IMG")))
+//                        println("beforefilePath" + file.path)
+                val requestFile: RequestBody =
+                    file
+                        .asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                beforeImgBody = MultipartBody.Part.createFormData(
+                    "beforeImg",
+                    file.name.trim(),
+                    requestFile
+                )
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        binding.beforPic.setImageBitmap(beforeBitmap)
+    }
+
+    private fun setAfterImage(bitmap: Bitmap) {
+        var afterBitmap =bitmap.copy(Bitmap. Config.ARGB_8888,true)
+        CoroutineScope(Dispatchers.Default).launch {
+            val current = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+            val formatted = current.format(formatter)
+            afterBitmap =
+                drawTextToBitmap(
+                    afterBitmap,
+                    formatted.toString()
+                )
+            afterBitmap = compressBitmap(afterBitmap,30)
+            try {
+                val file = File(getRealPathFromURI(getImageUri(requireContext(), afterBitmap,"AFTER_IMG")))
+                println("afterfilePath" + file.path)
+                val requestFile: RequestBody =
+                    file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                afterImgBody = MultipartBody.Part.createFormData(
+                    "afterImg",
+                    file.name.trim(),
+                    requestFile
+                )
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        binding.afterPic.setImageBitmap(afterBitmap)
+    }
+private  fun  resizeBitmap(imagePath:String?):Bitmap{
+    val targetW = 800
+    val targetH = 1000
+
+    val bmOptions = BitmapFactory.Options()
+    bmOptions.inJustDecodeBounds = true
+    BitmapFactory.decodeFile(imagePath, bmOptions)
+    val photoW = bmOptions.outWidth
+    val photoH = bmOptions.outHeight
+
+    val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
+
+    bmOptions.inJustDecodeBounds = false
+    bmOptions.inSampleSize = scaleFactor
+    bmOptions.inPurgeable = true
+
+   return BitmapFactory.decodeFile(imagePath, bmOptions)
+}
     @SuppressLint("ResourceAsColor")
     private fun drawTextToBitmap(bitmap: Bitmap, text: String): Bitmap {
 
@@ -828,15 +970,24 @@ class AddServiceFragment : Fragment() {
         return bitmap
     }
 
-    fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
+    private fun compressBitmap(bitmap: Bitmap, quality:Int):Bitmap{
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.WEBP, quality, stream)
+        val byteArray = stream.toByteArray()
+        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    }
+
+    fun getImageUri(inContext: Context, inImage: Bitmap,title:String): Uri? {
         val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            inImage.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 20, bytes)
+        }
         val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
         val currentDate = sdf.format(Date())
         val path = MediaStore.Images.Media.insertImage(
             inContext.contentResolver,
             inImage,
-            "AFTER_IMG_" + currentDate.toString().replace(" ",""),
+            title+ currentDate.toString().replace(" ",""),
             null
         )
 //        val path = MediaStore.Images.Media.insertImage(
@@ -848,9 +999,9 @@ class AddServiceFragment : Fragment() {
         return Uri.parse(path)
     }
 
-    fun getRealPathFromURI(uri: Uri): String? {
+    fun getRealPathFromURI(uri: Uri?): String? {
         val cursor: Cursor? =
-            requireActivity().getContentResolver().query(uri, null, null, null, null)
+            uri?.let { requireActivity().getContentResolver().query(it, null, null, null, null) }
         cursor?.moveToFirst()
         val idx: Int? = cursor?.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
         return idx?.let { cursor.getString(it) }
@@ -923,15 +1074,15 @@ class AddServiceFragment : Fragment() {
         )
     }
 
-    //camera permission
-    @SuppressLint("MissingPermission")
-    fun checkCameraPermission() {
-        if (!isCameraPermissionGranted()) {
-            navigateToAppSetting()
-        } else {
-            enableCamera()
-        }
-    }
+//    //camera permission
+//    @SuppressLint("MissingPermission")
+//    fun checkCameraPermission() {
+//        if (!isCameraPermissionGranted()) {
+//            navigateToAppSetting()
+//        } else {
+//           sho
+//        }
+//    }
 
     private fun isCameraPermissionGranted(): Boolean {
         return ActivityCompat.checkSelfPermission(
@@ -947,26 +1098,23 @@ class AddServiceFragment : Fragment() {
         })
     }
 
-    private fun enableCamera() {
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
-    }
 
-    //external storage
-    @SuppressLint("MissingPermission")
-    fun checkExternalStoragePermission() {
-        if (!isExternalStoragePermissionGranted()) {
-            navigateToAppSetting()
-        } else {
-            enablePhotoes()
-        }
-    }
+//
+//    //external storage
+//    @SuppressLint("MissingPermission")
+//    fun checkExternalStoragePermission() {
+//        if (!isExternalStoragePermissionGranted()) {
+//            navigateToAppSetting()
+//        } else {
+//            showBeforePopup()
+//        }
+//    }
 
-    private fun enablePhotoes() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, REQUEST_CODE)
-    }
+//    private fun enablePhotoes() {
+//        val intent = Intent(Intent.ACTION_PICK)
+//        intent.type = "image/*"
+//        startActivityForResult(intent, REQUEST_CODE)
+//    }
 
     private fun isExternalStoragePermissionGranted(): Boolean {
         return ActivityCompat.checkSelfPermission(
@@ -975,15 +1123,18 @@ class AddServiceFragment : Fragment() {
         ) == PackageManager.PERMISSION_GRANTED
     }
     private fun showMessage(msg: String) {
-        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
-            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                resources.getColor(
-                    R.color.teal
+        lifecycleScope.launchWhenResumed {
+            Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                    resources.getColor(
+                        R.color.teal
+                    )
                 )
-            )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
-            {
-            }.show()
+                .setActionTextColor(resources.getColor(R.color.white))
+                .setAction(getString(R.string.dismiss))
+                {
+                }.show()
+        }
     }
     private fun registerConnectivityNetworkMonitor() {
         val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

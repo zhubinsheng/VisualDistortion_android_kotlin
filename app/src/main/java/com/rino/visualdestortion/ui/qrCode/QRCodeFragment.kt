@@ -21,6 +21,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.databinding.FragmentQRCodeBinding
@@ -37,6 +38,9 @@ class QRCodeFragment : Fragment() {
     private lateinit var binding: FragmentQRCodeBinding
     private lateinit var qrCodeImg:Bitmap
     private var url = ""
+    private var serviceId =""
+    private var serviceName = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -61,6 +65,8 @@ class QRCodeFragment : Fragment() {
         if (getArguments() != null) {
             // The getPrivacyPolicyLink() method will be created automatically.
             url = getArguments()?.get("QRCodeURL").toString()
+            serviceId = getArguments()?.get("serviceID").toString()
+            serviceName = getArguments()?.get("serviceName").toString()
             Log.e("QRCodeURL", url)
             if(NetworkConnection.checkInternetConnection(requireContext())){
                 downloadQRCode(url)
@@ -69,6 +75,9 @@ class QRCodeFragment : Fragment() {
                 showMessage(getString(R.string.no_internet))
             }
         }
+        binding.backImg.setOnClickListener{
+            navTAddService()
+        }
         binding.navigateToHome.setOnClickListener {
             navigateToHome()
         }
@@ -76,6 +85,12 @@ class QRCodeFragment : Fragment() {
             shareQRCodeInWhatsapp()
         }
     }
+
+    private fun navTAddService() {
+        val action = QRCodeFragmentDirections.actionQRCodeToAddForm(serviceName,serviceId)
+        findNavController().navigate(action)
+    }
+
     private fun shareQRCodeInWhatsapp() {
         val bitmap = ( binding.qrCodeImg.drawable.toBitmap())
         val imgUri: Uri = getImageUri(bitmap)
@@ -139,16 +154,21 @@ class QRCodeFragment : Fragment() {
             })
    }
     private fun showMessage(msg: String) {
-        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
-            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                resources.getColor(
-                    R.color.teal
+        lifecycleScope.launchWhenResumed {
+            Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                    resources.getColor(
+                        R.color.teal
+                    )
                 )
-            )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(
-               R.string.dismiss))
-            {
-            }.show()
+                .setActionTextColor(resources.getColor(R.color.white)).setAction(
+                    getString(
+                        R.string.dismiss
+                    )
+                )
+                {
+                }.show()
+        }
     }
     private fun registerConnectivityNetworkMonitor() {
         val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

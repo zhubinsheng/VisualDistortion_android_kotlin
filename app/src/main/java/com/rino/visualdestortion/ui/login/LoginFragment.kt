@@ -1,16 +1,21 @@
 package com.rino.visualdestortion.ui.login
 
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isGone
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.rino.visualdestortion.R
@@ -40,8 +45,25 @@ class LoginFragment : Fragment() {
     private fun init() {
         loginButtonOnClick()
         resetPassOnClick()
+        privacyPolicyOnClick()
         observeData()
         registerConnectivityNetworkMonitor()
+    }
+
+    private fun privacyPolicyOnClick() {
+        val text = getString(R.string.privacy_policy)
+        val content = SpannableString(text)
+        content.setSpan(UnderlineSpan(), 0, text.length, 0)
+        binding.privacyPolicyTxt.text = content
+        binding.privacyPolicyTxt.setOnClickListener {
+            navtoPrivacyPolicyUrl()
+        }
+    }
+
+    private fun navtoPrivacyPolicyUrl() {
+        val url = "https://amanat-jeddah-staging.azurewebsites.net/Home/PrivacyPolicy"
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(browserIntent)
     }
 
     private fun loginButtonOnClick() {
@@ -78,7 +100,7 @@ class LoginFragment : Fragment() {
              //   binding.progress.visibility = View.GONE
                 Toast.makeText(
                     requireActivity(),
-                    " Login Successfully",
+                    getString(R.string.success_login),
                     Toast.LENGTH_SHORT
                 ).show()
                 viewModel.isTodayPrepared()
@@ -87,7 +109,7 @@ class LoginFragment : Fragment() {
             } else {
                 Toast.makeText(
                     requireActivity(),
-                    " Invalid UserName or Password ",
+                            getString(R.string.invalid_email_or_pass),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -192,15 +214,18 @@ class LoginFragment : Fragment() {
     }
 
     private fun showMessage(msg: String) {
-        Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
-            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
-                resources.getColor(
-                    R.color.teal
+        lifecycleScope.launchWhenResumed {
+            Snackbar.make(requireView(), msg, Snackbar.LENGTH_INDEFINITE)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).setBackgroundTint(
+                    resources.getColor(
+                        R.color.teal
+                    )
                 )
-            )
-            .setActionTextColor(resources.getColor(R.color.white)).setAction(getString(R.string.dismiss))
-            {
-            }.show()
+                .setActionTextColor(resources.getColor(R.color.white))
+                .setAction(getString(R.string.dismiss))
+                {
+                }.show()
+        }
     }
     private fun registerConnectivityNetworkMonitor() {
         val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
