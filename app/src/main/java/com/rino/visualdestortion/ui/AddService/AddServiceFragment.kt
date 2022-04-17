@@ -201,7 +201,9 @@ class AddServiceFragment : Fragment() {
 
     private fun duringPicOnClick() {
         if (isExternalStoragePermissionGranted()&&isCameraPermissionGranted()) {
-            showDuringPopup()
+          //  showDuringPopup()
+            enableGallery(AFTER_GALLERY_REQUEST_CODE)
+
         } else {
             navigateToAppSetting()
         }
@@ -279,7 +281,8 @@ class AddServiceFragment : Fragment() {
 
     private fun afterPicOnClick() {
         if (isExternalStoragePermissionGranted()&&isCameraPermissionGranted()) {
-            showAfterPopup()
+        //    showAfterPopup()
+            enableGallery(AFTER_GALLERY_REQUEST_CODE)
         } else {
             navigateToAppSetting()
         }
@@ -287,7 +290,8 @@ class AddServiceFragment : Fragment() {
 
     private fun beforePicOnClick() {
         if (isExternalStoragePermissionGranted()&&isCameraPermissionGranted()) {
-            showBeforePopup()
+        //    showBeforePopup()
+            enableGallery(BEFORE_GALLERY_REQUEST_CODE)
         } else {
             navigateToAppSetting()
         }
