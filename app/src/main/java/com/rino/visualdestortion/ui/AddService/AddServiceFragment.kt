@@ -26,6 +26,7 @@ import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -52,6 +53,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -94,6 +96,12 @@ class AddServiceFragment : Fragment() {
     private lateinit var  beforePopup :PopupWindow
     private lateinit var  duringPopup :PopupWindow
     private lateinit var  afterPopup  :PopupWindow
+    private var fileName = "photo"
+    private var currentPhotoPath = ""
+    private lateinit var imageFile:File
+    private lateinit var bitmap:Bitmap
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationProviderClient =
@@ -189,7 +197,18 @@ class AddServiceFragment : Fragment() {
             submit()
         }
         binding.beforPic.setOnClickListener {
-            beforePicOnClick()
+            val storageDirectory: File? = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            try {
+                imageFile = File.createTempFile(fileName,".jpg",storageDirectory)
+                currentPhotoPath = imageFile.absolutePath
+                val aymanCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                val uri: Uri? = context?.let { it1 -> FileProvider.getUriForFile(it1,"com.rino.visualdestortion.fileprovider",imageFile) }
+                aymanCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,uri)
+                startActivityForResult(aymanCameraIntent,1)
+            }catch(e:IOException){
+                print(e.stackTrace)
+            }
+            //beforePicOnClick()
         }
         binding.afterPic.setOnClickListener {
             afterPicOnClick()
@@ -768,7 +787,23 @@ class AddServiceFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == AFTER_CAMERA_REQUEST_CODE && data != null) {
+        if (resultCode == Activity.RESULT_OK ){
+            bitmap = BitmapFactory.decodeFile(currentPhotoPath)
+            val out = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 30, out)
+            val decoded = BitmapFactory.decodeStream(ByteArrayInputStream(out.toByteArray()))
+            binding.afterPic.setImageBitmap(bitmap)
+            binding.beforPic.setImageBitmap(bitmap)
+            binding.duringPic.setImageBitmap(bitmap)
+
+            setDuringImage(bitmap)
+            setAfterImage(bitmap)
+            setBeforeImage(bitmap)
+
+        }else{
+            return
+        }
+        /*if (resultCode == Activity.RESULT_OK && requestCode == AFTER_CAMERA_REQUEST_CODE && data != null) {
             val bitmap = data.extras?.get("data") as Bitmap
             binding.afterPic.setImageBitmap(bitmap)
            val afterBitmap = resizeBitmap(getRealPathFromURI(getImageUri(requireContext(), bitmap,"AFTER_IMG")))
@@ -815,7 +850,7 @@ class AddServiceFragment : Fragment() {
             binding.duringPic.setImageBitmap(bitmap)
             val duringBitmap = resizeBitmap(getRealPathFromURI(getImageUri(requireContext(), bitmap,"DURING_IMG")))
             setDuringImage(duringBitmap)
-        }
+        }*/
         }
 
     private fun setDuringImage(bitmap: Bitmap) {
