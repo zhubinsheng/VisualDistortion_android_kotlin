@@ -803,8 +803,8 @@ class AddServiceFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == BEFORE_CAMERA_REQUEST_CODE) {
         //    val bitmap = data.extras?.get("data") as Bitmap
             bitmap = BitmapFactory.decodeFile(currentPhotoPath)
-            setBeforeImage(bitmap)
             binding.beforPic.setImageBitmap(bitmap)
+            setBeforeImage(bitmap)
 
         }
 
@@ -820,8 +820,8 @@ class AddServiceFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == DURING_CAMERA_REQUEST_CODE ) {
 //            val bitmap = data.extras?.get("data") as Bitmap
             bitmap = BitmapFactory.decodeFile(currentPhotoPath)
-            setDuringImage(bitmap)
             binding.duringPic.setImageBitmap(bitmap)
+            setDuringImage(bitmap)
 
         }
         }

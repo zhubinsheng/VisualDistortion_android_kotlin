@@ -37,12 +37,15 @@ class FilteredHistotyFragment : Fragment() {
     private lateinit var historyAdapter: FilteredHistoryAdapter
     private lateinit var historyList: ArrayList<Data>
     private lateinit var searchHistoryAdapter: SubItemFilteredHistoryAdapter
+    private lateinit var periodAdapter: PeriodAdapter
+
     private lateinit var searchHistoryList: ArrayList<ServiceData>
     private lateinit var periodTimeList_ar: ArrayList<String>
     private lateinit var periodTimeList_en: ArrayList<String>
     private lateinit var historyByServiceIdResponse: FilteredHistoryResponse
     private var selectedPeriod = "all"
     private var serviceId = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -65,9 +68,11 @@ class FilteredHistotyFragment : Fragment() {
         binding.shimmer.startShimmer()
         binding.historyRecycle.visibility = View.GONE
         viewModel = FilteredHistoryViewModel(requireActivity().application)
+        viewModel.serviceId = serviceId
         historyList = arrayListOf()
         searchHistoryList = arrayListOf()
         historyAdapter = FilteredHistoryAdapter(historyList, viewModel,requireContext())
+        periodAdapter = PeriodAdapter(periodTimeList_ar,viewModel)
         historyAdapter.updateItems(historyList)
         searchHistoryAdapter = SubItemFilteredHistoryAdapter(searchHistoryList, viewModel,requireContext())
         searchHistoryAdapter.updateItems(searchHistoryList)
@@ -184,7 +189,7 @@ class FilteredHistotyFragment : Fragment() {
         (activity as MainActivity).bottomNavigation.isGone = true
         //  checkNetwork(serviceId)
         registerConnectivityNetworkMonitor()
-        setPeriodTimeMenuItems()
+      //  setPeriodTimeMenuItems()
     }
 
     private fun setUpUI() {
@@ -193,6 +198,12 @@ class FilteredHistotyFragment : Fragment() {
         binding.historyRecycle.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = historyAdapter
+        }
+        val linearLayoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,true)
+        linearLayoutManager.stackFromEnd = true
+        binding.periodRecycle.apply {
+            layoutManager = linearLayoutManager
+            adapter = periodAdapter
         }
         binding.searchHistoryRecycle.apply {
             layoutManager = LinearLayoutManager(context)
@@ -213,33 +224,33 @@ class FilteredHistotyFragment : Fragment() {
                 return false
             }
         })
-              setPeriodTimeMenuItems()
+       //       setPeriodTimeMenuItems()
 
     }
 
 
-    private fun setPeriodTimeMenuItems() {
-        binding.periodTimeTextView.setText(R.string.period_time)
-
-        val adapter = ArrayAdapter(
-            requireContext(), R.layout.dropdown_item,
-            periodTimeList_ar
-        )
-        binding.periodTimeTextView.setAdapter(adapter)
-        binding.periodTimeTextView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, _, position, id ->
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                historyAdapter.clearList()
-                val index = periodTimeList_ar.indexOf(selectedItem)
-                selectedPeriod = periodTimeList_en[index]
-                if (NetworkConnection.checkInternetConnection(requireContext())) {
-                    viewModel.getHistoryData(serviceId, periodTimeList_en[index])
-                }
-                else{
-                    showMessage()
-                }
-            }
-    }
+//    private fun setPeriodTimeMenuItems() {
+//        binding.periodTimeTextView.setText(R.string.period_time)
+//
+//        val adapter = ArrayAdapter(
+//            requireContext(), R.layout.dropdown_item,
+//            periodTimeList_ar
+//        )
+//        binding.periodTimeTextView.setAdapter(adapter)
+//        binding.periodTimeTextView.onItemClickListener =
+//            AdapterView.OnItemClickListener { parent, _, position, id ->
+//                val selectedItem = parent.getItemAtPosition(position).toString()
+//                historyAdapter.clearList()
+//                val index = periodTimeList_ar.indexOf(selectedItem)
+//                selectedPeriod = periodTimeList_en[index]
+//                if (NetworkConnection.checkInternetConnection(requireContext())) {
+//                    viewModel.getHistoryData(serviceId, periodTimeList_en[index])
+//                }
+//                else{
+//                    showMessage()
+//                }
+//            }
+//    }
 
     private fun showMessage() {
         lifecycleScope.launchWhenResumed {

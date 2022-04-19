@@ -21,7 +21,12 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
     private var _getSearchHistoryData = MutableLiveData<SearchResponse?>()
     private var _navToSeeAll: MutableLiveData<String> = MutableLiveData()
     private var _navToTaskDetails: MutableLiveData<ServiceData> = MutableLiveData()
-
+    var serviceId = 0
+   companion object {
+    var lastSelectedPos = 0
+    var periodTimeList_en =
+        arrayListOf("all", "week", "lastweek", "month", "lastmonth", "year", "lastyear")
+   }
     val navToTaskDetails: LiveData<ServiceData>
         get() = _navToTaskDetails
 
