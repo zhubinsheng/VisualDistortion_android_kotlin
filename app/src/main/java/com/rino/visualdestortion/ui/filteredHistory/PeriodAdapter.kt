@@ -33,10 +33,11 @@ class PeriodAdapter(private var periodList: ArrayList<String>,private val filter
         Log.e("lastPosition",FilteredHistoryViewModel.lastSelectedPos.toString())
 
         if (lastSelectedCard == null && position == FilteredHistoryViewModel.lastSelectedPos) {
-            Log.e("lastPosition",FilteredHistoryViewModel.lastSelectedPos.toString())
+            Log.e("period",FilteredHistoryViewModel.periodTimeList_en[FilteredHistoryViewModel.lastSelectedPos])
 
             lastSelectedCard = holder.binding.categoryCard
             lastSelectedText = holder.binding.categoryName
+            filteredHistoryViewModel.getHistoryData(filteredHistoryViewModel.serviceId,FilteredHistoryViewModel.periodTimeList_en[FilteredHistoryViewModel.lastSelectedPos])
 
             lastSelectedCard?.setCardBackgroundColor(
                 ContextCompat.getColor(
@@ -51,8 +52,8 @@ class PeriodAdapter(private var periodList: ArrayList<String>,private val filter
                 )
             )
         }
-        val temp = periodList[position]
-        holder.bind(temp,position)
+            val temp = periodList[position]
+            holder.bind(temp, position)
     }
 
     inner class PeriodViewHolder(val binding: PeriodItemBinding) :
@@ -94,7 +95,6 @@ class PeriodAdapter(private var periodList: ArrayList<String>,private val filter
                 lastSelectedText = binding.categoryName
             }
         }
-
     }
 
     override fun getItemCount(): Int {

@@ -23,9 +23,9 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
     private var _navToTaskDetails: MutableLiveData<ServiceData> = MutableLiveData()
     var serviceId = 0
    companion object {
-    var lastSelectedPos = 0
     var periodTimeList_en =
-        arrayListOf("all", "week", "lastweek", "month", "lastmonth", "year", "lastyear")
+        arrayListOf("lastyear","year","lastmonth","month","lastweek","week","all")
+       var lastSelectedPos = periodTimeList_en.size-1
    }
     val navToTaskDetails: LiveData<ServiceData>
         get() = _navToTaskDetails
@@ -80,7 +80,7 @@ class FilteredHistoryViewModel (application: Application) : AndroidViewModel(app
     }
 
     fun searchHistoryDataByService(searchRequest: SearchRequest) {
-        // _loading.postValue(View.VISIBLE)
+         _loading.postValue(View.VISIBLE)
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = modelRepository.searchHistoryDataByService(searchRequest)) {
                 is Result.Success -> {

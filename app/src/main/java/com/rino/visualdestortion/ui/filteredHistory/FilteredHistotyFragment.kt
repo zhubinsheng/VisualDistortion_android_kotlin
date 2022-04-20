@@ -50,6 +50,7 @@ class FilteredHistotyFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             serviceId = arguments?.get("serviceID").toString().toInt()
+
         }
     }
 
@@ -63,8 +64,8 @@ class FilteredHistotyFragment : Fragment() {
     }
 
     private fun init() {
-        periodTimeList_ar = arrayListOf(" الكل "," الاسبوع الحالى "," الاسبوع السابق "," الشهر الحالى "," الشهر السابق "," السنة الحالية "," السنة السابقة ")
-        periodTimeList_en = arrayListOf("all","week","lastweek","month","lastmonth","year","lastyear")
+        periodTimeList_ar = arrayListOf(" السنة السابقة "," السنة الحالية "," الشهر السابق "," الشهر الحالى "," الاسبوع السابق "," الاسبوع الحالى "," الكل ")
+        periodTimeList_en = arrayListOf("lastyear","year","lastmonth","month","lastweek","week","all")
         binding.shimmer.startShimmer()
         binding.historyRecycle.visibility = View.GONE
         viewModel = FilteredHistoryViewModel(requireActivity().application)
@@ -199,7 +200,8 @@ class FilteredHistotyFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = historyAdapter
         }
-        val linearLayoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,true)
+        val linearLayoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+        linearLayoutManager.reverseLayout = false
         linearLayoutManager.stackFromEnd = true
         binding.periodRecycle.apply {
             layoutManager = linearLayoutManager
@@ -225,7 +227,6 @@ class FilteredHistotyFragment : Fragment() {
             }
         })
        //       setPeriodTimeMenuItems()
-
     }
 
 
@@ -311,7 +312,6 @@ class FilteredHistotyFragment : Fragment() {
                 binding.textNoInternet.visibility = View.VISIBLE
                 binding.noNetworkResult.visibility = View.VISIBLE
                 binding.linearLayout.visibility = View.GONE
-
             }
         }
     }
