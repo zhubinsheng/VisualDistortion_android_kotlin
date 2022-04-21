@@ -37,7 +37,7 @@ class PeriodAdapter(private var periodList: ArrayList<String>,private val filter
 
             lastSelectedCard = holder.binding.categoryCard
             lastSelectedText = holder.binding.categoryName
-            filteredHistoryViewModel.getHistoryData(filteredHistoryViewModel.serviceId,FilteredHistoryViewModel.periodTimeList_en[FilteredHistoryViewModel.lastSelectedPos])
+       //     filteredHistoryViewModel.getHistoryData(filteredHistoryViewModel.serviceId,FilteredHistoryViewModel.periodTimeList_en[FilteredHistoryViewModel.lastSelectedPos])
 
             lastSelectedCard?.setCardBackgroundColor(
                 ContextCompat.getColor(

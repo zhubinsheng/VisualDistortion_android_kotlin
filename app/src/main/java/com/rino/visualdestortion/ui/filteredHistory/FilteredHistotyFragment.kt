@@ -43,14 +43,14 @@ class FilteredHistotyFragment : Fragment() {
     private lateinit var periodTimeList_ar: ArrayList<String>
     private lateinit var periodTimeList_en: ArrayList<String>
     private lateinit var historyByServiceIdResponse: FilteredHistoryResponse
-    private var selectedPeriod = "all"
+    private val mainPeriod = "all"
     private var serviceId = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FilteredHistoryViewModel.lastSelectedPos = FilteredHistoryViewModel.periodTimeList_en.size -1
         arguments?.let {
             serviceId = arguments?.get("serviceID").toString().toInt()
-
         }
     }
 
@@ -284,7 +284,7 @@ class FilteredHistotyFragment : Fragment() {
                             binding.noInternetLayout.visibility = View.GONE
                             binding.linearLayout.visibility = View.VISIBLE
                             historyAdapter.clearList()
-                            viewModel.getHistoryData(serviceId,selectedPeriod)
+                            viewModel.getHistoryData(serviceId,FilteredHistoryViewModel.periodTimeList_en[FilteredHistoryViewModel.lastSelectedPos])
                         }
                     }
                 }
